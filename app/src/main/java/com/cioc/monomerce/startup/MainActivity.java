@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity
                     tabLayout.setupWithViewPager(viewPager);
                 }
             }
-        },5000);
+        },1000);
 
 
 
@@ -221,7 +221,6 @@ public class MainActivity extends AppCompatActivity
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
 
-        int value=0;
         for (int i=0; i<genericProducts.size(); i++) {
             ImageListFragment fragment = new ImageListFragment();
             Bundle bundle = new Bundle();

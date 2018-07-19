@@ -141,13 +141,13 @@ public class ImageListFragment extends Fragment {
         }*/
 
         if (ImageListFragment.this.getArguments().getInt("type") == 1){
-            items =ImageUrlUtils.getOffersUrls();
+            items = ImageUrlUtils.getOffersUrls();
             fragmentName = getString(R.string.item_1);
         }else if (ImageListFragment.this.getArguments().getInt("type") == 2){
-            items =ImageUrlUtils.getElectronicsUrls();
+            items = ImageUrlUtils.getElectronicsUrls();
             fragmentName = getString(R.string.item_2);
         }else if (ImageListFragment.this.getArguments().getInt("type") == 3){
-            items =ImageUrlUtils.getLifeStyleUrls();
+            items = ImageUrlUtils.getLifeStyleUrls();
             fragmentName = getString(R.string.item_3);
         }else if (ImageListFragment.this.getArguments().getInt("type") == 4){
             items = ImageUrlUtils.getHomeApplianceUrls();

@@ -45,9 +45,9 @@
                 >
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/monomerce_icon" />
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/sterlin_select" />
 
                 <TextView
                     android:id="@+id/toolbar_title"
