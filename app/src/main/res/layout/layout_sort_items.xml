@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/activity_category_list"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+        <TextView
+            style="@style/text_view_style"
+            android:layout_height="30dp"
+            android:text="Sort"
+            android:textSize="@dimen/text_size_large"
+            />
+
+        <TextView
+            style="@style/text_view_style"
+            android:layout_height="30dp"
+            android:id="@+id/sort_new"
+            android:text="New"
+            android:textAlignment="gravity"
+            android:gravity="center_vertical"
+            />
+
+        <TextView
+            style="@style/text_view_style"
+            android:layout_height="30dp"
+            android:id="@+id/sort_popular"
+            android:text="Popular"
+            android:textAlignment="gravity"
+            android:gravity="center_vertical"
+            />
+
+        <TextView
+            style="@style/text_view_style"
+            android:layout_height="30dp"
+            android:id="@+id/sort_lowToHigh"
+            android:text="Price Low to High"
+            android:textAlignment="gravity"
+            android:gravity="center_vertical"
+            />
+
+        <TextView
+            style="@style/text_view_style"
+            android:layout_height="30dp"
+            android:id="@+id/sort_highToLow"
+            android:text="Price High to Low"
+            android:textAlignment="gravity"
+            android:gravity="center_vertical"
+            />
+</LinearLayout>

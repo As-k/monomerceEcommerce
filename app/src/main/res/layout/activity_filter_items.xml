@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cioc.monomerce.fragments.FilterItemsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10"
+        >
+
+        <LinearLayout android:id="@+id/layout_items"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="#dfdfdf"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/text_view_style"
+                android:text="Filter By"
+                android:padding="@dimen/margin_small"
+                android:layout_marginStart="0dp"
+                android:elevation="30dp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#f7f7f7"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="@dimen/margin_medium"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/text_view_style"
+                    android:text="Rs. 499"
+                    android:padding="@dimen/margin_medium"
+                    android:layout_marginStart="0dp"
+                    />
+
+                <SeekBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="@dimen/margin_medium"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/text_view_style"
+                    android:text="Rs. 49999"
+                    android:padding="@dimen/margin_medium"
+                    android:layout_marginStart="0dp"
+                    />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#f7f7f7"
+                android:orientation="horizontal"
+                >
+                <LinearLayout
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:background="#f7f7f7"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/text_view_style"
+                        android:id="@+id/filter_category"
+                        android:text="Category"
+                        android:padding="20dp"
+                        android:layout_marginStart="0dp"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/text_view_style"
+                        android:id="@+id/filter_brand"
+                        android:text="Brand"
+                        android:padding="20dp"
+                        android:layout_marginStart="0dp"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/text_view_style"
+                        android:id="@+id/filter_by"
+                        android:text="Filter By"
+                        android:padding="20dp"
+                        android:layout_marginStart="0dp"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/text_view_style"
+                        android:id="@+id/filter_size"
+                        android:text="Size"
+                        android:padding="20dp"
+                        android:layout_marginStart="0dp"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/text_view_style"
+                        android:id="@+id/filter_type"
+                        android:text="Type"
+                        android:padding="20dp"
+                        android:layout_marginStart="0dp"
+                        />
+
+
+                </LinearLayout>
+
+                <fragment
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/filter_fragment"
+                    class="com.allandroidprojects.ecomsample.fragments.FilterCategoryFragment"
+                    />
+
+
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/layout_payment"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:background="@color/gen_black"
+            android:visibility="visible">
+            <Button android:id="@+id/show_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/orange_light"
+                android:text="Show Result"
+                android:textAllCaps="false"
+                android:textSize="14dp"
+                android:textColor="@color/gen_white"
+                android:textStyle="bold"
+                android:gravity="center"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>

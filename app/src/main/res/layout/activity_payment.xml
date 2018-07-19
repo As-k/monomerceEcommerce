@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/activity_cart_list"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    tools:context="com.allandroidprojects.ecomsample.options.CartListActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.githang.stepview.StepView
+        android:id="@+id/step_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:background="@color/colorPrimary"
+        app:svTextColor="@color/gen_white"
+        app:svCircleColor="@color/grey_light"
+        app:svSelectedColor="@color/orange_light"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9.5">
+    <LinearLayout android:id="@+id/layout_items"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:layout_weight="9.5"
+        android:background="#f7f7f7"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:weightSum="3">
+
+            <TextView android:id="@+id/shipping_details"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Shipping Details"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/gen_black"
+                android:textStyle="bold"
+                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@color/gen_white"
+                android:weightSum="3">
+                <View
+                    android:layout_width="@dimen/view_width_small"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:background="@color/grey_light"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:orientation="vertical"
+                    >
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/view_width_small"
+                        android:background="@color/grey_light" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/selected_address"
+                        android:padding="@dimen/margin_medium"
+                        android:text="4th Floor, Venkateshwara Heritage, Kudlu Hosa Road, Opp Sai Purna Premium Apartment, Sai Meadows, Kudlu, Bengaluru, Karnataka 560068"
+                        android:gravity="left"
+                        android:textColor="@color/gen_black"
+                        />
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/view_width_small"
+                        android:background="@color/grey_light" />
+                </LinearLayout>
+                <View
+                    android:layout_width="@dimen/view_width_small"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:background="@color/grey_light"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:weightSum="3">
+            <TextView android:id="@+id/payment_options"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Payment Options"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/gen_black"
+                android:textStyle="bold"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="left"
+                android:padding="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@color/gen_white"
+                >
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radio_payment">
+
+                    <RadioButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/radio_cod"
+                        android:text="COD"
+                        android:textColor="@color/gen_black"
+                        />
+
+                    <RadioButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/radio_card"
+                        android:text="Credit / Debit or Net Banking"
+                        android:textColor="@color/gen_black"
+                        />
+
+                </RadioGroup>
+
+
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:weightSum="3">
+            <TextView android:id="@+id/add_new_address"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Order Summary"
+                android:textSize="14dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="@color/gen_black"
+                android:textStyle="bold"
+                />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_payment"
+                android:scrollbars="vertical"
+                android:paddingTop="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    </ScrollView>
+    <LinearLayout android:id="@+id/layout_payment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:elevation="30dp"
+        android:background="@color/gen_black"
+        android:visibility="visible">
+        <TextView android:id="@+id/text_action_bottom1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/gen_white"
+            android:text="Rs 8,750"
+            android:textSize="14dp"
+            android:textColor="@color/gen_black"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <TextView android:id="@+id/payment_text_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:text="PAYMENT"
+            android:textSize="14dp"
+            android:textColor="@color/gen_white"
+            android:textStyle="bold"
+            android:gravity="center"/>
+    </LinearLayout>
+</LinearLayout>
