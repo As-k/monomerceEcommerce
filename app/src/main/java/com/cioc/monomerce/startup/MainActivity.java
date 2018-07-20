@@ -41,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity
 
     AsyncHttpClient client;
 
-    ArrayList<GenericProduct> genericProducts;
+    public static ArrayList<GenericProduct> genericProducts;
 
 
     @Override
@@ -220,12 +221,12 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-
         for (int i=0; i<genericProducts.size(); i++) {
             ImageListFragment fragment = new ImageListFragment();
             Bundle bundle = new Bundle();
             GenericProduct product = genericProducts.get(i);
             bundle.putInt("type", i+1);
+            bundle.putString("pk", product.getPk());
             fragment.setArguments(bundle);
             adapter.addFragment(fragment, product.getName());
         }

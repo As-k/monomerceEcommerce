@@ -35,7 +35,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".fragments.ViewPagerActivity" />
-        <activity android:name=".product.ItemDetailsActivity" />
+        <activity android:name=".product.ItemDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".options.WishlistActivity"
             android:label="@string/my_wishlist" />
