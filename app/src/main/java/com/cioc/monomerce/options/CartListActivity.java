@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.cioc.monomerce.R;
@@ -71,7 +72,7 @@ public class CartListActivity extends AppCompatActivity {
             public final SimpleDraweeView mImageView;
             public final LinearLayout mLayoutItem, mLayoutRemove;
             TextView actualPrice, discountPercentage, itemsQuantity;
-            ImageView itemsQuantityAdd, itemsQuantityRemove;
+            ImageView itemsQuantityAdd, itemsQuantityRemove, cardWishList;
 
             public ViewHolder(View view) {
                 super(view);
@@ -85,6 +86,7 @@ public class CartListActivity extends AppCompatActivity {
                 itemsQuantity =  view.findViewById(R.id.items_quantity);
                 itemsQuantityAdd =  view.findViewById(R.id.items_quantity_add);
                 itemsQuantityRemove =  view.findViewById(R.id.items_quantity_remove);
+                cardWishList =  view.findViewById(R.id.card_wishlist);
 
             }
         }
@@ -138,13 +140,25 @@ public class CartListActivity extends AppCompatActivity {
                 }
             });
 
+
+            holder.cardWishList.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+                    imageUrlUtils.addWishlistImageUri(mCartlistImageUri.get(position));
+                    holder.cardWishList.setImageResource(R.drawable.ic_favorite_black_18dp);
+                    notifyDataSetChanged();
+                    Toast.makeText(mContext,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
             //Set click action
             holder.itemsQuantityRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     String quan = holder.itemsQuantity.getText().toString();
                     int quantRemove = Integer.parseInt(quan);
-                    if (quantRemove==0) {
+                    if (quantRemove<=1) {
                         ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
                         imageUrlUtils.removeCartListImageUri(position);
                         notifyDataSetChanged();
@@ -155,6 +169,7 @@ public class CartListActivity extends AppCompatActivity {
                     holder.itemsQuantity.setText(quantRemove+"");
                 }
             });
+
             holder.itemsQuantityAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

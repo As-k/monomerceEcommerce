@@ -1,6 +1,7 @@
 package com.cioc.monomerce.product;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +29,10 @@ import com.facebook.drawee.view.SimpleDraweeView;
 
 public class ItemDetailsActivity extends AppCompatActivity {
     int imagePosition;
-    String stringImageUri;
+    String itemName, itemPrice, itemDiscountPrice, itemDiscount, stringImageUri;
+    private Menu menu;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,11 +60,19 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
 
         SimpleDraweeView mImageView = (SimpleDraweeView)findViewById(R.id.image1);
+        TextView textViewItemName = (TextView)findViewById(R.id.item_name);
+        TextView textViewItemPrice = (TextView)findViewById(R.id.item_price);
+        TextView textViewItemDiscountPrice = (TextView)findViewById(R.id.actual_price);
+        TextView textViewItemDiscount = (TextView)findViewById(R.id.discount_percentage);
         TextView textViewAddToCart = (TextView)findViewById(R.id.text_action_bottom1);
         TextView textViewBuyNow = (TextView)findViewById(R.id.text_action_bottom2);
 
         //Getting image uri from previous screen
         if (getIntent() != null) {
+            itemName = getIntent().getStringExtra("itemName");
+            itemPrice = getIntent().getStringExtra("itemPrice");
+            itemDiscountPrice = getIntent().getStringExtra("itemDiscountPrice");
+            itemDiscount = getIntent().getStringExtra("itemDiscount");
             stringImageUri = getIntent().getStringExtra(ImageListFragment.STRING_IMAGE_URI);
             imagePosition = getIntent().getIntExtra(ImageListFragment.STRING_IMAGE_URI,0);
         }
@@ -75,6 +87,20 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
             }
         });
+
+        textViewItemName.setText(itemName);
+        if (itemDiscount.equals("0")){
+            textViewItemPrice.setText("Rs. "+itemPrice);
+            textViewItemDiscount.setVisibility(View.GONE);
+            textViewItemDiscountPrice.setVisibility(View.GONE);
+        } else {
+            textViewItemPrice.setText("Rs. "+itemDiscountPrice);
+            textViewItemDiscount.setVisibility(View.VISIBLE);
+            textViewItemDiscount.setText("("+itemDiscount+" %)");
+            textViewItemDiscountPrice.setVisibility(View.VISIBLE);
+            textViewItemDiscountPrice.setText(itemPrice);
+            textViewItemDiscountPrice.setPaintFlags(textViewItemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+        }
 
         textViewAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +134,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.item_details, menu);
         return true;
@@ -151,8 +178,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
             invalidateOptionsMenu();*/
             return true;
         }else if (id == R.id.action_wishlist) {
-            startActivity(new Intent(ItemDetailsActivity.this, WishlistActivity.class));
-
+            ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+            imageUrlUtils.addWishlistImageUri(stringImageUri);
+            item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_white_24dp));
+            Toast.makeText(getApplicationContext(),"Item added to wishlist.", Toast.LENGTH_SHORT).show();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

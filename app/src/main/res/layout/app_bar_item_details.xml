@@ -49,16 +49,48 @@
                 android:orientation="vertical">
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
+                    android:id="@+id/item_name"
                           android:text="Denim Shirt"
                           android:textSize="16dp"
                           android:textColor="@color/gen_black"/>
-                <TextView android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:layout_marginTop="8dp"
-                          android:text="Rs. 1,979"
-                          android:textSize="20dp"
-                          android:textColor="@color/gen_black"
-                          />
+                <!--<TextView android:layout_width="wrap_content"-->
+                          <!--android:layout_height="wrap_content"-->
+                          <!--android:layout_marginTop="8dp"-->
+                          <!--android:text="Rs. 1,979"-->
+                          <!--android:textSize="20dp"-->
+                          <!--android:textColor="@color/gen_black"-->
+                          <!--/>-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    >
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/item_price"
+                        android:text="Rs. 8,999"
+                        android:textSize="@dimen/text_size_xmedium"
+                        android:textColor="@color/gen_black"
+                        android:layout_marginTop="@dimen/margin_small"/>
+
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="9,999"
+                        android:textSize="@dimen/text_size_xmedium"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/actual_price" />
+
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="(10%)"
+                        android:textSize="@dimen/text_size_xmedium"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/discount_percentage" />
+
+                </LinearLayout>
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:text="FREE Delivery"

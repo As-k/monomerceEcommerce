@@ -17,6 +17,7 @@
 package com.cioc.monomerce.fragments;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -216,6 +217,7 @@ public class ImageListFragment extends Fragment {
             public final SimpleDraweeView mImageView;
             public final LinearLayout mLayoutItem;
             public final ImageView mImageViewWishlist;
+            TextView itemName, itemPrice, itemDiscount, itemDiscountPrice;
 
             public ViewHolder(View view) {
                 super(view);
@@ -223,6 +225,10 @@ public class ImageListFragment extends Fragment {
                 mImageView = (SimpleDraweeView) view.findViewById(R.id.image1);
                 mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item);
                 mImageViewWishlist = (ImageView) view.findViewById(R.id.ic_wishlist);
+                itemName =  view.findViewById(R.id.item_name);
+                itemPrice =  view.findViewById(R.id.item_price);
+                itemDiscountPrice =  view.findViewById(R.id.actual_price);
+                itemDiscount =  view.findViewById(R.id.discount_percentage);
             }
         }
 
@@ -263,12 +269,34 @@ public class ImageListFragment extends Fragment {
             final ListingParent parent = mValues.get(position);
             final Uri uri = Uri.parse(parent.getFilesAttachment());
             holder.mImageView.setImageURI(uri);
+            holder.itemName.setText(parent.getProductName());
+            if (parent.getProductDiscount().equals("0")){
+                holder.itemPrice.setText("Rs. "+parent.getProductPrice());
+                holder.itemDiscountPrice.setVisibility(View.GONE);
+                holder.itemDiscount.setVisibility(View.GONE);
+
+            } else {
+                holder.itemPrice.setText("Rs. "+parent.getProductDiscountedPrice());
+                holder.itemDiscountPrice.setVisibility(View.VISIBLE);
+                holder.itemDiscountPrice.setText("Rs. "+parent.getProductPrice());
+                holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.itemDiscount.setVisibility(View.VISIBLE);
+                holder.itemDiscount.setText("("+parent.getProductDiscount()+" %)");
+
+            }
+
+
+
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mActivity, ItemDetailsActivity.class);
                     intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
                     intent.putExtra(STRING_IMAGE_POSITION, position);
+                    intent.putExtra("itemName", parent.getProductName());
+                    intent.putExtra("itemPrice", parent.getProductPrice());
+                    intent.putExtra("itemDiscountPrice", parent.getProductDiscountedPrice());
+                    intent.putExtra("itemDiscount", parent.getProductDiscount());
                     intent.putExtra("fragmentName", fname.toUpperCase());
                     mActivity.startActivity(intent);
 
@@ -276,17 +304,17 @@ public class ImageListFragment extends Fragment {
             });
 
             //Set click action for wishlist
-//            holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//                    imageUrlUtils.addWishlistImageUri(parent.filesAttachment);
-//                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
-//                    notifyDataSetChanged();
-//                    Toast.makeText(mActivity,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
-//
-//                }
-//            });
+            holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+                    imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
+                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
+                    notifyDataSetChanged();
+                    Toast.makeText(mActivity,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
+
+                }
+            });
 
         }
 

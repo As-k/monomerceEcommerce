@@ -1,68 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingBottom="@dimen/margin_medium">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/margin_medium">
     <LinearLayout android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:weightSum="3">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3">
         <com.facebook.drawee.view.SimpleDraweeView xmlns:fresco="http://schemas.android.com/apk/res-auto"
-                                                   android:id="@+id/image_cartlist" android:layout_width="0dp"
-                                                   android:layout_height="80dp"
-                                                   android:layout_weight="1"
-                                                   android:layout_gravity="center_vertical"
-                                                   fresco:placeholderImage="@color/stay_color"/>
+            android:id="@+id/image_cartlist" android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            fresco:placeholderImage="@color/stay_color"/>
         <LinearLayout  android:id="@+id/layout_item_desc"
-                       android:layout_width="0dp"
-                       android:layout_height="wrap_content"
-                       android:orientation="vertical"
-                       android:layout_weight="2"
-                       android:layout_marginLeft="@dimen/activity_horizontal_margin">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="2"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin">
             <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:text="Denim Shirt"
-                      android:textSize="@dimen/text_size_small"
-                      android:textStyle="bold"/>
+                android:layout_height="wrap_content"
+                android:text="Denim Shirt"
+                android:textSize="@dimen/text_size_small"
+                android:textStyle="bold"/>
             <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:text="Slim fit, cotton"
-                      android:textSize="@dimen/text_size_small"/>
+                android:layout_height="wrap_content"
+                android:text="Slim fit, cotton"
+                android:textSize="@dimen/text_size_small"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 >
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rs. 8,999"
+                    android:maxLength="12"
+                    android:textSize="@dimen/text_size_xmedium"
+                    android:textColor="#4CAF50"
+                    android:layout_marginTop="@dimen/margin_small"/>
 
                 <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:text="Rs. 8,999"
-                      android:textSize="@dimen/text_size_xmedium"
-                      android:textColor="#4CAF50"
-                      android:layout_marginTop="@dimen/margin_small"/>
-
-                    <TextView android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="9,999"
-                          android:textSize="@dimen/text_size_xmedium"
-                        android:layout_marginTop="@dimen/margin_small"
-                        android:layout_marginLeft="10dp"
-                        android:id="@+id/actual_price" />
+                    android:layout_height="wrap_content"
+                    android:text="9,999"
+                    android:maxLength="8"
+                    android:textSize="@dimen/text_size_xmedium"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/actual_price" />
 
                 <TextView android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="(10%)"
-                          android:textSize="@dimen/text_size_xmedium"
-                        android:layout_marginTop="@dimen/margin_small"
+                    android:layout_height="wrap_content"
+                    android:text="(10%)"
+                    android:textSize="@dimen/text_size_xmedium"
+                    android:layout_marginTop="@dimen/margin_small"
                     android:layout_marginLeft="5dp"
-                        android:id="@+id/discount_percentage" />
+                    android:id="@+id/discount_percentage" />
 
             </LinearLayout>
             <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:text="Delivery charge: FREE"
-                      android:textSize="@dimen/text_size_small"/>
+                android:layout_height="wrap_content"
+                android:text="Delivery charge: FREE"
+                android:textSize="@dimen/text_size_small"/>
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:orientation="horizontal"
@@ -124,7 +125,7 @@
             android:background="@color/grey_light" />
 
         <ImageView
-            android:id="@+id/ic_wishlist"
+            android:id="@+id/card_wishlist"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:layout_gravity="center_vertical"

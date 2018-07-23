@@ -47,7 +47,6 @@ public class ListingParent {
                 String dtsPkStr = dfsArray.getString(i);
             }
 
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
