@@ -42,7 +42,8 @@
             android:label="@string/my_wishlist" />
         <activity
             android:name=".options.CartListActivity"
-            android:label="@string/my_cart" />
+            android:label="@string/my_cart"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".options.SearchResultActivity">
 
             <!-- to identify this activity as "searchable.xml" -->
@@ -59,13 +60,16 @@
         <activity android:name=".miscellaneous.EmptyActivity" />
         <activity
             android:name=".options.CheckOutActivity"
-            android:label="@string/checkout" />
+            android:label="@string/checkout"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".options.NewAddressActivity"
-            android:label="@string/new_address" />
+            android:label="@string/new_address"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".payment.PaymentActivity"
-            android:label="@string/payment" />
+            android:label="@string/payment"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".fragments.AllItemsShowActivity"
             android:label="@string/title_activity_all_items_show"

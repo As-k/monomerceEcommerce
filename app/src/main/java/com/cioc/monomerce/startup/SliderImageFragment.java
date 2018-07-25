@@ -1,6 +1,7 @@
 package com.cioc.monomerce.startup;
 
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.cioc.monomerce.R;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 
 /**
@@ -19,10 +21,10 @@ public class SliderImageFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section-icon";
     private static final String ARG_SECTION_COLOR = "section-color";
 
-    public static SliderImageFragment newInstance(int color, int icon) {
+    public static SliderImageFragment newInstance(int color, String icon) {
         SliderImageFragment fragment = new SliderImageFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, icon);
+        args.putString(ARG_SECTION_NUMBER, icon);
         args.putInt(ARG_SECTION_COLOR, color);
         fragment.setArguments(args);
         return fragment;
@@ -39,8 +41,9 @@ public class SliderImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView =  inflater.inflate(R.layout.fragment_slider_image, container, false);
         rootView.setBackgroundColor(ContextCompat.getColor(getContext(), getArguments().getInt(ARG_SECTION_COLOR)));
-        ImageView image = (ImageView) rootView.findViewById(R.id.iv_icon);
-        image.setImageResource(getArguments().getInt(ARG_SECTION_NUMBER));
+        SimpleDraweeView image =  rootView.findViewById(R.id.iv_icon);
+        Uri uri = Uri.parse(getArguments().getString(ARG_SECTION_NUMBER));
+        image.setImageURI(uri);
         return rootView;
 
     }

@@ -1,23 +1,35 @@
 package com.cioc.monomerce.product;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.cioc.monomerce.BackendServer;
 import com.cioc.monomerce.R;
+import com.cioc.monomerce.entites.ListingLite;
+import com.cioc.monomerce.entites.ParentType;
 import com.cioc.monomerce.fragments.ImageListFragment;
 import com.cioc.monomerce.fragments.ViewPagerActivity;
 import com.cioc.monomerce.notification.NotificationCountSetClass;
@@ -26,49 +38,44 @@ import com.cioc.monomerce.options.WishlistActivity;
 import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 public class ItemDetailsActivity extends AppCompatActivity {
+    SimpleDraweeView mImageView;
+    TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount, textViewAddToCart, textViewBuyNow;
     int imagePosition;
-    String itemName, itemPrice, itemDiscountPrice, itemDiscount, stringImageUri;
+    String itemPk, itemName, itemPrice, itemDiscountPrice, itemDiscount, stringImageUri;
+//    RecyclerView specificationsListView;
+    ListView specificationsListView;
+    Context mContext;
     private Menu menu;
+    AsyncHttpClient client;
+    ArrayList<ListingLite> listingLites;
+    String name, value, fieldType, helpText, unit, jsonData;
+    JSONArray jsonArray = new JSONArray();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_details);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        String name = getIntent().getExtras().getString("fragmentName");
-        getSupportActionBar().setTitle(name);
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_items_detail);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        toggle.setDrawerIndicatorEnabled(false);
-        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_arrow_back_white_24dp, getApplicationContext().getTheme());
-        toggle.setHomeAsUpIndicator(drawable);
-        toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-
-
-        SimpleDraweeView mImageView = (SimpleDraweeView)findViewById(R.id.image1);
-        TextView textViewItemName = (TextView)findViewById(R.id.item_name);
-        TextView textViewItemPrice = (TextView)findViewById(R.id.item_price);
-        TextView textViewItemDiscountPrice = (TextView)findViewById(R.id.actual_price);
-        TextView textViewItemDiscount = (TextView)findViewById(R.id.discount_percentage);
-        TextView textViewAddToCart = (TextView)findViewById(R.id.text_action_bottom1);
-        TextView textViewBuyNow = (TextView)findViewById(R.id.text_action_bottom2);
+        mContext = ItemDetailsActivity.this;
+        client = new AsyncHttpClient();
+        listingLites = new ArrayList<>();
 
         //Getting image uri from previous screen
         if (getIntent() != null) {
+            itemPk = getIntent().getStringExtra("listingLitePk");
             itemName = getIntent().getStringExtra("itemName");
             itemPrice = getIntent().getStringExtra("itemPrice");
             itemDiscountPrice = getIntent().getStringExtra("itemDiscountPrice");
@@ -76,15 +83,61 @@ public class ItemDetailsActivity extends AppCompatActivity {
             stringImageUri = getIntent().getStringExtra(ImageListFragment.STRING_IMAGE_URI);
             imagePosition = getIntent().getIntExtra(ImageListFragment.STRING_IMAGE_URI,0);
         }
+
+        getParentType();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                setSupportActionBar(toolbar);
+                String name = getIntent().getExtras().getString("fragmentName");
+                getSupportActionBar().setTitle(name);
+                final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_items_detail);
+                ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                        ItemDetailsActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                drawer.setDrawerListener(toggle);
+                toggle.syncState();
+
+                toggle.setDrawerIndicatorEnabled(false);
+                Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_arrow_back_white_24dp, getApplicationContext().getTheme());
+                toggle.setHomeAsUpIndicator(drawable);
+                toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
+                init();
+//                specificationsListView.setLayoutManager(new LinearLayoutManager(mContext));
+                SpecificationsListAdapter list = new SpecificationsListAdapter();
+                specificationsListView.setAdapter(list);
+                list.notifyDataSetChanged();
+            }
+        },2000);
+
+
+    }
+
+    public void init() {
+        mImageView = findViewById(R.id.image1);
+        textViewItemName = findViewById(R.id.item_name);
+        textViewItemPrice = findViewById(R.id.item_price);
+        textViewItemDiscountPrice = findViewById(R.id.actual_price);
+        textViewItemDiscount = findViewById(R.id.discount_percentage);
+        textViewAddToCart = findViewById(R.id.text_action_bottom1);
+        textViewBuyNow = findViewById(R.id.text_action_bottom2);
+        specificationsListView = findViewById(R.id.specifications_list);
+
         Uri uri = Uri.parse(stringImageUri);
         mImageView.setImageURI(uri);
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    Intent intent = new Intent(ItemDetailsActivity.this, ViewPagerActivity.class);
-                    intent.putExtra("position", imagePosition);
-                    startActivity(intent);
-
+                Intent intent = new Intent(ItemDetailsActivity.this, ViewPagerActivity.class);
+                intent.putExtra("position", imagePosition);
+                startActivity(intent);
             }
         });
 
@@ -96,7 +149,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         } else {
             textViewItemPrice.setText("Rs. "+itemDiscountPrice);
             textViewItemDiscount.setVisibility(View.VISIBLE);
-            textViewItemDiscount.setText("("+itemDiscount+" %)");
+            textViewItemDiscount.setText("("+itemDiscount+"% OFF)");
             textViewItemDiscountPrice.setVisibility(View.VISIBLE);
             textViewItemDiscountPrice.setText(itemPrice);
             textViewItemDiscountPrice.setPaintFlags(textViewItemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
@@ -124,6 +177,47 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+    }
+
+    public void getParentType(){
+        client.get(BackendServer.url+"/api/ecommerce/listingLite/"+itemPk+"/", new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Toast.makeText(ItemDetailsActivity.this, "success", Toast.LENGTH_SHORT).show();
+                    try {
+                        ListingLite lite = new ListingLite(response);
+                        String data = response.getString("specifications");
+                            JSONArray dataJson = new JSONArray(data);
+                            for (int j = 0; j < dataJson.length(); j++) {
+                                JSONObject object = dataJson.getJSONObject(j);
+                                name = object.getString("name");
+                                value = object.getString("value");
+                                fieldType = object.getString("fieldType");
+                                helpText = object.getString("helpText");
+                                unit = object.getString("unit");
+                                jsonData = object.getString("data");
+                                jsonArray.put(object);
+                            }
+
+                        listingLites.add(lite);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Toast.makeText(ItemDetailsActivity.this, "failure", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override
@@ -186,5 +280,111 @@ public class ItemDetailsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    class SpecificationsListAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return jsonArray == null ? 0 : jsonArray.length();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View view, ViewGroup viewGroup) {
+            TextView propertyName, propertyValue;
+            LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = layoutInflater.inflate(R.layout.layout_specifications_style, viewGroup, false);
+            propertyName = v.findViewById(R.id.property_name);
+            propertyValue = v.findViewById(R.id.property_value);
+            try {
+                JSONObject obj = jsonArray.getJSONObject(position);
+                propertyName.setText(obj.getString("name"));
+                propertyValue.setText(obj.getString("value"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            return v;
+        }
+    }
+
+
+//    private class SpecificationsListAdapter extends RecyclerView.Adapter<SpecificationsListAdapter.MyHolder>{
+//        Context context;
+//        JSONArray array;
+//
+//        public SpecificationsListAdapter(Context context, JSONArray jsonArray) {
+//            this.context = context;
+//            this.array = jsonArray;
+//        }
+//
+//        @NonNull
+//        @Override
+//        public SpecificationsListAdapter.MyHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+//            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            View v = layoutInflater.inflate(R.layout.layout_specifications_style, viewGroup, false);
+//            SpecificationsListAdapter.MyHolder myHolder = new SpecificationsListAdapter.MyHolder(v);
+//
+//            return myHolder;
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(@NonNull MyHolder myHolder, int position) {
+//            try {
+//                JSONObject obj = array.getJSONObject(position);
+//                myHolder.propertyName.setText(obj.getString("name"));
+//                myHolder.propertyValue.setText(obj.getString("value"));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return array.length();
+//        }
+//
+//        public class MyHolder extends RecyclerView.ViewHolder{
+//            TextView propertyName, propertyValue;
+//            public MyHolder(@NonNull View itemView) {
+//                super(itemView);
+//
+//                propertyName = itemView.findViewById(R.id.property_name);
+//                propertyValue = itemView.findViewById(R.id.property_value);
+//
+//            }
+//        }
+//
+//
+////        @Override
+////        public View getView(int position, View view, ViewGroup viewGroup) {
+////            View v = getLayoutInflater().inflate(R.layout.layout_specifications_style, viewGroup, false);
+////            propertyName = v.findViewById(R.id.property_name);
+////            propertyValue = v.findViewById(R.id.property_value);
+////
+////            try {
+////                JSONObject obj = jsonArray.getJSONObject(position);
+////                propertyName.setText(obj.getString("name"));
+////                propertyValue.setText(obj.getString("value"));
+////            } catch (JSONException e) {
+////                e.printStackTrace();
+////            }
+////
+////
+////            return v;
+////        }
+//    }
+
 
 }

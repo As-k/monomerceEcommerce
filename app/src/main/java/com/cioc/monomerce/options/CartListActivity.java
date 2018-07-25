@@ -36,7 +36,8 @@ import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 public class CartListActivity extends AppCompatActivity {
     private static Context mContext;
     TextView checkOutAction;
-    StepView mStepView;
+    private static StepView mStepView;
+    public static LinearLayout layoutCartItems, layoutCartPayments, layoutCartNoItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +79,11 @@ public class CartListActivity extends AppCompatActivity {
                 super(view);
                 mView = view;
                 mImageView = (SimpleDraweeView) view.findViewById(R.id.image_cartlist);
-                mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item_desc);
+                mLayoutItem =  view.findViewById(R.id.layout_item_desc);
                 actualPrice =  view.findViewById(R.id.actual_price);
                 actualPrice.setPaintFlags(actualPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                 discountPercentage =  view.findViewById(R.id.discount_percentage);
-                mLayoutRemove = (LinearLayout) view.findViewById(R.id.layout_action1);
+                mLayoutRemove =  view.findViewById(R.id.layout_action1);
                 itemsQuantity =  view.findViewById(R.id.items_quantity);
                 itemsQuantityAdd =  view.findViewById(R.id.items_quantity_add);
                 itemsQuantityRemove =  view.findViewById(R.id.items_quantity_remove);
@@ -136,6 +137,12 @@ public class CartListActivity extends AppCompatActivity {
                     notifyDataSetChanged();
                     //Decrease notification count
                     MainActivity.notificationCountCart--;
+                    if (MainActivity.notificationCountCart==0) {
+                        layoutCartNoItems.setVisibility(View.VISIBLE);
+                        layoutCartItems.setVisibility(View.GONE);
+                        layoutCartPayments.setVisibility(View.GONE);
+                        mStepView.setVisibility(View.GONE);
+                    }
 
                 }
             });
@@ -164,6 +171,10 @@ public class CartListActivity extends AppCompatActivity {
                         notifyDataSetChanged();
                         //Decrease notification count
                         MainActivity.notificationCountCart--;
+                        layoutCartNoItems.setVisibility(View.VISIBLE);
+                        layoutCartItems.setVisibility(View.GONE);
+                        layoutCartPayments.setVisibility(View.GONE);
+                        mStepView.setVisibility(View.GONE);
                     } else
                         quantRemove--;
                     holder.itemsQuantity.setText(quantRemove+"");
@@ -188,9 +199,9 @@ public class CartListActivity extends AppCompatActivity {
     }
 
     protected void setCartLayout(){
-        LinearLayout layoutCartItems = (LinearLayout) findViewById(R.id.layout_items);
-        LinearLayout layoutCartPayments = (LinearLayout) findViewById(R.id.layout_payment);
-        LinearLayout layoutCartNoItems = (LinearLayout) findViewById(R.id.layout_cart_empty);
+        layoutCartItems = (LinearLayout) findViewById(R.id.layout_items);
+        layoutCartPayments = (LinearLayout) findViewById(R.id.layout_payment);
+        layoutCartNoItems = (LinearLayout) findViewById(R.id.layout_cart_empty);
         mStepView = (StepView) findViewById(R.id.step_view);
         checkOutAction = findViewById(R.id.text_action_bottom2);
 

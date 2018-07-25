@@ -11,7 +11,7 @@ import org.json.JSONObject;
 public class GenericProduct {
     public String pk, name, minCost, visual;
     public String fieldPk, fieldName, fieldType, unit, helpText, fieldData, fieldDefault;
-    public String parentPk, parentName, parentminCost, parentVisual;
+    public String parentPk, parentName, parentMinCost, parentVisual;
 
     JSONObject object;
 
@@ -157,12 +157,12 @@ public class GenericProduct {
         this.parentName = parentName;
     }
 
-    public String getParentminCost() {
-        return parentminCost;
+    public String getParentMinCost() {
+        return parentMinCost;
     }
 
-    public void setParentminCost(String parentminCost) {
-        this.parentminCost = parentminCost;
+    public void setParentMinCost(String parentMinCost) {
+        this.parentMinCost = parentMinCost;
     }
 
     public String getParentVisual() {

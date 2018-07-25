@@ -26,6 +26,7 @@ import android.view.View;
 import com.cioc.monomerce.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.GenericProduct;
+import com.cioc.monomerce.entites.OfferBanners;
 import com.cioc.monomerce.fragments.ImageListFragment;
 import com.cioc.monomerce.miscellaneous.EmptyActivity;
 import com.cioc.monomerce.notification.NotificationCountSetClass;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity
     AsyncHttpClient client;
 
     public static ArrayList<GenericProduct> genericProducts;
+    public static ArrayList<OfferBanners> offerBannersList;
 
 
     @Override
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity
 
         client = new AsyncHttpClient();
         genericProducts = new ArrayList<GenericProduct>();
+        offerBannersList = new ArrayList<OfferBanners>();
         getGenericProduct();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -115,13 +118,12 @@ public class MainActivity extends AppCompatActivity
 
 
         initCollapsingToolbar();
-        getViewpagerFragment();
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
                 if (viewPager != null) {
+                    getViewpagerFragment();
                     setupViewPager(viewPager);
                     tabLayout.setupWithViewPager(viewPager);
                 }
@@ -217,6 +219,30 @@ public class MainActivity extends AppCompatActivity
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
+
+        client.get(BackendServer.url+"/api/ecommerce/offerBanner/", new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                super.onSuccess(statusCode, headers, response);
+                for (int i=0; i<response.length(); i++) {
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        OfferBanners banners = new OfferBanners(object);
+                        offerBannersList.add(banners);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -348,10 +374,10 @@ public class MainActivity extends AppCompatActivity
     public void getViewpagerFragment() {
         extensiblePageIndicator = (ExtensiblePageIndicator) findViewById(R.id.flexibleIndicator);
         mSliderImageFragmentAdapter = new SliderImageFragmentAdapter(getSupportFragmentManager());
-
-        mSliderImageFragmentAdapter.addFragment(SliderImageFragment.newInstance(R.color.frag1, R.drawable.char1));
-        mSliderImageFragmentAdapter.addFragment(SliderImageFragment.newInstance(R.color.frag2, R.drawable.char2));
-        mSliderImageFragmentAdapter.addFragment(SliderImageFragment.newInstance(R.color.frag3, R.drawable.char3));
+        for (int i=0; i<offerBannersList.size(); i++) {
+            OfferBanners banners =offerBannersList.get(i);
+            mSliderImageFragmentAdapter.addFragment(SliderImageFragment.newInstance(android.R.color.transparent, banners.getImage()));
+        }
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSliderImageFragmentAdapter);

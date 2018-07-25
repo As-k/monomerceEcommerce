@@ -143,30 +143,30 @@ public class ImageListFragment extends Fragment {
 //        }
 
         new Handler().postDelayed(new Runnable() {
-                                      @Override
-                                      public void run() {
-                                          if (items.size()>10)
-                                              moreItems.setVisibility(View.VISIBLE);
-                                          else
-                                              moreItems.setVisibility(View.GONE);
-                                          progressBar.setVisibility(View.GONE);
-                                          StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                                          recyclerView.setLayoutManager(layoutManager);
-                                          SimpleStringRecyclerViewAdapter viewAdapter = new SimpleStringRecyclerViewAdapter(recyclerView, items, fragmentName);
-                                          recyclerView.setAdapter(viewAdapter);
-//                                          viewAdapter.notifyDataSetChanged();
-                                      }
-                                  },1000);
+            @Override
+            public void run() {
+                if (items.size()>10)
+                    moreItems.setVisibility(View.VISIBLE);
+                else
+                    moreItems.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(layoutManager);
+                SimpleStringRecyclerViewAdapter viewAdapter = new SimpleStringRecyclerViewAdapter(recyclerView, items, fragmentName);
+                recyclerView.setAdapter(viewAdapter);
+//                viewAdapter.notifyDataSetChanged();
+            }
+        },1000);
 
 
-            moreItems.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getContext().startActivity(new Intent(getContext(), AllItemsShowActivity.class)
-                            .putExtra("items", items)
-                            .putExtra("fragmentName", fragmentName.toUpperCase()));
-                }
-            });
+        moreItems.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getContext().startActivity(new Intent(getContext(), AllItemsShowActivity.class)
+                        .putExtra("items", items)
+                        .putExtra("fragmentName", fragmentName.toUpperCase()));
+            }
+        });
     }
 
     public void getItems(String pk) {
@@ -212,12 +212,14 @@ public class ImageListFragment extends Fragment {
         private RecyclerView mRecyclerView;
         String fname;
 
+
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final SimpleDraweeView mImageView;
             public final LinearLayout mLayoutItem;
             public final ImageView mImageViewWishlist;
             TextView itemName, itemPrice, itemDiscount, itemDiscountPrice;
+            boolean res=true;
 
             public ViewHolder(View view) {
                 super(view);
@@ -269,19 +271,24 @@ public class ImageListFragment extends Fragment {
             final ListingParent parent = mValues.get(position);
             final Uri uri = Uri.parse(parent.getFilesAttachment());
             holder.mImageView.setImageURI(uri);
+            Double d = Double.parseDouble(parent.getProductPrice());
+            final int price = (int) Math.round(d);
+            Double d1 = Double.parseDouble(parent.getProductDiscountedPrice());
+            final int price1 = (int) Math.round(d1);
+
             holder.itemName.setText(parent.getProductName());
             if (parent.getProductDiscount().equals("0")){
-                holder.itemPrice.setText("Rs. "+parent.getProductPrice());
+                holder.itemPrice.setText("Rs. "+ price);
                 holder.itemDiscountPrice.setVisibility(View.GONE);
                 holder.itemDiscount.setVisibility(View.GONE);
 
             } else {
-                holder.itemPrice.setText("Rs. "+parent.getProductDiscountedPrice());
+                holder.itemPrice.setText("Rs. "+price1);
                 holder.itemDiscountPrice.setVisibility(View.VISIBLE);
-                holder.itemDiscountPrice.setText("Rs. "+parent.getProductPrice());
+                holder.itemDiscountPrice.setText("Rs. "+price);
                 holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.itemDiscount.setVisibility(View.VISIBLE);
-                holder.itemDiscount.setText("("+parent.getProductDiscount()+" %)");
+                holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
 
             }
 
@@ -294,12 +301,12 @@ public class ImageListFragment extends Fragment {
                     intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
                     intent.putExtra(STRING_IMAGE_POSITION, position);
                     intent.putExtra("itemName", parent.getProductName());
-                    intent.putExtra("itemPrice", parent.getProductPrice());
-                    intent.putExtra("itemDiscountPrice", parent.getProductDiscountedPrice());
+                    intent.putExtra("listingLitePk", parent.getPk());
+                    intent.putExtra("itemPrice", String.valueOf(price));
+                    intent.putExtra("itemDiscountPrice", String.valueOf(price1));
                     intent.putExtra("itemDiscount", parent.getProductDiscount());
                     intent.putExtra("fragmentName", fname.toUpperCase());
                     mActivity.startActivity(intent);
-
                 }
             });
 
@@ -308,14 +315,20 @@ public class ImageListFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-                    imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
-                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
-                    notifyDataSetChanged();
-                    Toast.makeText(mActivity,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                    if (holder.res) {
+                        imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
+                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
+                        notifyDataSetChanged();
+                        Toast.makeText(mActivity, "Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        imageUrlUtils.removeWishlistImageUri(0);
+                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_black_18dp);
+                        notifyDataSetChanged();
+                        Toast.makeText(mActivity, "Item removed from wishlist.", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             });
-
         }
 
         @Override

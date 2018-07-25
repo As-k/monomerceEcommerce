@@ -16,6 +16,7 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="180dp"
+            android:background="@android:color/transparent"
             />
 
         <com.merhold.extensiblepageindicator.ExtensiblePageIndicator

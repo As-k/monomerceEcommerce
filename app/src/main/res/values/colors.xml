@@ -11,6 +11,7 @@
     <color name="grey_dark">#a3a2a2</color>
     <color name="orange_light">#f2563e</color>
     <color name="red_light">#e11212</color>
+    <color name="text_red">#ec6060</color>
 
     <!-- Screens background color-->
     <color name="bg_screen1">#162c48</color>
