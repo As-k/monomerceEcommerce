@@ -15,13 +15,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +43,10 @@ import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.ResponseHandlerInterface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +59,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class ItemDetailsActivity extends AppCompatActivity {
     SimpleDraweeView mImageView;
-    TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount, textViewAddToCart, textViewBuyNow;
+    TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount, textViewDescriptions, textViewAddToCart, textViewBuyNow;
     int imagePosition;
     String itemPk, itemName, itemPrice, itemDiscountPrice, itemDiscount, stringImageUri;
 //    RecyclerView specificationsListView;
@@ -61,6 +68,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
     private Menu menu;
     AsyncHttpClient client;
     ArrayList<ListingLite> listingLites;
+    public ListingLite lite = null;
     String name, value, fieldType, helpText, unit, jsonData;
     JSONArray jsonArray = new JSONArray();
 
@@ -83,15 +91,23 @@ public class ItemDetailsActivity extends AppCompatActivity {
             stringImageUri = getIntent().getStringExtra(ImageListFragment.STRING_IMAGE_URI);
             imagePosition = getIntent().getIntExtra(ImageListFragment.STRING_IMAGE_URI,0);
         }
-
         getParentType();
+
+        final ProgressBar progressBar = findViewById(R.id.progressBar);
+        final LinearLayout itemDetails = findViewById(R.id.layout_linear_item_details);
+        progressBar.setVisibility(View.VISIBLE);
+        itemDetails.setVisibility(View.GONE);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                progressBar.setVisibility(View.GONE);
+                itemDetails.setVisibility(View.VISIBLE);
+                lite = listingLites.get(0);
                 Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
                 setSupportActionBar(toolbar);
-                String name = getIntent().getExtras().getString("fragmentName");
-                getSupportActionBar().setTitle(name);
+//                String name = getIntent().getExtras().getString(lite.getParentTypeName().toUpperCase());
+                getSupportActionBar().setTitle(lite.getParentTypeName().toUpperCase());
                 final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_items_detail);
                 ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                         ItemDetailsActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -129,6 +145,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
         textViewAddToCart = findViewById(R.id.text_action_bottom1);
         textViewBuyNow = findViewById(R.id.text_action_bottom2);
         specificationsListView = findViewById(R.id.specifications_list);
+        textViewDescriptions = findViewById(R.id.description_txt);
+        lite = listingLites.get(0);
 
         Uri uri = Uri.parse(stringImageUri);
         mImageView.setImageURI(uri);
@@ -141,39 +159,86 @@ public class ItemDetailsActivity extends AppCompatActivity {
             }
         });
 
-        textViewItemName.setText(itemName);
-        if (itemDiscount.equals("0")){
-            textViewItemPrice.setText("Rs. "+itemPrice);
+
+        textViewItemName.setText(lite.getProductName());
+        if (lite.getProductDiscount().equals("0")){
+            textViewItemPrice.setText("Rs. "+lite.getProductPrice());
             textViewItemDiscount.setVisibility(View.GONE);
             textViewItemDiscountPrice.setVisibility(View.GONE);
         } else {
-            textViewItemPrice.setText("Rs. "+itemDiscountPrice);
+            textViewItemPrice.setText("Rs. "+lite.getProductDiscountedPrice());
             textViewItemDiscount.setVisibility(View.VISIBLE);
-            textViewItemDiscount.setText("("+itemDiscount+"% OFF)");
+            textViewItemDiscount.setText("("+lite.getProductDiscount()+"% OFF)");
             textViewItemDiscountPrice.setVisibility(View.VISIBLE);
-            textViewItemDiscountPrice.setText(itemPrice);
+            textViewItemDiscountPrice.setText(lite.getProductPrice());
             textViewItemDiscountPrice.setPaintFlags(textViewItemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+
+
+
+        Spanned htmlAsSpanned = Html.fromHtml(lite.getSource());
+        if (htmlAsSpanned.toString().equals("null")|| htmlAsSpanned.toString().equals("")|| htmlAsSpanned.toString() == null) {
+            textViewDescriptions.setText("");
+        } else {
+            textViewDescriptions.setText("\u2022 " +htmlAsSpanned);
         }
 
         textViewAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-                imageUrlUtils.addCartListImageUri(stringImageUri);
-                Toast.makeText(ItemDetailsActivity.this,"Item added to cart.", Toast.LENGTH_SHORT).show();
-                MainActivity.notificationCountCart++;
-                NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+                RequestParams params = new RequestParams();
+                params.put("product", lite.getProductPk());
+                params.put("qty", "1");
+                params.put("type", "card");
+                params.put("user", "1");
+                client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+                        imageUrlUtils.addCartListImageUri(stringImageUri);
+                        Toast.makeText(ItemDetailsActivity.this,"Item added to cart.", Toast.LENGTH_SHORT).show();
+                        MainActivity.notificationCountCart++;
+                        NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                
             }
         });
 
         textViewBuyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-                imageUrlUtils.addCartListImageUri(stringImageUri);
-                MainActivity.notificationCountCart++;
-                NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
-                startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
+                RequestParams params = new RequestParams();
+                params.put("product", lite.getProductPk());
+                params.put("qty", "1");
+                params.put("typ", "cart");
+                params.put("user", "1");
+                client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+//                        imageUrlUtils.addCartListImageUri(stringImageUri);
+                        Toast.makeText(ItemDetailsActivity.this,"Item added to cart.", Toast.LENGTH_SHORT).show();
+                        MainActivity.notificationCountCart++;
+                        NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+                        startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+//                ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+//                imageUrlUtils.addCartListImageUri(stringImageUri);
+//                MainActivity.notificationCountCart++;
+//                NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+//                startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
 
             }
         });
@@ -187,23 +252,21 @@ public class ItemDetailsActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
-                Toast.makeText(ItemDetailsActivity.this, "success", Toast.LENGTH_SHORT).show();
                     try {
                         ListingLite lite = new ListingLite(response);
-                        String data = response.getString("specifications");
-                            JSONArray dataJson = new JSONArray(data);
-                            for (int j = 0; j < dataJson.length(); j++) {
-                                JSONObject object = dataJson.getJSONObject(j);
-                                name = object.getString("name");
-                                value = object.getString("value");
-                                fieldType = object.getString("fieldType");
-                                helpText = object.getString("helpText");
-                                unit = object.getString("unit");
-                                jsonData = object.getString("data");
-                                jsonArray.put(object);
-                            }
-
                         listingLites.add(lite);
+                        String data = response.getString("specifications");
+                        JSONArray dataJson = new JSONArray(data);
+                        for (int j = 0; j < dataJson.length(); j++) {
+                            JSONObject object = dataJson.getJSONObject(j);
+                            name = object.getString("name");
+                            value = object.getString("value");
+                            fieldType = object.getString("fieldType");
+                            helpText = object.getString("helpText");
+                            unit = object.getString("unit");
+                            jsonData = object.getString("data");
+                            jsonArray.put(object);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -214,7 +277,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
-                Toast.makeText(ItemDetailsActivity.this, "failure", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -282,7 +344,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
     }
 
 
-    class SpecificationsListAdapter extends BaseAdapter {
+    protected class SpecificationsListAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -365,25 +427,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
 //
 //            }
 //        }
-//
-//
-////        @Override
-////        public View getView(int position, View view, ViewGroup viewGroup) {
-////            View v = getLayoutInflater().inflate(R.layout.layout_specifications_style, viewGroup, false);
-////            propertyName = v.findViewById(R.id.property_name);
-////            propertyValue = v.findViewById(R.id.property_value);
-////
-////            try {
-////                JSONObject obj = jsonArray.getJSONObject(position);
-////                propertyName.setText(obj.getString("name"));
-////                propertyValue.setText(obj.getString("value"));
-////            } catch (JSONException e) {
-////                e.printStackTrace();
-////            }
-////
-////
-////            return v;
-////        }
 //    }
 
 

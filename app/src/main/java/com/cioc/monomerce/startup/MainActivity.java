@@ -25,6 +25,7 @@ import android.view.View;
 
 import com.cioc.monomerce.BackendServer;
 import com.cioc.monomerce.R;
+import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.GenericProduct;
 import com.cioc.monomerce.entites.OfferBanners;
 import com.cioc.monomerce.fragments.ImageListFragment;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity
 
     public static ArrayList<GenericProduct> genericProducts;
     public static ArrayList<OfferBanners> offerBannersList;
+    public static ArrayList<Cart> cartList;;
 
 
     @Override
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity
         client = new AsyncHttpClient();
         genericProducts = new ArrayList<GenericProduct>();
         offerBannersList = new ArrayList<OfferBanners>();
+        cartList = new ArrayList<>();
         getGenericProduct();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -121,12 +124,13 @@ public class MainActivity extends AppCompatActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
+                notificationCountCart = cartList.size();
                 if (viewPager != null) {
                     getViewpagerFragment();
                     setupViewPager(viewPager);
                     tabLayout.setupWithViewPager(viewPager);
                 }
+
             }
         },1000);
 
@@ -242,6 +246,28 @@ public class MainActivity extends AppCompatActivity
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
+
+        client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&user=1&typ=cart",
+                new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                        super.onSuccess(statusCode, headers, response);
+                        for (int i=0; i<response.length(); i++) {
+                            try {
+                                JSONObject object = response.getJSONObject(i);
+                                Cart cart = new Cart(object);
+                                cartList.add(cart);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+                });
 
     }
 

@@ -9,7 +9,8 @@ import org.json.JSONObject;
  */
 
 public class ListingParent {
-    public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice;
+    public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, specifications;
+    int productIntPrice, productIntDiscountedPrice;
     boolean approved;
     public String filesPk, filesLink, filesAttachment, filesMediaType;
     JSONObject jsonObject;
@@ -29,16 +30,28 @@ public class ListingParent {
             JSONObject productObj = jsonObject.getJSONObject("product");
             this.productPk = productObj.getString("pk");
             this.productName = productObj.getString("name");
-            this.productPrice = productObj.getString("price");
+//            this.productPrice = productObj.getString("price");
+            Double d = Double.parseDouble(productObj.getString("price"));
+            this.productIntPrice = (int) Math.round(d);
+            this.productPrice = String.valueOf(this.productIntPrice);
+
             this.productDiscount = productObj.getString("discount");
-            this.productDiscountedPrice = productObj.getString("discountedPrice");
+//            this.productDiscountedPrice = productObj.getString("discountedPrice");
+            Double d1 = Double.parseDouble(productObj.getString("discountedPrice"));
+            this.productIntDiscountedPrice = (int) Math.round(d1);
+            this.productDiscountedPrice = String.valueOf(this.productIntDiscountedPrice);
+            String str = jsonObject.getString("specifications");
+            this.specifications = str;
 
             JSONArray filesArray = jsonObject.getJSONArray("files");
             for(int i=0; i<filesArray.length(); i++) {
                 JSONObject filesObject = filesArray.getJSONObject(i);
                 this.filesPk = filesObject.getString("pk");
                 this.filesLink = filesObject.getString("link");
-                this.filesAttachment = filesObject.getString("attachment");
+                String filesAttachment = filesObject.getString("attachment");
+                if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment==null){
+                    this.filesAttachment = "http://192.168.1.114:8000/media/ecommerce/pictureUploads/1532692600_38_admin_ecommerce.jpg";
+                } else { this.filesAttachment = filesAttachment; }
                 this.filesMediaType = filesObject.getString("mediaType");
             }
 
@@ -126,12 +139,36 @@ public class ListingParent {
         this.productDiscountedPrice = productDiscountedPrice;
     }
 
+    public int getProductIntPrice() {
+        return productIntPrice;
+    }
+
+    public void setProductIntPrice(int productIntPrice) {
+        this.productIntPrice = productIntPrice;
+    }
+
+    public int getProductIntDiscountedPrice() {
+        return productIntDiscountedPrice;
+    }
+
+    public void setProductIntDiscountedPrice(int productIntDiscountedPrice) {
+        this.productIntDiscountedPrice = productIntDiscountedPrice;
+    }
+
     public boolean isApproved() {
         return approved;
     }
 
     public void setApproved(boolean approved) {
         this.approved = approved;
+    }
+
+    public String getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(String specifications) {
+        this.specifications = specifications;
     }
 
     public String getFilesPk() {

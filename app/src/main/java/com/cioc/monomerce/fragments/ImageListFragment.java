@@ -62,8 +62,8 @@ public class ImageListFragment extends Fragment {
     private static MainActivity mActivity;
     TextView moreItems;
     ProgressBar progressBar;
-    ArrayList<GenericProduct> genericProducts = MainActivity.genericProducts;
-    ArrayList<ListingParent> listingParents;
+//    ArrayList<GenericProduct> genericProducts = MainActivity.genericProducts;
+    public static ArrayList<ListingParent> listingParents;
     AsyncHttpClient client;
     String pk;
 
@@ -90,12 +90,9 @@ public class ImageListFragment extends Fragment {
         moreItems = view.findViewById(R.id.more_items);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         setupRecyclerView(recyclerViewList);
-
     }
 
-
-
-    ArrayList<ListingParent> items = null;
+    public ArrayList<ListingParent> items = null;
     String fragmentName = "";
     private void setupRecyclerView(final RecyclerView recyclerView) {
       /*  if (ImageListFragment.this.getArguments().getInt("type") == 1) {
@@ -109,9 +106,9 @@ public class ImageListFragment extends Fragment {
             recyclerView.setLayoutManager(layoutManager);
         }*/
 
-        for (int i=0; i<genericProducts.size(); i++) {
+        for (int i=0; i<MainActivity.genericProducts.size(); i++) {
             if (ImageListFragment.this.getArguments().getInt("type") == i+1) {
-                GenericProduct product = genericProducts.get(i);
+                GenericProduct product = MainActivity.genericProducts.get(i);
                 pk = product.getPk();
                 if (ImageListFragment.this.getArguments().getString("pk").equals(pk)) {
                     listingParents.clear();
@@ -145,41 +142,40 @@ public class ImageListFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (items.size()>10)
+                if (listingParents.size()==0)
+                    progressBar.setVisibility(View.VISIBLE);
+                if (listingParents.size()>10) {
                     moreItems.setVisibility(View.VISIBLE);
-                else
+                    moreItems.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getContext().startActivity(new Intent(getContext(), AllItemsShowActivity.class)
+//                                    .putExtra("items", items)
+                                    .putExtra("fragmentName", fragmentName.toUpperCase()));
+                        }
+                    });
+                } else
                     moreItems.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                 recyclerView.setLayoutManager(layoutManager);
-                SimpleStringRecyclerViewAdapter viewAdapter = new SimpleStringRecyclerViewAdapter(recyclerView, items, fragmentName);
+                SimpleStringRecyclerViewAdapter viewAdapter = new SimpleStringRecyclerViewAdapter(recyclerView, listingParents, fragmentName);
                 recyclerView.setAdapter(viewAdapter);
 //                viewAdapter.notifyDataSetChanged();
             }
         },1000);
 
 
-        moreItems.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getContext().startActivity(new Intent(getContext(), AllItemsShowActivity.class)
-                        .putExtra("items", items)
-                        .putExtra("fragmentName", fragmentName.toUpperCase()));
-            }
-        });
+
     }
 
     public void getItems(String pk) {
-//        RequestParams params = new RequestParams();
-//        params.put("parent", pk);
-//        params.put("recursive", "1");
         client.get(BackendServer.url+"/api/ecommerce/listing/?parent="+pk+"&recursive=1", new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
                 for (int i=0; i<response.length(); i++){
                     try {
-//                        Toast.makeText(mActivity, "onSuccess", Toast.LENGTH_SHORT).show();
                         JSONObject object = response.getJSONObject(i);
                         ListingParent parent = new ListingParent(object);
                         listingParents.add(parent);
@@ -187,11 +183,7 @@ public class ImageListFragment extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 }
-
-
-
             }
 
             @Override
@@ -209,7 +201,6 @@ public class ImageListFragment extends Fragment {
             extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder> {
 
         private ArrayList<ListingParent> mValues;
-        private RecyclerView mRecyclerView;
         String fname;
 
 
@@ -237,7 +228,6 @@ public class ImageListFragment extends Fragment {
         public SimpleStringRecyclerViewAdapter(RecyclerView recyclerView, ArrayList<ListingParent> items, String name) {
             mValues = items;
             fname = name;
-            mRecyclerView = recyclerView;
         }
 
         @Override

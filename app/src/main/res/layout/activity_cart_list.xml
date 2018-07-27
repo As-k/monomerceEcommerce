@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="10"
-    tools:context="com.allandroidprojects.ecomsample.options.CartListActivity"
+    android:gravity="center"
+    tools:context="com.cioc.monomerce.options.CartListActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.githang.stepview.StepView
         android:id="@+id/step_view"
@@ -19,6 +20,14 @@
         app:svCircleColor="@color/grey_light"
         app:svSelectedColor="@color/orange_light"
         android:visibility="gone"/>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        />
+
     <LinearLayout android:id="@+id/layout_items"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -34,7 +43,7 @@
         <android.support.v7.widget.RecyclerView
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/recyclerview"
-            android:scrollbars="vertical"
+            android:scrollbars="none"
             android:layout_marginTop="@dimen/margin_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -55,7 +64,7 @@
                   android:layout_height="match_parent"
                   android:layout_weight="1"
                   android:background="@color/gen_white"
-                  android:text="Rs 8,750"
+                  android:text="Rs 0"
                   android:textSize="14dp"
                   android:textColor="@color/gen_black"
                   android:textStyle="bold"

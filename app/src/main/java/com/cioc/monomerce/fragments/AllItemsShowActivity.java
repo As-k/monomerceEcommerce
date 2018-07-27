@@ -3,6 +3,7 @@ package com.cioc.monomerce.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,11 +25,14 @@ import android.widget.Toast;
 
 
 import com.cioc.monomerce.R;
+import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import org.michaelbel.bottomsheet.BottomSheet;
+
+import java.util.ArrayList;
 
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
@@ -37,16 +41,19 @@ import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 public class AllItemsShowActivity extends AppCompatActivity {
     public Context context;
     Button sortBtn, filterBtn;
+    ArrayList<ListingParent> parents;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_items_show);
         context = AllItemsShowActivity.this;
+        parents = ImageListFragment.listingParents;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        String[] stringArray = getIntent().getExtras().getStringArray("items");
+//        ArrayList<Parcelable> stringArray = getIntent().getExtras().getParcelableArrayList("items");
         String name = getIntent().getExtras().getString("fragmentName");
         getSupportActionBar().setTitle(name);
 
@@ -66,9 +73,10 @@ public class AllItemsShowActivity extends AppCompatActivity {
             }
         });
 
-        clickBtn(stringArray);
+        clickBtn(parents);
     }
-    public void clickBtn(String[] strings){
+
+    public void clickBtn(ArrayList<ListingParent> strings){
         RecyclerView recyclerViewList = findViewById(R.id.recyclerview_all_list);
         sortBtn = findViewById(R.id.sort_action_button);
         filterBtn = findViewById(R.id.filter_action_button);
@@ -139,17 +147,16 @@ public class AllItemsShowActivity extends AppCompatActivity {
 
     }
 
-    public void setupRecyclerView(RecyclerView recyclerView, String[] items) {
+    public void setupRecyclerView(RecyclerView recyclerView, ArrayList<ListingParent> items) {
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new AllItemsShowActivity.AllItemsRecyclerViewAdapter(context, recyclerView, items));
+        recyclerView.setAdapter(new AllItemsShowActivity.AllItemsRecyclerViewAdapter(context, items));
     }
 
     public static class AllItemsRecyclerViewAdapter
             extends RecyclerView.Adapter<AllItemsShowActivity.AllItemsRecyclerViewAdapter.ViewHolder> {
 
-        private String[] mValues;
-        private RecyclerView mRecyclerView;
+        private ArrayList<ListingParent> mValues;
         Context mContext;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -157,6 +164,8 @@ public class AllItemsShowActivity extends AppCompatActivity {
             public final SimpleDraweeView mImageView;
             public final LinearLayout mLayoutItem;
             public final ImageView mImageViewWishlist;
+            TextView itemName, itemPrice, itemDiscount, itemDiscountPrice;
+            boolean res=true;
 
             public ViewHolder(View view) {
                 super(view);
@@ -164,12 +173,15 @@ public class AllItemsShowActivity extends AppCompatActivity {
                 mImageView = (SimpleDraweeView) view.findViewById(R.id.image1);
                 mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item);
                 mImageViewWishlist = (ImageView) view.findViewById(R.id.ic_wishlist);
+                itemName =  view.findViewById(R.id.item_name);
+                itemPrice =  view.findViewById(R.id.item_price);
+                itemDiscountPrice =  view.findViewById(R.id.actual_price);
+                itemDiscount =  view.findViewById(R.id.discount_percentage);
             }
         }
 
-        public AllItemsRecyclerViewAdapter(Context context, RecyclerView recyclerView, String[] items) {
+        public AllItemsRecyclerViewAdapter(Context context, ArrayList<ListingParent> items) {
             mValues = items;
-            mRecyclerView = recyclerView;
             this.mContext = context;
         }
 
@@ -200,16 +212,45 @@ public class AllItemsShowActivity extends AppCompatActivity {
             } else {
                 layoutParams.height = 800;
             }*/
-            final Uri uri = Uri.parse(mValues[position]);
+            final ListingParent parent = mValues.get(position);
+            final Uri uri = Uri.parse(parent.getFilesAttachment());
             holder.mImageView.setImageURI(uri);
+            Double d = Double.parseDouble(parent.getProductPrice());
+            final int price = (int) Math.round(d);
+            Double d1 = Double.parseDouble(parent.getProductDiscountedPrice());
+            final int price1 = (int) Math.round(d1);
+
+            holder.itemName.setText(parent.getProductName());
+            if (parent.getProductDiscount().equals("0")){
+                holder.itemPrice.setText("Rs. "+ price);
+                holder.itemDiscountPrice.setVisibility(View.GONE);
+                holder.itemDiscount.setVisibility(View.GONE);
+
+            } else {
+                holder.itemPrice.setText("Rs. "+price1);
+                holder.itemDiscountPrice.setVisibility(View.VISIBLE);
+                holder.itemDiscountPrice.setText("Rs. "+price);
+                holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.itemDiscount.setVisibility(View.VISIBLE);
+                holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
+
+            }
+
+
+
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-                    intent.putExtra(STRING_IMAGE_URI, mValues[position]);
+                    intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
                     intent.putExtra(STRING_IMAGE_POSITION, position);
+                    intent.putExtra("itemName", parent.getProductName());
+                    intent.putExtra("listingLitePk", parent.getPk());
+                    intent.putExtra("itemPrice", String.valueOf(price));
+                    intent.putExtra("itemDiscountPrice", String.valueOf(price1));
+                    intent.putExtra("itemDiscount", parent.getProductDiscount());
+//                    intent.putExtra("fragmentName", fname.toUpperCase());
                     mContext.startActivity(intent);
-
                 }
             });
 
@@ -218,10 +259,17 @@ public class AllItemsShowActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-                    imageUrlUtils.addWishlistImageUri(mValues[position]);
-                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
-                    notifyDataSetChanged();
-                    Toast.makeText(mContext,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                    if (holder.res) {
+                        imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
+                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
+                        notifyDataSetChanged();
+                        Toast.makeText(mContext, "Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        imageUrlUtils.removeWishlistImageUri(0);
+                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_black_18dp);
+                        notifyDataSetChanged();
+                        Toast.makeText(mContext, "Item removed from wishlist.", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             });
@@ -230,7 +278,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mValues.length;
+            return mValues.size();
         }
     }
 

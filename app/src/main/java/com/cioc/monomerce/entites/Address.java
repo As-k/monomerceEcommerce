@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 
 public class Address {
-    public String city, street, pincode, state, buyerName, mobile;
+    public String pk, user, city, street, pincode, state, buyerName, mobile, country, title, landMark, lat, lon;
     ArrayList<String> addressList = new ArrayList<>();
 
     public Address() {
@@ -68,6 +68,62 @@ public class Address {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public String getPk() {
+        return pk;
+    }
+
+    public void setPk(String pk) {
+        this.pk = pk;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getLandMark() {
+        return landMark;
+    }
+
+    public void setLandMark(String landMark) {
+        this.landMark = landMark;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
     }
 
     public void addAddressList(String addresslist) {

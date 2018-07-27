@@ -22,6 +22,7 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin">
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/product_name"
                 android:text="Denim Shirt"
                 android:textSize="@dimen/text_size_small"
                 android:textStyle="bold"/>
@@ -36,6 +37,7 @@
                 >
                 <TextView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/item_price"
                     android:text="Rs. 8,999"
                     android:maxLength="12"
                     android:textSize="@dimen/text_size_xmedium"

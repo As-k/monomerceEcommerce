@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class ListingLite {
     public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, specifications;
+    int productIntPrice, productIntDiscountedPrice;
     boolean approved;
     public String parentPk, parentName;
     public String parentTypePk, parentTypeName, parentTypeMinCost, parentTypeVisual;
@@ -32,12 +33,44 @@ public class ListingLite {
             this.pk = jsonObject.getString("pk");
             this.approved = jsonObject.getBoolean("approved");
             this.source = jsonObject.getString("source");
+            String str = jsonObject.getString("specifications");
+            this.specifications = str;
+
+            JSONObject productObj = jsonObject.getJSONObject("product");
+            this.productPk = productObj.getString("pk");
+            this.productName = productObj.getString("name");
+//            this.productPrice = productObj.getString("price");
+            Double d = Double.parseDouble(productObj.getString("price"));
+            this.productIntPrice = (int) Math.round(d);
+            this.productPrice = String.valueOf(this.productIntPrice);
+            this.productDiscount = productObj.getString("discount");
+//            this.productDiscountedPrice = productObj.getString("discountedPrice");
+            Double d1 = Double.parseDouble(productObj.getString("discountedPrice"));
+            this.productIntDiscountedPrice = (int) Math.round(d1);
+            this.productDiscountedPrice = String.valueOf(this.productIntDiscountedPrice);
+
+            JSONArray filesArray = jsonObject.getJSONArray("files");
+            for(int i=0; i<filesArray.length(); i++) {
+                JSONObject filesObject = filesArray.getJSONObject(i);
+                this.filesPk = filesObject.getString("pk");
+                this.filesLink = filesObject.getString("link");
+                String filesAttachment = filesObject.getString("attachment");
+                if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment==null){
+                    this.filesAttachment = "http://192.168.1.114:8000/media/ecommerce/pictureUploads/1532690173_89_admin_ecommerce.jpg";
+                } else this.filesAttachment = filesAttachment;
+                this.filesMediaType = filesObject.getString("mediaType");
+            }
 
             JSONObject parentType = jsonObject.getJSONObject("parentType");
             this.parentTypePk = parentType.getString("pk");
             this.parentTypeName = parentType.getString("name");
             this.parentTypeMinCost = parentType.getString("minCost");
             this.parentTypeVisual = parentType.getString("visual");
+
+            JSONObject parent = parentType.getJSONObject("parent");
+            this.parentPk = parent.getString("pk");
+            this.parentName = parent.getString("name");
+
             JSONArray fields = parentType.getJSONArray("fields");
             for (int i=0; i<fields.length(); i++) {
                 JSONObject fieldsObject = fields.getJSONObject(i);
@@ -49,39 +82,22 @@ public class ListingLite {
                 this.fieldsUnit = fieldsObject.getString("unit");
                 this.fieldsData = fieldsObject.getString("data");
             }
-            JSONObject parent = jsonObject.getJSONObject("parent");
-            this.parentPk = parent.getString("pk");
-            this.parentName = parent.getString("name");
 
-            String str = jsonObject.getString("specifications");
-            this.specifications = str;
-            JSONArray data = new JSONArray(str);
-            for (int i=0; i<data.length(); i++){
-                JSONObject object = data.getJSONObject(i);
-                this.name = object.getString("name");
-                this.value = object.getString("value");
-                this.fieldType = object.getString("fieldType");
-                this.helpText = object.getString("helpText");
-                this.unit = object.getString("unit");
-                this.data = object.getString("data");
-                size.add(i);
-            }
 
-            JSONObject productObj = jsonObject.getJSONObject("product");
-            this.productPk = productObj.getString("pk");
-            this.productName = productObj.getString("name");
-            this.productPrice = productObj.getString("price");
-            this.productDiscount = productObj.getString("discount");
-            this.productDiscountedPrice = productObj.getString("discountedPrice");
 
-            JSONArray filesArray = jsonObject.getJSONArray("files");
-            for(int i=0; i<filesArray.length(); i++) {
-                JSONObject filesObject = filesArray.getJSONObject(i);
-                this.filesPk = filesObject.getString("pk");
-                this.filesLink = filesObject.getString("link");
-                this.filesAttachment = filesObject.getString("attachment");
-                this.filesMediaType = filesObject.getString("mediaType");
-            }
+//            JSONArray data = new JSONArray(str);
+//            for (int i=0; i<data.length(); i++){
+//                JSONObject object = data.getJSONObject(i);
+//                this.name = object.getString("name");
+//                this.value = object.getString("value");
+//                this.fieldType = object.getString("fieldType");
+//                this.helpText = object.getString("helpText");
+//                this.unit = object.getString("unit");
+//                this.data = object.getString("data");
+//                size.add(i);
+//            }
+
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -154,6 +170,22 @@ public class ListingLite {
 
     public String getProductDiscountedPrice() {
         return productDiscountedPrice;
+    }
+
+    public int getProductIntPrice() {
+        return productIntPrice;
+    }
+
+    public void setProductIntPrice(int productIntPrice) {
+        this.productIntPrice = productIntPrice;
+    }
+
+    public int getProductIntDiscountedPrice() {
+        return productIntDiscountedPrice;
+    }
+
+    public void setProductIntDiscountedPrice(int productIntDiscountedPrice) {
+        this.productIntDiscountedPrice = productIntDiscountedPrice;
     }
 
     public void setProductDiscountedPrice(String productDiscountedPrice) {
@@ -366,5 +398,13 @@ public class ListingLite {
 
     public void setSize(ArrayList<Integer> size) {
         this.size = size;
+    }
+
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
+    public void setJsonObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
     }
 }
