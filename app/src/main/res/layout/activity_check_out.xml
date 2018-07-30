@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="10"
-    tools:context="com.allandroidprojects.ecomsample.options.CartListActivity"
+    tools:context="com.cioc.monomerce.options.CheckOutActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.githang.stepview.StepView
         android:id="@+id/step_view"
@@ -22,9 +22,9 @@
     <LinearLayout android:id="@+id/layout_items"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:layout_weight="9.5"
         android:orientation="vertical"
         >
@@ -32,7 +32,7 @@
         <android.support.v7.widget.RecyclerView
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/recyclerview_address"
-            android:scrollbars="vertical"
+            android:scrollbars="none"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

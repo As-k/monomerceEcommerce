@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="10"
-    tools:context="com.allandroidprojects.ecomsample.options.CartListActivity"
+    tools:context="com.cioc.monomerce.payment.PaymentActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.githang.stepview.StepView
         android:id="@+id/step_view"
@@ -21,7 +21,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9.5">
+        android:layout_weight="9.5"
+        android:scrollbars="none">
     <LinearLayout android:id="@+id/layout_items"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -164,7 +165,7 @@
                 />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview_payment"
-                android:scrollbars="vertical"
+                android:scrollbars="none"
                 android:paddingTop="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium"
                 android:layout_width="match_parent"
@@ -185,7 +186,7 @@
         android:elevation="30dp"
         android:background="@color/gen_black"
         android:visibility="visible">
-        <TextView android:id="@+id/text_action_bottom1"
+        <TextView android:id="@+id/text_amount"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"

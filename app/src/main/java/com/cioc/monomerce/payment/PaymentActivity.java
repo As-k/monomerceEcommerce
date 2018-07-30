@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cioc.monomerce.R;
+import com.cioc.monomerce.entites.Cart;
+import com.cioc.monomerce.options.CartListActivity;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -31,7 +33,9 @@ import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 public class PaymentActivity extends AppCompatActivity {
     private static Context mContext;
     TextView selectedAddress;
-
+    TextView textAmount, paymentBtn;
+    RecyclerView recyclerView;
+    ArrayList<String> addresses;
 
 
     @Override
@@ -42,9 +46,9 @@ public class PaymentActivity extends AppCompatActivity {
         String address = getIntent().getExtras().getString("address");
 
         mContext = PaymentActivity.this;
-
-        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-        ArrayList<String> cartlistImageUri = imageUrlUtils.getCartListImageUri();
+        init();
+//        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+//        ArrayList<String> cartlistImageUri = imageUrlUtils.getCartListImageUri();
         //Show cart layout based on items
 //        setCartLayout();
         StepView mStepView = (StepView) findViewById(R.id.step_view);
@@ -52,21 +56,27 @@ public class PaymentActivity extends AppCompatActivity {
         mStepView.setSteps(steps);
         mStepView.selectedStep(3);
 
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview_payment);
         RecyclerView.LayoutManager recylerViewLayoutManager = new LinearLayoutManager(mContext);
 
         recyclerView.setLayoutManager(recylerViewLayoutManager);
-        recyclerView.setAdapter(new PaymentActivity.PaymentRecyclerViewAdapter(recyclerView, cartlistImageUri));
+        recyclerView.setAdapter(new PaymentActivity.PaymentRecyclerViewAdapter(recyclerView, CartListActivity.cartList));
 
-        selectedAddress = findViewById(R.id.selected_address);
         selectedAddress.setText(address);
+        textAmount.setText(getIntent().getStringExtra("totalPrice"));
 
+    }
+
+    public void init(){
+        selectedAddress = findViewById(R.id.selected_address);
+        paymentBtn = findViewById(R.id.payment_text_button);
+        textAmount = findViewById(R.id.text_amount);
+        recyclerView = findViewById(R.id.recyclerview_payment);
     }
 
     public static class PaymentRecyclerViewAdapter
             extends RecyclerView.Adapter<PaymentActivity.PaymentRecyclerViewAdapter.ViewHolder> {
 
-        private ArrayList<String> mCartlistImageUri;
+        private ArrayList<Cart> mPaymentlist;
         private RecyclerView mRecyclerView;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -86,8 +96,8 @@ public class PaymentActivity extends AppCompatActivity {
             }
         }
 
-        public PaymentRecyclerViewAdapter(RecyclerView recyclerView, ArrayList<String> wishlistImageUri) {
-            mCartlistImageUri = wishlistImageUri;
+        public PaymentRecyclerViewAdapter(RecyclerView recyclerView, ArrayList<Cart> paymentlist) {
+            mPaymentlist = paymentlist;
             mRecyclerView = recyclerView;
         }
 
@@ -110,13 +120,15 @@ public class PaymentActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final PaymentActivity.PaymentRecyclerViewAdapter.ViewHolder holder, final int position) {
-            final Uri uri = Uri.parse(mCartlistImageUri.get(position));
+            final Cart cart = mPaymentlist.get(position);
+
+            final Uri uri = Uri.parse(cart.getListingParent().getFilesAttachment());
             holder.mImageView.setImageURI(uri);
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-                    intent.putExtra(STRING_IMAGE_URI, mCartlistImageUri.get(position));
+                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
                     intent.putExtra(STRING_IMAGE_POSITION, position);
                     mContext.startActivity(intent);
                 }
@@ -145,7 +157,7 @@ public class PaymentActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return mCartlistImageUri.size();
+            return mPaymentlist.size();
         }
     }
 

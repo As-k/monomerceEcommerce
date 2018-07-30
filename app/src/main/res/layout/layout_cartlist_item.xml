@@ -9,7 +9,8 @@
         android:orientation="horizontal"
         android:weightSum="3">
         <com.facebook.drawee.view.SimpleDraweeView xmlns:fresco="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/image_cartlist" android:layout_width="0dp"
+            android:id="@+id/image_cartlist"
+            android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
@@ -19,17 +20,18 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_weight="2"
+            android:layout_gravity="center"
             android:layout_marginLeft="@dimen/activity_horizontal_margin">
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/product_name"
                 android:text="Denim Shirt"
-                android:textSize="@dimen/text_size_small"
+                android:textSize="@dimen/text_size_xmedium"
                 android:textStyle="bold"/>
-            <TextView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Slim fit, cotton"
-                android:textSize="@dimen/text_size_small"/>
+            <!--<TextView android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Slim fit, cotton"-->
+                <!--android:textSize="@dimen/text_size_small"/>-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,24 +64,24 @@
                     android:id="@+id/discount_percentage" />
 
             </LinearLayout>
-            <TextView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Delivery charge: FREE"
-                android:textSize="@dimen/text_size_small"/>
-            <LinearLayout android:layout_width="match_parent"
-                          android:layout_height="wrap_content"
-                          android:orientation="horizontal"
-                          android:layout_marginTop="@dimen/margin_medium">
+            <!--<TextView android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Delivery charge: FREE"-->
+                <!--android:textSize="@dimen/text_size_small"/>-->
+            <!--<LinearLayout android:layout_width="match_parent"-->
+                          <!--android:layout_height="wrap_content"-->
+                          <!--android:orientation="horizontal"-->
+                          <!--android:layout_marginTop="@dimen/margin_medium">-->
                 <!--<TextView android:layout_width="wrap_content"-->
                           <!--android:layout_height="wrap_content"-->
                           <!--android:text="Qty: 1"-->
                           <!--android:textSize="@dimen/text_size_small"/>-->
-                <TextView android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:text="Size: 41"
-                          android:textSize="@dimen/text_size_small"
-                          />
-            </LinearLayout>
+                <!--<TextView android:layout_width="wrap_content"-->
+                          <!--android:layout_height="wrap_content"-->
+                          <!--android:text="Size: 41"-->
+                          <!--android:textSize="@dimen/text_size_small"-->
+                          <!--/>-->
+            <!--</LinearLayout>-->
         </LinearLayout>
     </LinearLayout>
 

@@ -38,11 +38,14 @@ import com.cioc.monomerce.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.GenericProduct;
 import com.cioc.monomerce.entites.ListingParent;
+import com.cioc.monomerce.notification.NotificationCountSetClass;
+import com.cioc.monomerce.options.CartListActivity;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -114,6 +117,7 @@ public class ImageListFragment extends Fragment {
                     listingParents.clear();
                     getItems(pk);
                     progressBar.setVisibility(View.VISIBLE);
+                    moreItems.setVisibility(View.GONE);
                     items = listingParents;
                     fragmentName = product.getName();
                 }
@@ -142,8 +146,10 @@ public class ImageListFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (listingParents.size()==0)
+                if (listingParents.size()==0) {
                     progressBar.setVisibility(View.VISIBLE);
+                    moreItems.setVisibility(View.GONE);
+                }
                 if (listingParents.size()>10) {
                     moreItems.setVisibility(View.VISIBLE);
                     moreItems.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +167,7 @@ public class ImageListFragment extends Fragment {
                 recyclerView.setLayoutManager(layoutManager);
                 SimpleStringRecyclerViewAdapter viewAdapter = new SimpleStringRecyclerViewAdapter(recyclerView, listingParents, fragmentName);
                 recyclerView.setAdapter(viewAdapter);
-//                viewAdapter.notifyDataSetChanged();
+                viewAdapter.notifyDataSetChanged();
             }
         },1000);
 
@@ -271,7 +277,6 @@ public class ImageListFragment extends Fragment {
                 holder.itemPrice.setText("Rs. "+ price);
                 holder.itemDiscountPrice.setVisibility(View.GONE);
                 holder.itemDiscount.setVisibility(View.GONE);
-
             } else {
                 holder.itemPrice.setText("Rs. "+price1);
                 holder.itemDiscountPrice.setVisibility(View.VISIBLE);
@@ -279,10 +284,7 @@ public class ImageListFragment extends Fragment {
                 holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.itemDiscount.setVisibility(View.VISIBLE);
                 holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
-
             }
-
-
 
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -304,12 +306,29 @@ public class ImageListFragment extends Fragment {
             holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+                    AsyncHttpClient client = new AsyncHttpClient();
+                    final ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
                     if (holder.res) {
-                        imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
-                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
-                        notifyDataSetChanged();
-                        Toast.makeText(mActivity, "Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                        RequestParams params = new RequestParams();
+                        params.put("product", parent.getProductPk());
+                        params.put("qty", "1");
+                        params.put("typ", "favourite");
+                        params.put("user", "1");
+                        client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
+                                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
+                                notifyDataSetChanged();
+                                Toast.makeText(mActivity, "Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                Toast.makeText(mActivity, "This Product is already in card.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     } else {
                         imageUrlUtils.removeWishlistImageUri(0);
                         holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_black_18dp);

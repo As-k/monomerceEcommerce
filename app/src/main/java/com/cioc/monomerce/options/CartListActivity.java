@@ -86,8 +86,8 @@ public class CartListActivity extends AppCompatActivity {
             @Override
             public void run() {
                 progressBar.setVisibility(View.GONE);
-                RecyclerView.LayoutManager recylerViewLayoutManager = new LinearLayoutManager(mContext);
-                recyclerView.setLayoutManager(recylerViewLayoutManager);
+                RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
+                recyclerView.setLayoutManager(recyclerViewLayoutManager);
                 recyclerView.setAdapter(new CartListActivity.SimpleStringRecyclerViewAdapter(cartList, price));
             }
         },500);
@@ -96,7 +96,7 @@ public class CartListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        textTotalPrice.setText("Rs. "+SimpleStringRecyclerViewAdapter.mPrice);
+        textTotalPrice.setText("Rs "+SimpleStringRecyclerViewAdapter.mPrice);
     }
 
     public void getCardItem() {
@@ -227,11 +227,12 @@ public class CartListActivity extends AppCompatActivity {
             holder.cardWishList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-                    imageUrlUtils.addWishlistImageUri(cart.getListingParent().getFilesAttachment());
+                    moveWishList(cart);
+//                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+//                    imageUrlUtils.addWishlistImageUri(cart.getListingParent().getFilesAttachment());
                     holder.cardWishList.setImageResource(R.drawable.ic_favorite_black_18dp);
                     notifyDataSetChanged();
-                    Toast.makeText(mContext,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mContext,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -292,7 +293,6 @@ public class CartListActivity extends AppCompatActivity {
                     Toast.makeText(mContext, "removed"+ cart.getPk(), Toast.LENGTH_SHORT).show();
 //                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
 //                    imageUrlUtils.removeCartListImageUri(position);
-                    notifyDataSetChanged();
                     //Decrease notification count
                     MainActivity.notificationCountCart--;
                     if (MainActivity.notificationCountCart==0) {
@@ -301,6 +301,7 @@ public class CartListActivity extends AppCompatActivity {
                         layoutCartPayments.setVisibility(View.GONE);
                         mStepView.setVisibility(View.GONE);
                     }
+                    notifyDataSetChanged();
                 }
 
                 @Override
@@ -326,6 +327,23 @@ public class CartListActivity extends AppCompatActivity {
             });
         }
 
+        public void moveWishList(Cart cart) {
+            RequestParams params = new RequestParams();
+            params.put("typ", "favourite");
+            client.patch(BackendServer.url+"/api/ecommerce/cart/"+ cart.getPk()+"/", params, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    Toast.makeText(mContext, "onSuccess", Toast.LENGTH_SHORT).show();
+                    MainActivity.notificationCountCart--;
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    Toast.makeText(mContext, "onFailure", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
     protected void setCartLayout(){
@@ -346,7 +364,7 @@ public class CartListActivity extends AppCompatActivity {
             checkOutAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getApplicationContext(), CheckOutActivity.class));
+                    startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", SimpleStringRecyclerViewAdapter.mPrice));
                 }
             });
 

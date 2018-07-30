@@ -24,7 +24,7 @@ import java.util.List;
 
 public class CheckOutActivity extends AppCompatActivity {
     private static Context mContext;
-    TextView newAddressBtn;
+    TextView textAmount, newAddressBtn;
     RecyclerView recyclerView;
     ArrayList<String> addresses;
 
@@ -33,6 +33,7 @@ public class CheckOutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
         mContext = CheckOutActivity.this;
+
         Address newAddress = new Address();
         addresses = newAddress.getAddressList();
         init();
@@ -41,7 +42,7 @@ public class CheckOutActivity extends AppCompatActivity {
         mStepView.setSteps(steps);
         mStepView.selectedStep(2);
 
-        recyclerView = (RecyclerView)findViewById(R.id.recyclerview_address);
+        textAmount.setText("Rs. "+getIntent().getExtras().getInt("totalPrice"));
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         recyclerView.setAdapter(new CheckOutActivity.AddressRecyclerViewAdapter(recyclerView, addresses));
         newAddressBtn.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +57,8 @@ public class CheckOutActivity extends AppCompatActivity {
 
     public void init(){
         newAddressBtn = findViewById(R.id.text_action_continue);
-
+        textAmount = findViewById(R.id.text_action_amount);
+        recyclerView = findViewById(R.id.recyclerview_address);
     }
 
 
@@ -104,7 +106,9 @@ public class CheckOutActivity extends AppCompatActivity {
             holder.deliveryAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(mContext, PaymentActivity.class).putExtra("address", holder.addresstxt.getText().toString()));
+                    startActivity(new Intent(mContext, PaymentActivity.class)
+                            .putExtra("address", holder.addresstxt.getText().toString())
+                            .putExtra("totalPrice", textAmount.getText().toString()));
 
                 }
             });

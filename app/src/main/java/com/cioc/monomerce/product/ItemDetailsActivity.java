@@ -234,11 +234,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                         Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT).show();
                     }
                 });
-//                ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//                imageUrlUtils.addCartListImageUri(stringImageUri);
-//                MainActivity.notificationCountCart++;
-//                NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
-//                startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
 
             }
         });
