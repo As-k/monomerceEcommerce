@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,23 +25,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.cioc.monomerce.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.michaelbel.bottomsheet.BottomSheet;
 
 import java.util.ArrayList;
 
+import cz.msebera.android.httpclient.Header;
+
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
-
 
 public class AllItemsShowActivity extends AppCompatActivity {
     public Context context;
     Button sortBtn, filterBtn;
+    AsyncHttpClient client;
     ArrayList<ListingParent> parents;
 
     @Override
@@ -48,14 +57,16 @@ public class AllItemsShowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_items_show);
         context = AllItemsShowActivity.this;
-        parents = ImageListFragment.listingParents;
+        client = new AsyncHttpClient();
+        parents = new ArrayList<>();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 //        ArrayList<Parcelable> stringArray = getIntent().getExtras().getParcelableArrayList("items");
-        String name = getIntent().getExtras().getString("fragmentName");
-        getSupportActionBar().setTitle(name);
+        final String name = getIntent().getExtras().getString("fragmentName");
+        String pk = getIntent().getExtras().getString("pk");
+
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_all_items);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -73,7 +84,40 @@ public class AllItemsShowActivity extends AppCompatActivity {
             }
         });
 
-        clickBtn(parents);
+        getItems(pk);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getSupportActionBar().setTitle(name);
+                clickBtn(parents);
+            }
+        },1000);
+
+    }
+
+    public void getItems(String pk) {
+        client.get(BackendServer.url+"/api/ecommerce/listing/?parent="+pk+"&recursive=1", new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                super.onSuccess(statusCode, headers, response);
+                for (int i=0; i<response.length(); i++){
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        ListingParent parent = new ListingParent(object);
+                        parents.add(parent);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Toast.makeText(getApplicationContext(), "onFailure", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void clickBtn(ArrayList<ListingParent> strings){
@@ -244,11 +288,11 @@ public class AllItemsShowActivity extends AppCompatActivity {
                     Intent intent = new Intent(mContext, ItemDetailsActivity.class);
                     intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
                     intent.putExtra(STRING_IMAGE_POSITION, position);
-                    intent.putExtra("itemName", parent.getProductName());
+//                    intent.putExtra("itemName", parent.getProductName());
                     intent.putExtra("listingLitePk", parent.getPk());
-                    intent.putExtra("itemPrice", String.valueOf(price));
-                    intent.putExtra("itemDiscountPrice", String.valueOf(price1));
-                    intent.putExtra("itemDiscount", parent.getProductDiscount());
+//                    intent.putExtra("itemPrice", String.valueOf(price));
+//                    intent.putExtra("itemDiscountPrice", String.valueOf(price1));
+//                    intent.putExtra("itemDiscount", parent.getProductDiscount());
 //                    intent.putExtra("fragmentName", fname.toUpperCase());
                     mContext.startActivity(intent);
                 }
@@ -270,7 +314,6 @@ public class AllItemsShowActivity extends AppCompatActivity {
                         notifyDataSetChanged();
                         Toast.makeText(mContext, "Item removed from wishlist.", Toast.LENGTH_SHORT).show();
                     }
-
                 }
             });
 

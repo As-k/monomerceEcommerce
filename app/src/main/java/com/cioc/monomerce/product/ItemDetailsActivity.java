@@ -61,7 +61,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
     SimpleDraweeView mImageView;
     TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount, textViewDescriptions, textViewAddToCart, textViewBuyNow;
     int imagePosition;
-    String itemPk, itemName, itemPrice, itemDiscountPrice, itemDiscount, stringImageUri;
+    String itemPk, stringImageUri;
 //    RecyclerView specificationsListView;
     ListView specificationsListView;
     Context mContext;
@@ -84,12 +84,12 @@ public class ItemDetailsActivity extends AppCompatActivity {
         //Getting image uri from previous screen
         if (getIntent() != null) {
             itemPk = getIntent().getStringExtra("listingLitePk");
-            itemName = getIntent().getStringExtra("itemName");
-            itemPrice = getIntent().getStringExtra("itemPrice");
-            itemDiscountPrice = getIntent().getStringExtra("itemDiscountPrice");
-            itemDiscount = getIntent().getStringExtra("itemDiscount");
-            stringImageUri = getIntent().getStringExtra(ImageListFragment.STRING_IMAGE_URI);
-            imagePosition = getIntent().getIntExtra(ImageListFragment.STRING_IMAGE_URI,0);
+//            itemName = getIntent().getStringExtra("itemName");
+//            itemPrice = getIntent().getStringExtra("itemPrice");
+//            itemDiscountPrice = getIntent().getStringExtra("itemDiscountPrice");
+//            itemDiscount = getIntent().getStringExtra("itemDiscount");
+//            stringImageUri = getIntent().getStringExtra(ImageListFragment.STRING_IMAGE_URI);
+//            imagePosition = getIntent().getIntExtra(ImageListFragment.STRING_IMAGE_URI,0);
         }
         getParentType();
 
@@ -131,7 +131,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 specificationsListView.setAdapter(list);
                 list.notifyDataSetChanged();
             }
-        },2000);
+        },1000);
 
 
     }
@@ -148,7 +148,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         textViewDescriptions = findViewById(R.id.description_txt);
         lite = listingLites.get(0);
 
-        Uri uri = Uri.parse(stringImageUri);
+        Uri uri = Uri.parse(lite.getFilesAttachment());
         mImageView.setImageURI(uri);
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,8 +194,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-                        imageUrlUtils.addCartListImageUri(stringImageUri);
+//                        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+//                        imageUrlUtils.addCartListImageUri(stringImageUri);
                         Toast.makeText(ItemDetailsActivity.this,"Item added to cart.", Toast.LENGTH_SHORT).show();
                         MainActivity.notificationCountCart++;
                         NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
@@ -329,8 +329,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
             invalidateOptionsMenu();*/
             return true;
         }else if (id == R.id.action_wishlist) {
-            ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-            imageUrlUtils.addWishlistImageUri(stringImageUri);
+//            ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+//            imageUrlUtils.addWishlistImageUri(stringImageUri);
             item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_white_24dp));
             Toast.makeText(getApplicationContext(),"Item added to wishlist.", Toast.LENGTH_SHORT).show();
             return true;

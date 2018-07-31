@@ -32,6 +32,8 @@ import com.cioc.monomerce.fragments.ImageListFragment;
 import com.cioc.monomerce.miscellaneous.EmptyActivity;
 import com.cioc.monomerce.notification.NotificationCountSetClass;
 import com.cioc.monomerce.options.CartListActivity;
+import com.cioc.monomerce.options.HelpCenterActivity;
+import com.cioc.monomerce.options.MyAccountActivity;
 import com.cioc.monomerce.options.SearchResultActivity;
 import com.cioc.monomerce.options.WishlistActivity;
 import com.loopj.android.http.AsyncHttpClient;
@@ -118,8 +120,6 @@ public class MainActivity extends AppCompatActivity
                             .setAction("Action", null).show();
                 }
             });*/
-
-
         initCollapsingToolbar();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -142,6 +142,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+//        offerBannersList.clear();
+//        getGenericProduct();
         invalidateOptionsMenu();
     }
 
@@ -201,8 +203,9 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+
     public void getGenericProduct() {
-        client.get(BackendServer.url+"/api/ecommerce/genericProduct/",new JsonHttpResponseHandler() {
+        client.get(BackendServer.url+"/api/ecommerce/genericProduct/", new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
@@ -268,8 +271,9 @@ public class MainActivity extends AppCompatActivity
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                     }
                 });
-
     }
+
+
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
@@ -332,9 +336,14 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, WishlistActivity.class));
         }else if (id == R.id.my_cart) {
             startActivity(new Intent(MainActivity.this, CartListActivity.class));
+        }else if (id == R.id.my_account) {
+            startActivity(new Intent(MainActivity.this, MyAccountActivity.class));
+        }else if (id == R.id.help_center) {
+                startActivity(new Intent(MainActivity.this, HelpCenterActivity.class));
         }else {
-            startActivity(new Intent(MainActivity.this, EmptyActivity.class));
+                startActivity(new Intent(MainActivity.this, EmptyActivity.class));
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

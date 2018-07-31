@@ -35,16 +35,20 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".fragments.ViewPagerActivity" />
-        <activity android:name=".product.ItemDetailsActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".product.ItemDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".options.WishlistActivity"
             android:label="@string/my_wishlist" />
         <activity
             android:name=".options.CartListActivity"
             android:label="@string/my_cart"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".options.SearchResultActivity">
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".options.SearchResultActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar">
 
             <!-- to identify this activity as "searchable.xml" -->
             <intent-filter>
@@ -61,21 +65,30 @@
         <activity
             android:name=".options.CheckOutActivity"
             android:label="@string/checkout"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".options.NewAddressActivity"
             android:label="@string/new_address"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".payment.PaymentActivity"
             android:label="@string/payment"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".fragments.AllItemsShowActivity"
             android:label="@string/title_activity_all_items_show"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".fragments.FilterItemsActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".fragments.FilterItemsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".options.MyAccountActivity"
+            android:label="My Account" />
+        <activity
+            android:name=".options.HelpCenterActivity"
+            android:label="@string/title_activity_help_center"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".options.FeedBackActivity"></activity>
     </application>
 
 </manifest>

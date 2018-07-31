@@ -156,7 +156,7 @@ public class ImageListFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             getContext().startActivity(new Intent(getContext(), AllItemsShowActivity.class)
-//                                    .putExtra("items", items)
+                                    .putExtra("pk", pk)
                                     .putExtra("fragmentName", fragmentName.toUpperCase()));
                         }
                     });
@@ -292,12 +292,12 @@ public class ImageListFragment extends Fragment {
                     Intent intent = new Intent(mActivity, ItemDetailsActivity.class);
                     intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
                     intent.putExtra(STRING_IMAGE_POSITION, position);
-                    intent.putExtra("itemName", parent.getProductName());
+//                    intent.putExtra("itemName", parent.getProductName());
                     intent.putExtra("listingLitePk", parent.getPk());
-                    intent.putExtra("itemPrice", String.valueOf(price));
-                    intent.putExtra("itemDiscountPrice", String.valueOf(price1));
-                    intent.putExtra("itemDiscount", parent.getProductDiscount());
-                    intent.putExtra("fragmentName", fname.toUpperCase());
+//                    intent.putExtra("itemPrice", String.valueOf(price));
+//                    intent.putExtra("itemDiscountPrice", String.valueOf(price1));
+//                    intent.putExtra("itemDiscount", parent.getProductDiscount());
+//                    intent.putExtra("fragmentName", fname.toUpperCase());
                     mActivity.startActivity(intent);
                 }
             });
