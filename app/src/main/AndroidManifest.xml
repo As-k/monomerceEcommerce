@@ -88,7 +88,15 @@
             android:name=".options.HelpCenterActivity"
             android:label="@string/title_activity_help_center"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".options.FeedBackActivity"></activity>
+        <activity
+            android:name=".options.FeedBackActivity"
+            android:label="Feedback" />
+        <activity
+            android:name=".options.OrderActivity"
+            android:label="@string/title_activity_order"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".options.OrderDetailsActivity"
+            android:label="@string/title_activity_order_details"></activity>
     </application>
 
 </manifest>

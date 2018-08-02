@@ -88,7 +88,9 @@ public class CartListActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
                 recyclerView.setLayoutManager(recyclerViewLayoutManager);
-                recyclerView.setAdapter(new CartListActivity.SimpleStringRecyclerViewAdapter(cartList, price));
+                CartListRecyclerViewAdapter adapter = new CartListActivity.CartListRecyclerViewAdapter(cartList, price);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
         },500);
     }
@@ -96,7 +98,7 @@ public class CartListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        textTotalPrice.setText("Rs "+SimpleStringRecyclerViewAdapter.mPrice);
+        textTotalPrice.setText("Rs "+CartListRecyclerViewAdapter.mPrice);
     }
 
     public void getCardItem() {
@@ -124,8 +126,8 @@ public class CartListActivity extends AppCompatActivity {
     }
 
 
-    public static class SimpleStringRecyclerViewAdapter
-            extends RecyclerView.Adapter<CartListActivity.SimpleStringRecyclerViewAdapter.ViewHolder> {
+    public static class CartListRecyclerViewAdapter
+            extends RecyclerView.Adapter<CartListRecyclerViewAdapter.ViewHolder> {
 
         private ArrayList<Cart> mCartlist;
         AsyncHttpClient client;
@@ -155,20 +157,20 @@ public class CartListActivity extends AppCompatActivity {
             }
         }
 
-        public SimpleStringRecyclerViewAdapter(ArrayList<Cart> carts, int price) {
+        public CartListRecyclerViewAdapter(ArrayList<Cart> carts, int price) {
             mCartlist = carts;
             mPrice = price;
         }
 
         @Override
-        public CartListActivity.SimpleStringRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_cartlist_item, parent, false);
             client = new AsyncHttpClient();
-            return new CartListActivity.SimpleStringRecyclerViewAdapter.ViewHolder(view);
+            return new CartListRecyclerViewAdapter.ViewHolder(view);
         }
 
         @Override
-        public void onViewRecycled(CartListActivity.SimpleStringRecyclerViewAdapter.ViewHolder holder) {
+        public void onViewRecycled(CartListActivity.CartListRecyclerViewAdapter.ViewHolder holder) {
             if (holder.mImageView.getController() != null) {
                 holder.mImageView.getController().onDetach();
             }
@@ -179,7 +181,7 @@ public class CartListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final CartListActivity.SimpleStringRecyclerViewAdapter.ViewHolder holder, final int position) {
+        public void onBindViewHolder(final CartListActivity.CartListRecyclerViewAdapter.ViewHolder holder, final int position) {
             final Cart cart = mCartlist.get(position);
             final ListingParent parent = cart.getParents().get(0);
             final Uri uri = Uri.parse(parent.getFilesAttachment());
@@ -364,7 +366,7 @@ public class CartListActivity extends AppCompatActivity {
             checkOutAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", SimpleStringRecyclerViewAdapter.mPrice));
+                    startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", CartListRecyclerViewAdapter.mPrice));
                 }
             });
 

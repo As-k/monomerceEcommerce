@@ -32,8 +32,10 @@ import com.cioc.monomerce.fragments.ImageListFragment;
 import com.cioc.monomerce.miscellaneous.EmptyActivity;
 import com.cioc.monomerce.notification.NotificationCountSetClass;
 import com.cioc.monomerce.options.CartListActivity;
+import com.cioc.monomerce.options.FeedBackActivity;
 import com.cioc.monomerce.options.HelpCenterActivity;
 import com.cioc.monomerce.options.MyAccountActivity;
+import com.cioc.monomerce.options.OrderActivity;
 import com.cioc.monomerce.options.SearchResultActivity;
 import com.cioc.monomerce.options.WishlistActivity;
 import com.loopj.android.http.AsyncHttpClient;
@@ -340,6 +342,10 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, MyAccountActivity.class));
         }else if (id == R.id.help_center) {
                 startActivity(new Intent(MainActivity.this, HelpCenterActivity.class));
+        }else if (id == R.id.contact_us) {
+                startActivity(new Intent(MainActivity.this, FeedBackActivity.class));
+        }else if (id == R.id.my_orders) {
+                startActivity(new Intent(MainActivity.this, OrderActivity.class));
         }else {
                 startActivity(new Intent(MainActivity.this, EmptyActivity.class));
         }

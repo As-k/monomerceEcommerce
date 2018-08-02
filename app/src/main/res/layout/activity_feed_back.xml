@@ -17,8 +17,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="20dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:text="Send us your feedback/message/complaint or query."
+                android:textStyle="normal"
+                android:textColor="@color/colorPrimary"
+                android:padding="@dimen/margin_small"
+                android:textSize="@dimen/text_size_xmedium"
+                />
+
             <LinearLayout
-                android:id="@+id/llPassword"
+                android:id="@+id/llEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/activity_vertical_margin"
@@ -28,7 +40,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <AutoCompleteTextView
+                    <EditText
                         android:id="@+id/email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -36,6 +48,7 @@
                         android:inputType="textEmailAddress"
                         android:maxLines="1"
                         android:singleLine="true"
+                        android:textSize="@dimen/text_size_xmedium"
                         android:backgroundTint="@android:color/transparent"/>
 
                 </android.support.design.widget.TextInputLayout>
@@ -51,14 +64,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <AutoCompleteTextView
+                    <EditText
                         android:id="@+id/mobile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Mobile"
-                        android:inputType="textEmailAddress"
+                        android:inputType="number"
                         android:maxLines="1"
                         android:singleLine="true"
+                        android:maxLength="10"
+                        android:textSize="@dimen/text_size_xmedium"
                         android:backgroundTint="@android:color/transparent"/>
 
                 </android.support.design.widget.TextInputLayout>
@@ -66,22 +81,22 @@
             <LinearLayout
                 android:id="@+id/message_ll"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:layout_marginVertical="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
 
-                    <AutoCompleteTextView
+                    <EditText
                         android:id="@+id/message"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:hint="Message"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"
-                        android:singleLine="true"
+                        android:inputType="textMultiLine"
+                        android:textSize="@dimen/text_size_xmedium"
+                        android:gravity="top"
                         android:backgroundTint="@android:color/transparent"/>
 
                 </android.support.design.widget.TextInputLayout>
@@ -89,7 +104,7 @@
 
 
             <Button
-                android:id="@+id/sign_in_button"
+                android:id="@+id/feedback_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -40,6 +40,14 @@
         <item name="android:layout_marginStart">12dp</item>
     </style>
 
+    <style name="text_view_order_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
 
     <style name="error_text_msg">
         <item name="android:layout_width">match_parent</item>
