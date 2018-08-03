@@ -35,15 +35,20 @@ import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.Order;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -184,7 +189,36 @@ public class OrderActivity extends AppCompatActivity {
             viewHolder.downloadInvoices.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new DownloadFile().execute("http://maven.apache.org/maven-1.x/maven.pdf", "maven.pdf");
+//                    new DownloadFile().execute("http://maven.apache.org/maven-1.x/maven.pdf", "maven.pdf");
+                    client.get(BackendServer.url+"/api/ecommerce/downloadInvoice/?value="+order.getPk(), new FileAsyncHttpResponseHandler(context) {
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+                            Toast.makeText(OrderActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, File response) {
+                            // Do something with the file `response`
+                            final int  MEGABYTE = 1024 * 1024;
+                            String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
+                            File folder = new File(extStorageDirectory, "testthreepdf");
+                            folder.mkdir();
+                            File pdfFile = new File(folder, "invoice_"+ Calendar.DATE);
+                            try {
+                                FileInputStream fis = new FileInputStream(file);
+                                pdfFile.createNewFile();
+                                FileOutputStream fileOutputStream = new FileOutputStream(pdfFile);
+                                byte[] buffer = new byte[MEGABYTE];
+                                int bufferLength = 0;
+                                while((bufferLength = fis.read(buffer))>0 ){
+                                    fileOutputStream.write(buffer, 0, bufferLength);
+                                }
+                                fileOutputStream.close();
+                            } catch (IOException e){
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 }
             });
 
@@ -210,12 +244,10 @@ public class OrderActivity extends AppCompatActivity {
             paymentMode = itemView.findViewById(R.id.payment_mode_result);
             cardViewOrder = itemView.findViewById(R.id.card_view_order);
             downloadInvoices = itemView.findViewById(R.id.downloads_invoice_action);
-
         }
     }
 
     private class DownloadFile extends AsyncTask<String, Void, Void> {
-
         @Override
         protected Void doInBackground(String... strings) {
             String fileUrl = strings[0];   // -> http://maven.apache.org/maven-1.x/maven.pdf
@@ -225,10 +257,9 @@ public class OrderActivity extends AppCompatActivity {
             folder.mkdir();
 
             File pdfFile = new File(folder, fileName);
-
-            try{
+            try {
                 pdfFile.createNewFile();
-            }catch (IOException e){
+            } catch (IOException e){
                 e.printStackTrace();
             }
             FileDownloader.downloadFile(fileUrl, pdfFile);

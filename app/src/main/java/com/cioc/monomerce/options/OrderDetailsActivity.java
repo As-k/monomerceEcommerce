@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -46,6 +47,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     ArrayList<Order> orders;
     ArrayList<OrderQtyMap> qtyMaps;
     boolean res = false;
+    public static List<Boolean> isSelected = new ArrayList<>();
     ArrayList<Integer> position = new ArrayList<>();
     LinearLayout orderDetailsLL;
     ProgressBar progressBar;
@@ -75,12 +77,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
                 recyclerViewOrder.setLayoutManager(recyclerViewLayoutManager);
                 recyclerViewOrder.setAdapter(new OrderRecyclerViewAdapter(qtyMaps));
-
                 orderShipping.setText(address);
             }
         },1000);
-
-
     }
 
     public void getOrderDetails(String pk) {
@@ -115,55 +114,110 @@ public class OrderDetailsActivity extends AppCompatActivity {
         linearLayoutCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (res) {
-                    orderCancelOrReturn();
-
-                } else Toast.makeText(mContext, "Please select one item.", Toast.LENGTH_SHORT).show();
+//                if (position.size()>0) {
+                    orderCancelOrReturn(true);
+//                } else Toast.makeText(mContext, "Please select one item.", Toast.LENGTH_SHORT).show();
             }
         });
 
+        linearLayoutReturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                if (position.size()>0) {
+                    orderCancelOrReturn(false);
+//                } else Toast.makeText(mContext, "Please select one item.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void orderCancelOrReturn() {
+    private void orderCancelOrReturn(boolean isClick) {
         RecyclerView recyclerViewCancel;
-
         Button cancelBtn;
+        position.clear();
         View v = getLayoutInflater().inflate(R.layout.layout_order_cancel_style, null, false);
-        recyclerViewCancel = v.findViewById(R.id.recycler_view_cancelOrReturn);
-        RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
-        recyclerViewCancel.setLayoutManager(recyclerViewLayoutManager);
-        recyclerViewCancel.setAdapter(new CancelRecyclerViewAdapter(position));
+        for (int p=0; p<qtyMaps.size(); p++) {
+            if (isSelected.get(p) == true) {
 
-        cancelBtn = v.findViewById(R.id.cancel_btn);
-        AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
-        adb.setView(v);
-        final AlertDialog dialog = adb.create();
+//                View v = getLayoutInflater().inflate(R.layout.layout_order_cancel_style, null, false);
+                position.add(p);
+                final OrderQtyMap map = qtyMaps.get(p);
+                if (isClick) {
+                    if (map.getOrderStatus().equals("created") || map.getOrderStatus().equals("packed")) {
+                        recyclerViewCancel = v.findViewById(R.id.recycler_view_cancelOrReturn);
+                        RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
+                        recyclerViewCancel.setLayoutManager(recyclerViewLayoutManager);
+                        final CancelRecyclerViewAdapter adapter = new CancelRecyclerViewAdapter(position);
+                        recyclerViewCancel.setAdapter(adapter);
+                        cancelBtn = v.findViewById(R.id.cancel_btn);
+                        final AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
+                        adb.setView(v);
+                        final AlertDialog dialog = adb.create();
+                        dialog.show();
+                        cancelBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                RequestParams params = new RequestParams();
+                                params.put("status", "cancelled");
+                                client.patch(BackendServer.url + "/api/ecommerce/orderQtyMap/" + map.getOrderQtyPk() + "/", params, new AsyncHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                        Toast.makeText(OrderDetailsActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                        finish();
+                                    }
 
-        for (int p=0; p<position.size(); p++) {
-            int i = position.get(p);
-            final OrderQtyMap map = qtyMaps.get(i);
-            cancelBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    RequestParams params = new RequestParams();
-                    params.put("status", "cancelled");
-                    client.patch(BackendServer.url + "/api/ecommerce/orderQtyMap/" + map.getOrderQtyPk() + "/", params, new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            Toast.makeText(OrderDetailsActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                            finish();
-                        }
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                        Toast.makeText(OrderDetailsActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        Toast.makeText(mContext, "selected items can't be cancelled", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                } else {
+                    if ((map.getOrderStatus().equals("delivered"))) {
+                        recyclerViewCancel = v.findViewById(R.id.recycler_view_cancelOrReturn);
+                        RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
+                        recyclerViewCancel.setLayoutManager(recyclerViewLayoutManager);
+                        final CancelRecyclerViewAdapter adapter = new CancelRecyclerViewAdapter(position);
+                        recyclerViewCancel.setAdapter(adapter);
+                        cancelBtn = v.findViewById(R.id.cancel_btn);
+                        final AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
+                        adb.setView(v);
+                        final AlertDialog dialog = adb.create();
+                        dialog.show();
+                        cancelBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                RequestParams params = new RequestParams();
+                                params.put("status", "returned");
+                                client.patch(BackendServer.url + "/api/ecommerce/orderQtyMap/" + map.getOrderQtyPk() + "/", params, new AsyncHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                        Toast.makeText(OrderDetailsActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                                        dialog.dismiss();
+                                        finish();
+                                    }
 
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            Toast.makeText(OrderDetailsActivity.this, "failure", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                        Toast.makeText(OrderDetailsActivity.this, "failure", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        Toast.makeText(mContext, "selected items can't be returned", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                 }
-            });
-
-            dialog.show();
+            } else {
+                Toast.makeText(mContext, "Please select one item.", Toast.LENGTH_SHORT).show();
+                break;
+            }
         }
     }
 
@@ -185,22 +239,31 @@ public class OrderDetailsActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
+        public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
             final OrderQtyMap qtyMap = mQtyMaps.get(i);
+            isSelected.add(i, false);
+            isSelected.set(i, false);
             viewHolder.productName.setText(""+qtyMap.getOrderProductName());
             viewHolder.qty.setText(""+qtyMap.getOrderQty());
             viewHolder.amount.setText(""+qtyMap.getOrderPpAfterDiscount());
             viewHolder.status.setText(""+qtyMap.getOrderStatus());
-            viewHolder.selectOrderItem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            viewHolder.selectOrderItem.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (b) {
-                        res = b;
-                        position.add(i);
-                        String pk = qtyMap.getOrderQtyPk();
-                    } else {
+                public void onClick(View view) {
+//                }
+//            });
+//                    setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                    boolean bol = position.contains(i);
+                    if (!viewHolder.selectOrderItem.isChecked()) {
+                        isSelected.set(i, false);
 //                        position.remove(i);
-                        res = b;
+                    } else {
+                        isSelected.set(i, true);
+                        viewHolder.selectOrderItem.setChecked(isSelected.get(i));
+//                        position.add(i);
+//                        res = !bol;
                     }
                 }
             });
@@ -223,8 +286,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
             amount = itemView.findViewById(R.id.approved_detail_result);
             status = itemView.findViewById(R.id.status_detail_result);
             selectOrderItem = itemView.findViewById(R.id.selected_product_cb);
-
-
         }
     }
 

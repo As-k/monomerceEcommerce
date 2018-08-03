@@ -37,7 +37,8 @@ public class MyAccountActivity extends AppCompatActivity {
         settingView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MyAccountActivity.this, NewAddressActivity.class));
+                startActivity(new Intent(MyAccountActivity.this, NewAddressActivity.class)
+                .putExtra("newAdd", "set" ));
             }
         });
         supportView.setOnClickListener(new View.OnClickListener() {

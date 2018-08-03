@@ -1,5 +1,8 @@
 package com.cioc.monomerce.entites;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -7,19 +10,30 @@ import java.util.ArrayList;
  */
 
 public class Address {
-    public String pk, user, city, street, pincode, state, buyerName, mobile, country, title, landMark, lat, lon;
+    public String pk, user, name, city, street, pincode, state, buyerName, mobile, country, title, landMark, lat, lon;
     ArrayList<String> addressList = new ArrayList<>();
+    JSONObject object;
 
     public Address() {
     }
 
-    public Address(String city, String street, String pincode, String state, String buyerName, String mobile) {
-        this.city = city;
-        this.street = street;
-        this.pincode = pincode;
-        this.state = state;
-        this.buyerName = buyerName;
-        this.mobile = mobile;
+    public Address(JSONObject object) throws JSONException {
+        this.object = object;
+
+        this.pk = object.getString("pk");
+        this.user = object.getString("user");
+        this.city = object.getString("city");
+        this.street = object.getString("street");
+        this.pincode = object.getString("pincode");
+        this.state = object.getString("state");
+//        this.buyerName = object.getString("buyerName");
+//        this.mobile = object.getString("mobile");
+        this.country = object.getString("country");
+        this.title = object.getString("title");
+        this.landMark = object.getString("landMark");
+        this.lat = object.getString("lat");
+        this.lon = object.getString("lon");
+
     }
 
     public String getCity() {

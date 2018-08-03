@@ -27,8 +27,11 @@ public class NewAddressActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_address);
         context = NewAddressActivity.this;
 
+        String s = getIntent().getStringExtra("newAdd");
         init();
-
+        if (!(s==null)){
+            continuePayment.setVisibility(View.GONE);
+        }
 
         continuePayment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +64,6 @@ public class NewAddressActivity extends AppCompatActivity {
         pincodeErr = findViewById(R.id.pincodeErrTxt);
         nameErr = findViewById(R.id.nameErrTxt);
         moobileErr = findViewById(R.id.mobileErrTxt);
-
     }
 
     public void save(boolean res){

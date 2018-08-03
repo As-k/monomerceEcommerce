@@ -238,8 +238,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
     public void getParentType(){
