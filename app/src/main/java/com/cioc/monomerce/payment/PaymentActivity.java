@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Cart;
+import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.options.CartListActivity;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
@@ -35,7 +36,6 @@ public class PaymentActivity extends AppCompatActivity {
     TextView selectedAddress;
     TextView textAmount, paymentBtn;
     RecyclerView recyclerView;
-    ArrayList<String> addresses;
 
 
     @Override
@@ -83,13 +83,15 @@ public class PaymentActivity extends AppCompatActivity {
             public final View mView;
             public final SimpleDraweeView mImageView;
             public final LinearLayout mLayoutItem;
-            TextView actualPrice, discountPercentage;
+            TextView productName, itemPrice, actualPrice, discountPercentage, itemsQuantity;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
                 mImageView = (SimpleDraweeView) view.findViewById(R.id.image_cartlist);
                 mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item_desc);
+                productName =  view.findViewById(R.id.product_name);
+                itemPrice =  view.findViewById(R.id.item_price);
                 actualPrice =  view.findViewById(R.id.actual_price);
                 actualPrice.setPaintFlags(actualPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                 discountPercentage =  view.findViewById(R.id.discount_percentage);
@@ -121,7 +123,7 @@ public class PaymentActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final PaymentActivity.PaymentRecyclerViewAdapter.ViewHolder holder, final int position) {
             final Cart cart = mPaymentlist.get(position);
-
+            final ListingParent parent = cart.getParents().get(0);
             final Uri uri = Uri.parse(cart.getListingParent().getFilesAttachment());
             holder.mImageView.setImageURI(uri);
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +135,23 @@ public class PaymentActivity extends AppCompatActivity {
                     mContext.startActivity(intent);
                 }
             });
+
+            holder.productName.setText(parent.getProductName());
+//            holder.itemsQuantity.setText(cart.getQuantity());
+            if (parent.getProductDiscount().equals("0")){
+                holder.itemPrice.setText("Rs. "+parent.getProductPrice());
+                holder.actualPrice.setVisibility(View.GONE);
+                holder.discountPercentage.setVisibility(View.GONE);
+//                mPrice = mPrice + (parent.getProductIntPrice()*Integer.parseInt(cart.getQuantity()));
+            } else {
+                holder.itemPrice.setText("Rs. "+parent.getProductDiscountedPrice());
+//                mPrice = mPrice + (parent.getProductIntDiscountedPrice()*Integer.parseInt(cart.getQuantity()));
+                holder.discountPercentage.setVisibility(View.VISIBLE);
+                holder.discountPercentage.setText("("+parent.getProductDiscount()+"% OFF)");
+                holder.actualPrice.setVisibility(View.VISIBLE);
+                holder.actualPrice.setText(parent.getProductPrice());
+                holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+            }
 
 //            //Set click action
 //            holder.mLayoutRemove.setOnClickListener(new View.OnClickListener() {

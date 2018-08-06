@@ -28,25 +28,22 @@
         android:visibility="gone"
         />
 
-    <LinearLayout android:id="@+id/layout_items"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+    <LinearLayout
+        android:id="@+id/layout_items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_weight="9.5"
         android:orientation="vertical"
         android:visibility="gone">
 
-
-
-        <android.support.v7.widget.RecyclerView
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/recyclerview"
-            android:scrollbars="none"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/dots_height"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+            android:scrollbars="none" />
 
     </LinearLayout>
     <LinearLayout android:id="@+id/layout_payment"

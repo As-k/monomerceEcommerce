@@ -165,11 +165,11 @@ public class ImageListFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
                 StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                 recyclerView.setLayoutManager(layoutManager);
-                SimpleStringRecyclerViewAdapter viewAdapter = new SimpleStringRecyclerViewAdapter(recyclerView, listingParents, fragmentName);
+                CategoriesRecyclerViewAdapter viewAdapter = new CategoriesRecyclerViewAdapter(listingParents, fragmentName);
                 recyclerView.setAdapter(viewAdapter);
                 viewAdapter.notifyDataSetChanged();
             }
-        },1000);
+        },2000);
 
 
 
@@ -203,12 +203,11 @@ public class ImageListFragment extends Fragment {
 
 
 
-    public static class SimpleStringRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder> {
+    public static class CategoriesRecyclerViewAdapter
+            extends RecyclerView.Adapter<CategoriesRecyclerViewAdapter.ViewHolder> {
 
         private ArrayList<ListingParent> mValues;
         String fname;
-
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
@@ -231,7 +230,7 @@ public class ImageListFragment extends Fragment {
             }
         }
 
-        public SimpleStringRecyclerViewAdapter(RecyclerView recyclerView, ArrayList<ListingParent> items, String name) {
+        public CategoriesRecyclerViewAdapter(ArrayList<ListingParent> items, String name) {
             mValues = items;
             fname = name;
         }

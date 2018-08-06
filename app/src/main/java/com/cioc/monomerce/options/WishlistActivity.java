@@ -28,6 +28,7 @@ import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.githang.stepview.StepView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -49,7 +50,8 @@ public class WishlistActivity extends AppCompatActivity {
     private static Context mContext;
     RecyclerView recyclerView;
     ProgressBar progressBar;
-
+    Button bStartShopping;
+    public static LinearLayout layoutCartItems, layoutCartPayments, layoutCartNoItems;
     public AsyncHttpClient client;
     public static ArrayList<Cart> wishList;
 
@@ -77,6 +79,30 @@ public class WishlistActivity extends AppCompatActivity {
                 recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(wishList));
             }
         },1000);
+    }
+
+    protected void setCartLayout(){
+        layoutCartItems = findViewById(R.id.layout_items);
+        layoutCartNoItems = findViewById(R.id.layout_cart_empty);
+        bStartShopping =  findViewById(R.id.bAddNew);
+
+        if (MainActivity.notificationCountCart >0) {
+            layoutCartNoItems.setVisibility(View.GONE);
+            layoutCartItems.setVisibility(View.VISIBLE);
+            layoutCartPayments.setVisibility(View.VISIBLE);
+
+        } else {
+            layoutCartNoItems.setVisibility(View.VISIBLE);
+            layoutCartItems.setVisibility(View.GONE);
+            layoutCartPayments.setVisibility(View.GONE);
+
+            bStartShopping.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
+        }
     }
 
     public void getWishListItem() {
@@ -225,6 +251,31 @@ public class WishlistActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                     Toast.makeText(mContext, "onFailure", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        public void deleteItem(final Cart cart, final int position) {
+            client.delete(mContext, BackendServer.url + "/api/ecommerce/cart/"+ cart.getPk()+"/", new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    Toast.makeText(mContext, "removed"+ cart.getPk(), Toast.LENGTH_SHORT).show();
+//                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+//                    imageUrlUtils.removeCartListImageUri(position);
+                    //Decrease notification count
+                    MainActivity.notificationCountCart--;
+                    if (MainActivity.notificationCountCart==0) {
+                        layoutCartNoItems.setVisibility(View.VISIBLE);
+//                        layoutCartItems.setVisibility(View.GONE);
+//                        layoutCartPayments.setVisibility(View.GONE);
+//                        mStepView.setVisibility(View.GONE);
+                    }
+                    notifyDataSetChanged();
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    Toast.makeText(mContext, "removing failure"+ cart.getPk(), Toast.LENGTH_SHORT).show();
                 }
             });
         }

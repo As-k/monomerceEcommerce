@@ -3,34 +3,68 @@ package com.cioc.monomerce.options;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cioc.monomerce.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Address;
 import com.cioc.monomerce.payment.PaymentActivity;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public class NewAddressActivity extends AppCompatActivity {
-    public static Context context;
-    EditText city, street, state, pincode, name, moobile;
-    TextView cityErr, streetErr, stateErr, pincodeErr, nameErr, moobileErr, saveLayoutAction, continuePayment;
-//    LinearLayout saveLayoutAction;
-//    ArrayList<Address> addressList = new ArrayList<>();;
+    public static Context mContext;
+    EditText city, street, state, pincode, name, mobile;
+    TextView savedAdd, cityErr, streetErr, stateErr, pincodeErr, nameErr, mobileErr, saveLayoutAction, continuePayment;
+    AsyncHttpClient client;
+    RecyclerView recyclerViewAddress;
+    ArrayList<Address> addressList;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_address);
-        context = NewAddressActivity.this;
+        mContext = NewAddressActivity.this;
+        client = new AsyncHttpClient();
 
         String s = getIntent().getStringExtra("newAdd");
         init();
         if (!(s==null)){
+            addressList = new ArrayList<>();
             continuePayment.setVisibility(View.GONE);
+            savedAdd.setVisibility(View.VISIBLE);
+            recyclerViewAddress.setVisibility(View.VISIBLE);
+            getAddress();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    recyclerViewAddress.setLayoutManager(new LinearLayoutManager(mContext));
+                    recyclerViewAddress.setAdapter(new AddressAdapter(addressList));
+                }
+            }, 500);
+
+
         }
 
         continuePayment.setOnClickListener(new View.OnClickListener() {
@@ -50,12 +84,13 @@ public class NewAddressActivity extends AppCompatActivity {
     }
 
     public void init(){
+        savedAdd = findViewById(R.id.saved_addresses);
         street = findViewById(R.id.address_street);
         city = findViewById(R.id.address_city);
         state = findViewById(R.id.address_state);
         pincode = findViewById(R.id.address_pincode);
         name = findViewById(R.id.address_name);
-        moobile = findViewById(R.id.address_mob);
+        mobile = findViewById(R.id.address_mob);
         saveLayoutAction = findViewById(R.id.add_new_address);
         continuePayment = findViewById(R.id.continue_payment);
         streetErr = findViewById(R.id.streetErrTxt);
@@ -63,16 +98,43 @@ public class NewAddressActivity extends AppCompatActivity {
         stateErr = findViewById(R.id.stateErrTxt);
         pincodeErr = findViewById(R.id.pincodeErrTxt);
         nameErr = findViewById(R.id.nameErrTxt);
-        moobileErr = findViewById(R.id.mobileErrTxt);
+        mobileErr = findViewById(R.id.mobileErrTxt);
+        recyclerViewAddress = findViewById(R.id.recycler_view_address);
+        savedAdd.setVisibility(View.GONE);
+        recyclerViewAddress.setVisibility(View.GONE);
     }
 
-    public void save(boolean res){
+    public void getAddress() {
+        client.get(BackendServer.url+"/api/ecommerce/address/", new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                super.onSuccess(statusCode, headers, response);
+                for (int i = 0; i < response.length(); i++) {
+                    JSONObject object = null;
+                    try {
+                        object = response.getJSONObject(i);
+                        Address address = new Address(object);
+                        addressList.add(address);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+    }
+
+    public void save(final boolean res){
         String streetStr = street.getText().toString().trim();
         String cityStr = city.getText().toString().trim();
         String stateStr = state.getText().toString().trim();
         String pincodeStr = pincode.getText().toString().trim();
         String nameStr = name.getText().toString().trim();
-        String mobStr = moobile.getText().toString().trim();
+        String mobStr = mobile.getText().toString().trim();
 
         if (cityStr.isEmpty()){
             cityErr.setVisibility(View.VISIBLE);
@@ -108,10 +170,10 @@ public class NewAddressActivity extends AppCompatActivity {
             nameErr.setVisibility(View.GONE);
         }
         if (mobStr.isEmpty()){
-            moobileErr.setVisibility(View.VISIBLE);
-            moobileErr.setText("Please provide the necessary details.");
+            mobileErr.setVisibility(View.VISIBLE);
+            mobileErr.setText("Please provide the necessary details.");
         } else {
-            moobileErr.setVisibility(View.GONE);
+            mobileErr.setVisibility(View.GONE);
         }
         if (cityStr.length()==0){
             Toast.makeText(getApplicationContext(), "Please provide the necessary details.", Toast.LENGTH_SHORT).show();
@@ -136,34 +198,97 @@ public class NewAddressActivity extends AppCompatActivity {
             return;
         }if (mobStr.length()==0){
             Toast.makeText(getApplicationContext(), "Please provide the necessary details.", Toast.LENGTH_SHORT).show();
-            moobile.requestFocus();
+            mobile.requestFocus();
             return;
         }
 
-        Address address = new Address();
-        address.setCity(cityStr);
-        address.setStreet(streetStr);
-        address.setPincode(pincodeStr);
-        address.setState(stateStr);
-        address.setBuyerName(nameStr);
-        address.setMobile(mobStr);
+        RequestParams params = new RequestParams();
+        params.put("title", nameStr);
+        params.put("city", cityStr);
+        params.put("state", stateStr);
+        params.put("street", streetStr);
+        params.put("pincode", pincodeStr);
+        params.put("primary", false);
+        params.put("landMark", "");
+        params.put("country", "India");
+        params.put("user", "1");
+        params.put("lat", "");
+        params.put("lon", "");
 
-        String addressStr = address.getBuyerName()+"\n"+address.getStreet()+"\n"+address.getCity()+", "+address.getState()+" "+address.getPincode()+"\n"+address.getMobile();
+        client.post(BackendServer.url+"/api/ecommerce/address/", params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                try {
+                    String title = response.getString("title");
+                    String city = response.getString("city");
+                    String landMark = response.getString("landMark");
+                    String street = response.getString("street");
+                    String pincode = response.getString("pincode");
+                    String state = response.getString("state");
+//                    boolean primary = response.getBoolean("primary");
+                    String country = response.getString("country");
+
+                    String addressStr = title+"\n"+street+"\n"+landMark+"\n"+city+", "+state+" "+pincode+"\n"+country;
 
 
-        address.addAddressList(addressStr);
-        Toast.makeText(getApplicationContext(), "Saved" +address.getAddressList().size(), Toast.LENGTH_SHORT).show();
-        if (res){
-            startActivity(new Intent(this, PaymentActivity.class).putExtra("address",addressStr));
-        } else {
-            finish();
-        }
+                    if (res){
+                        startActivity(new Intent(mContext, PaymentActivity.class).putExtra("address",addressStr));
+                    } else {
+                        finish();
+                        Toast.makeText(getApplicationContext(), "Saved" +addressStr, Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+
+
 
     }
 
-//    public void addAddressList(Address addresslist) {
-//        this.addressList.add(0, addresslist);
-//    }
-//    public ArrayList<Address> getAddressList(){ return this.addressList; }
 
+    private class AddressAdapter extends RecyclerView.Adapter<MyViewHolder> {
+        ArrayList<Address> addresses;
+
+        public AddressAdapter(ArrayList<Address> addressList) {
+            this.addresses = addressList;
+        }
+
+        @NonNull
+        @Override
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_address_list, viewGroup, false);
+            return new MyViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+            Address address = addresses.get(position);
+            holder.addresstxt.setText(address.getTitle()+"\n"+address.getStreet()+"\n"+address.getLandMark()+"\n"+address.getCity()+", "+address.getState()+" "+address.getPincode()+"\n"+address.getCountry());
+        }
+
+        @Override
+        public int getItemCount() {
+            return addresses.size();
+        }
+    }
+
+    private class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView addresstxt;
+        LinearLayout deliveryAction;
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+            addresstxt =  itemView.findViewById(R.id.address_text);
+            deliveryAction =  itemView.findViewById(R.id.delivery_action);
+            deliveryAction.setVisibility(View.GONE);
+        }
+    }
 }

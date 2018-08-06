@@ -18,6 +18,7 @@
             android:scrollbars="vertical"
             android:scrollbarStyle="outsideOverlay"
             >
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -26,11 +27,38 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_horizontal_margin"
                 >
+                <TextView android:id="@+id/saved_addresses"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Saved Addresses"
+                    android:textSize="14dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="@dimen/margin_medium"
+                    />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_address"
+                    android:scrollbars="none"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
                 <LinearLayout android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
+                    android:paddingTop="@dimen/activity_horizontal_margin"
                     >
+                    <TextView android:id="@+id/new_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Create New Address"
+                        android:textSize="14dp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textColor="@color/colorAccent"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        />
                     <LinearLayout android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -172,6 +200,7 @@
                     android:orientation="horizontal"
                     android:weightSum="2"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:background="@color/orange_light"
                     >
 

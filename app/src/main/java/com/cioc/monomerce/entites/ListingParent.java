@@ -1,5 +1,7 @@
 package com.cioc.monomerce.entites;
 
+import com.cioc.monomerce.BackendServer;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,8 +52,10 @@ public class ListingParent {
                 this.filesLink = filesObject.getString("link");
                 String filesAttachment = filesObject.getString("attachment");
                 if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment==null){
-                    this.filesAttachment = "http://192.168.1.114:8000/media/ecommerce/pictureUploads/1532692600_38_admin_ecommerce.jpg";
-                } else { this.filesAttachment = filesAttachment; }
+                    this.filesAttachment = BackendServer.url+"/media/ecommerce/pictureUploads/1532692600_38_admin_ecommerce.jpg";
+                } else {
+                    this.filesAttachment = filesAttachment;
+                }
                 this.filesMediaType = filesObject.getString("mediaType");
             }
 

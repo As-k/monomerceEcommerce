@@ -92,7 +92,7 @@ public class CartListActivity extends AppCompatActivity {
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
-        },500);
+        },1000);
     }
 
     @Override

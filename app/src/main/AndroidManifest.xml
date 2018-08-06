@@ -69,7 +69,7 @@
         <activity
             android:name=".options.NewAddressActivity"
             android:label="@string/new_address"
-            android:theme="@style/AppTheme.NoActionBar" />
+            />
         <activity
             android:name=".payment.PaymentActivity"
             android:label="@string/payment"
@@ -95,6 +95,7 @@
             android:name=".options.OrderActivity"
             android:label="@string/title_activity_order"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".options.OrderDetailsActivity"
             android:label="@string/title_activity_order_details"></activity>
     </application>
