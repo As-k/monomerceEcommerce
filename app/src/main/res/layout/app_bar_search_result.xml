@@ -24,7 +24,7 @@
             <ImageView
                 android:layout_width="80dp"
                 android:layout_height="40dp"
-                android:src="@drawable/sterlin_select" />
+                android:src="@drawable/sterling_select" />
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

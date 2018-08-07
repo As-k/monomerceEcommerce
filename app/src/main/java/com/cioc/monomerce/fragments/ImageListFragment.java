@@ -34,12 +34,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.GenericProduct;
 import com.cioc.monomerce.entites.ListingParent;
-import com.cioc.monomerce.notification.NotificationCountSetClass;
-import com.cioc.monomerce.options.CartListActivity;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
@@ -264,6 +262,7 @@ public class ImageListFragment extends Fragment {
             }*/
 
             final ListingParent parent = mValues.get(position);
+
             final Uri uri = Uri.parse(parent.getFilesAttachment());
             holder.mImageView.setImageURI(uri);
             Double d = Double.parseDouble(parent.getProductPrice());
@@ -273,13 +272,13 @@ public class ImageListFragment extends Fragment {
 
             holder.itemName.setText(parent.getProductName());
             if (parent.getProductDiscount().equals("0")){
-                holder.itemPrice.setText("Rs. "+ price);
+                holder.itemPrice.setText("\u20B9"+ price);
                 holder.itemDiscountPrice.setVisibility(View.GONE);
                 holder.itemDiscount.setVisibility(View.GONE);
             } else {
-                holder.itemPrice.setText("Rs. "+price1);
+                holder.itemPrice.setText("\u20B9"+price1);
                 holder.itemDiscountPrice.setVisibility(View.VISIBLE);
-                holder.itemDiscountPrice.setText("Rs. "+price);
+                holder.itemDiscountPrice.setText("\u20B9"+price);
                 holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.itemDiscount.setVisibility(View.VISIBLE);
                 holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");

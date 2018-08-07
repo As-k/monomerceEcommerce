@@ -30,7 +30,6 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:layout_weight="9.5"
-        android:background="#f7f7f7"
         android:orientation="vertical"
         >
 
@@ -191,7 +190,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/gen_white"
-            android:text="Rs 8,750"
+            android:text="\u20B90"
             android:textSize="14dp"
             android:textColor="@color/gen_black"
             android:textStyle="bold"

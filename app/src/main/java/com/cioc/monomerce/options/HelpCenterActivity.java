@@ -11,7 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.FrequentlyQuestions;
 import com.loopj.android.http.AsyncHttpClient;
@@ -33,7 +33,8 @@ public class HelpCenterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help_center);
-        client = new AsyncHttpClient();
+        BackendServer backend = new BackendServer(this);
+        client = backend.getHTTPClient();
         questions = new ArrayList<>();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

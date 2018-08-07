@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Address;
 import com.cioc.monomerce.payment.PaymentActivity;
@@ -46,8 +46,10 @@ public class NewAddressActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_address);
         mContext = NewAddressActivity.this;
-        client = new AsyncHttpClient();
 
+        BackendServer backend = new BackendServer(mContext);
+        client = backend.getHTTPClient();
+        getSupportActionBar().hide();
         String s = getIntent().getStringExtra("newAdd");
         init();
         if (!(s==null)){

@@ -43,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/text_view_style"
-                    android:text="Rs. 499"
+                    android:text="\u20B9 499"
                     android:padding="@dimen/margin_medium"
                     android:layout_marginStart="0dp"
                     />
@@ -59,7 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/text_view_style"
-                    android:text="Rs. 49999"
+                    android:text="\u20B9 49999"
                     android:padding="@dimen/margin_medium"
                     android:layout_marginStart="0dp"
                     />

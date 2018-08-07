@@ -1,8 +1,13 @@
 package com.cioc.monomerce.startup;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -18,12 +23,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.GenericProduct;
@@ -38,7 +48,9 @@ import com.cioc.monomerce.options.MyAccountActivity;
 import com.cioc.monomerce.options.OrderActivity;
 import com.cioc.monomerce.options.SearchResultActivity;
 import com.cioc.monomerce.options.WishlistActivity;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.merhold.extensiblepageindicator.ExtensiblePageIndicator;
 
@@ -46,8 +58,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -58,7 +71,10 @@ public class MainActivity extends AppCompatActivity
     public static int notificationCountCart = 0;
     static ViewPager viewPager;
     static TabLayout tabLayout;
-
+    Context context;
+    TextView userName;
+    LinearLayout navHeadLayout;
+    SimpleDraweeView userImage;
     private SliderImageFragmentAdapter mSliderImageFragmentAdapter;
     private ViewPager mViewPager;
     private ExtensiblePageIndicator extensiblePageIndicator;
@@ -69,13 +85,14 @@ public class MainActivity extends AppCompatActivity
     public static ArrayList<OfferBanners> offerBannersList;
     public static ArrayList<Cart> cartList;;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.context = MainActivity.this;
 
-        client = new AsyncHttpClient();
+        BackendServer backend = new BackendServer(context);
+        client = backend.getHTTPClient();
         genericProducts = new ArrayList<GenericProduct>();
         offerBannersList = new ArrayList<OfferBanners>();
         cartList = new ArrayList<>();
@@ -108,20 +125,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+//        View v =  navigationView.inflateHeaderView(R.layout.nav_header_main);
+        View v =  navigationView.getHeaderView(0);
+        navHeadLayout = v.findViewById(R.id.nav_head_ll);
+        userName = v.findViewById(R.id.user_name);
+        userImage = v.findViewById(R.id.user_image);
 
-         viewPager = (ViewPager) findViewById(R.id.viewpager);
-         tabLayout = (TabLayout) findViewById(R.id.tabs);
-
-
-
-        /*  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            });*/
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         initCollapsingToolbar();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -132,11 +143,16 @@ public class MainActivity extends AppCompatActivity
                     setupViewPager(viewPager);
                     tabLayout.setupWithViewPager(viewPager);
                 }
-
             }
         },1000);
+        getUserDetails();
 
-
+        navHeadLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(context, MyAccountActivity.class));
+            }
+        });
 
     }
 
@@ -149,14 +165,30 @@ public class MainActivity extends AppCompatActivity
         invalidateOptionsMenu();
     }
 
+    private Boolean exit = false;
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+            return;
         }
+        if (exit) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(this, "Press again to Exit.",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
+
+        }
+
     }
 
     @Override
@@ -350,10 +382,86 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, EmptyActivity.class));
         }
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    void getUserDetails() {
+        client.get(BackendServer.url + "/api/HR/users/?mode=mySelf&format=json", new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                Log.e("MainActivity","onSuccess");
+                super.onSuccess(statusCode, headers, response);
+                try {
+                    JSONObject usrObj = response.getJSONObject(0);
+//                    pk = usrObj.getInt("pk");
+                    String username = usrObj.getString("username");
+                    String firstName = usrObj.getString("first_name");
+                    String lastName = usrObj.getString("last_name");
+                    String email = usrObj.getString("email");
+                    JSONObject profileObj = usrObj.getJSONObject("profile");
+
+                    String dpLink = profileObj.getString("displayPicture");
+                    String mobile = profileObj.getString("mobile");
+
+                    userName.setText(firstName+" "+lastName);
+                    Uri uri = Uri.parse(dpLink);
+                    userImage.setImageURI(uri);
+//                    emailId.setText(email);
+//                    if (!mobile.equals("null"))
+//                        mobileNo.setText(mobile);
+
+//                    String[] image = dpLink.split("/"); //Backend.serverUrl+"/media/HR/images/DP/"
+//                    String dp = image[7];
+//                    Log.e("image "+dpLink,""+dp);
+
+//                    client.get(dpLink, new FileAsyncHttpResponseHandler() {
+//                        @Override
+//                        public void onSuccess(int statusCode, Header[] headers, File file) {
+//                            // Do something with the file `response`
+//
+//                            FileOutputStream outputStream;
+//                            try {
+//                                file1 = new File(Environment.getExternalStorageDirectory()+"/Monomerce"+ "/" + dp);
+//                                if (file1.exists())
+//                                    file1.delete();
+//                                outputStream = new FileOutputStream(file1);
+//                                outputStream.write(dp.getBytes());
+//                                outputStream.close();
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                            Log.e("image",""+file1.getAbsolutePath());
+//                            Bitmap pp = BitmapFactory.decodeFile(file.getAbsolutePath());
+//                            profileImage.setImageBitmap(pp);
+//                        }
+//                        @Override
+//                        public void onFailure(int statusCode, Header[] headers,Throwable e, File file) {
+//                            // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+//                            Log.e("failure-image",""+file.getAbsolutePath());
+//                            System.out.println("failure");
+//                            System.out.println(statusCode);
+//                        }
+//                    });
+                } catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Log.e("MainActivity","onFailure");
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e("MainActivity","onFinish");
+            }
+        });
     }
 
     static class Adapter extends FragmentPagerAdapter {

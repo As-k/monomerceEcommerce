@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.ListingParent;
@@ -65,7 +65,8 @@ public class CartListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_list);
         mContext = CartListActivity.this;
-        client = new AsyncHttpClient();
+        BackendServer backend = new BackendServer(this);
+        client = backend.getHTTPClient();
         cartList = new ArrayList<>();
 
         getCardItem();
@@ -98,7 +99,7 @@ public class CartListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        textTotalPrice.setText("Rs "+CartListRecyclerViewAdapter.mPrice);
+        textTotalPrice.setText("\u20B9"+CartListRecyclerViewAdapter.mPrice);
     }
 
     public void getCardItem() {
@@ -190,17 +191,17 @@ public class CartListActivity extends AppCompatActivity {
             holder.productName.setText(parent.getProductName());
             holder.itemsQuantity.setText(cart.getQuantity());
             if (parent.getProductDiscount().equals("0")){
-                holder.itemPrice.setText("Rs. "+parent.getProductPrice());
+                holder.itemPrice.setText("\u20B9"+parent.getProductPrice());
                 holder.actualPrice.setVisibility(View.GONE);
                 holder.discountPercentage.setVisibility(View.GONE);
                 mPrice = mPrice + (parent.getProductIntPrice()*Integer.parseInt(cart.getQuantity()));
             } else {
-                holder.itemPrice.setText("Rs. "+parent.getProductDiscountedPrice());
+                holder.itemPrice.setText("\u20B9"+parent.getProductDiscountedPrice());
                 mPrice = mPrice + (parent.getProductIntDiscountedPrice()*Integer.parseInt(cart.getQuantity()));
                 holder.discountPercentage.setVisibility(View.VISIBLE);
                 holder.discountPercentage.setText("("+parent.getProductDiscount()+"% OFF)");
                 holder.actualPrice.setVisibility(View.VISIBLE);
-                holder.actualPrice.setText(parent.getProductPrice());
+                holder.actualPrice.setText("\u20B9"+parent.getProductPrice());
                 holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
             }
 
@@ -230,8 +231,6 @@ public class CartListActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     moveWishList(cart);
-//                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//                    imageUrlUtils.addWishlistImageUri(cart.getListingParent().getFilesAttachment());
                     holder.cardWishList.setImageResource(R.drawable.ic_favorite_black_18dp);
                     notifyDataSetChanged();
 //                    Toast.makeText(mContext,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
@@ -246,15 +245,7 @@ public class CartListActivity extends AppCompatActivity {
                     int quantRemove = Integer.parseInt(quan);
                     if (quantRemove <= 1) {
                         deleteItem(cart, position);
-//                        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//                        imageUrlUtils.removeCartListImageUri(position);
-//                        notifyDataSetChanged();
-//                        //Decrease notification count
-//                        MainActivity.notificationCountCart--;
-//                        layoutCartNoItems.setVisibility(View.VISIBLE);
-//                        layoutCartItems.setVisibility(View.GONE);
-//                        layoutCartPayments.setVisibility(View.GONE);
-//                        mStepView.setVisibility(View.GONE);
+
                     } else {
                         quantRemove--;
                         updateItem(String.valueOf(quantRemove), cart);

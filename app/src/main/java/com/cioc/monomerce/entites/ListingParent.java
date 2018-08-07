@@ -1,6 +1,6 @@
 package com.cioc.monomerce.entites;
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,18 +46,23 @@ public class ListingParent {
             this.specifications = str;
 
             JSONArray filesArray = jsonObject.getJSONArray("files");
-            for(int i=0; i<filesArray.length(); i++) {
-                JSONObject filesObject = filesArray.getJSONObject(i);
-                this.filesPk = filesObject.getString("pk");
-                this.filesLink = filesObject.getString("link");
-                String filesAttachment = filesObject.getString("attachment");
-                if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment==null){
-                    this.filesAttachment = BackendServer.url+"/media/ecommerce/pictureUploads/1532692600_38_admin_ecommerce.jpg";
-                } else {
-                    this.filesAttachment = filesAttachment;
+            if (filesArray==null){
+                this.filesAttachment = BackendServer.url+"/static/images/ecommerce.jpg";
+            } else {
+                for (int i = 0; i < filesArray.length(); i++) {
+                    JSONObject filesObject = filesArray.getJSONObject(i);
+                    this.filesPk = filesObject.getString("pk");
+                    this.filesLink = filesObject.getString("link");
+                    String filesAttachment = filesObject.getString("attachment");
+                    if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment == null) {
+                        this.filesAttachment = BackendServer.url + "/static/images/ecommerce.jpg";
+                    } else {
+                        this.filesAttachment = filesAttachment;
+                    }
+                    this.filesMediaType = filesObject.getString("mediaType");
                 }
-                this.filesMediaType = filesObject.getString("mediaType");
             }
+
 
             JSONArray dfsArray = jsonObject.getJSONArray("dfs");
             for (int i=0; i<dfsArray.length(); i++) {

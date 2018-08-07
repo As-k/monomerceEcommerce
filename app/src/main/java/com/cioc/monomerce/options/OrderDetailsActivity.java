@@ -13,24 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
-import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.Order;
 import com.cioc.monomerce.entites.OrderQtyMap;
-import com.cioc.monomerce.payment.PaymentActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,7 +53,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_details);
         mContext = OrderDetailsActivity.this;
-        client = new AsyncHttpClient();
+        BackendServer backend = new BackendServer(mContext);
+        client = backend.getHTTPClient();
         orders = new ArrayList<>();
         final String address = getIntent().getExtras().getString("address");
         int pos = getIntent().getExtras().getInt("pos");

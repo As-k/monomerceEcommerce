@@ -14,21 +14,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.startup.MainActivity;
-import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.githang.stepview.StepView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -51,7 +48,8 @@ public class WishlistActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ProgressBar progressBar;
     Button bStartShopping;
-    public static LinearLayout layoutCartItems, layoutCartPayments, layoutCartNoItems;
+    TextView noItem;
+    public static LinearLayout layoutCartItems, layoutCartNoItems;
     public AsyncHttpClient client;
     public static ArrayList<Cart> wishList;
 
@@ -60,10 +58,12 @@ public class WishlistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist);
         mContext = WishlistActivity.this;
-        client = new AsyncHttpClient();
+        BackendServer backend = new BackendServer(mContext);
+        client = backend.getHTTPClient();
         wishList = new ArrayList<>();
 
         getWishListItem();
+
 
 //        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
 //        ArrayList<String> wishlistImageUri = imageUrlUtils.getWishlistImageUri();
@@ -74,6 +74,7 @@ public class WishlistActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                setCartLayout();
                 progressBar.setVisibility(View.GONE);
                 recyclerView.setLayoutManager(recyclerViewLayoutManager);
                 recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(wishList));
@@ -85,16 +86,17 @@ public class WishlistActivity extends AppCompatActivity {
         layoutCartItems = findViewById(R.id.layout_items);
         layoutCartNoItems = findViewById(R.id.layout_cart_empty);
         bStartShopping =  findViewById(R.id.bAddNew);
+        noItem =  findViewById(R.id.tvInfo);
 
-        if (MainActivity.notificationCountCart >0) {
+        if (wishList.size() >0) {
             layoutCartNoItems.setVisibility(View.GONE);
             layoutCartItems.setVisibility(View.VISIBLE);
-            layoutCartPayments.setVisibility(View.VISIBLE);
+//            layoutCartPayments.setVisibility(View.VISIBLE);
 
         } else {
             layoutCartNoItems.setVisibility(View.VISIBLE);
             layoutCartItems.setVisibility(View.GONE);
-            layoutCartPayments.setVisibility(View.GONE);
+            noItem.setText("No items yet");
 
             bStartShopping.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -194,17 +196,17 @@ public class WishlistActivity extends AppCompatActivity {
 
             holder.productName.setText(parent.getProductName());
             if (parent.getProductDiscount().equals("0")){
-                holder.itemPrice.setText("Rs "+parent.getProductPrice());
+                holder.itemPrice.setText("\u20B9"+parent.getProductPrice());
                 holder.actualPrice.setVisibility(View.GONE);
                 holder.discountPercentage.setVisibility(View.GONE);
 //                mPrice = mPrice + (parent.getProductIntPrice()*Integer.parseInt(cart.getQuantity()));
             } else {
-                holder.itemPrice.setText("Rs "+parent.getProductDiscountedPrice());
+                holder.itemPrice.setText("\u20B9"+parent.getProductDiscountedPrice());
 //                mPrice = mPrice + (parent.getProductIntDiscountedPrice()*Integer.parseInt(cart.getQuantity()));
                 holder.discountPercentage.setVisibility(View.VISIBLE);
                 holder.discountPercentage.setText("("+parent.getProductDiscount()+"% OFF)");
                 holder.actualPrice.setVisibility(View.VISIBLE);
-                holder.actualPrice.setText(parent.getProductPrice());
+                holder.actualPrice.setText("\u20B9"+parent.getProductPrice());
                 holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
             }
 

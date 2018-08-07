@@ -1,5 +1,7 @@
 package com.cioc.monomerce.entites;
 
+import com.cioc.monomerce.backend.BackendServer;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,15 +52,19 @@ public class ListingLite {
             this.productDiscountedPrice = String.valueOf(this.productIntDiscountedPrice);
 
             JSONArray filesArray = jsonObject.getJSONArray("files");
-            for(int i=0; i<filesArray.length(); i++) {
-                JSONObject filesObject = filesArray.getJSONObject(i);
-                this.filesPk = filesObject.getString("pk");
-                this.filesLink = filesObject.getString("link");
-                String filesAttachment = filesObject.getString("attachment");
-                if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment==null){
-                    this.filesAttachment = "http://192.168.1.114:8000/media/ecommerce/pictureUploads/1532690173_89_admin_ecommerce.jpg";
-                } else this.filesAttachment = filesAttachment;
-                this.filesMediaType = filesObject.getString("mediaType");
+            if (filesArray==null){
+                this.filesAttachment = BackendServer.url+"/static/images/ecommerce.jpg";
+            } else {
+                for (int i = 0; i < filesArray.length(); i++) {
+                    JSONObject filesObject = filesArray.getJSONObject(i);
+                    this.filesPk = filesObject.getString("pk");
+                    this.filesLink = filesObject.getString("link");
+                    String filesAttachment = filesObject.getString("attachment");
+                    if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment == null) {
+                        this.filesAttachment = BackendServer.url+"/media/ecommerce/pictureUploads/1532690173_89_admin_ecommerce.jpg";
+                    } else this.filesAttachment = filesAttachment;
+                    this.filesMediaType = filesObject.getString("mediaType");
+                }
             }
 
             JSONObject parentType = jsonObject.getJSONObject("parentType");

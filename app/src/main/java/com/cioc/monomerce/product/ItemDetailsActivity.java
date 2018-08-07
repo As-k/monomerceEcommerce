@@ -7,13 +7,10 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
@@ -30,30 +27,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.ListingLite;
-import com.cioc.monomerce.entites.ParentType;
-import com.cioc.monomerce.fragments.ImageListFragment;
 import com.cioc.monomerce.fragments.ViewPagerActivity;
 import com.cioc.monomerce.notification.NotificationCountSetClass;
 import com.cioc.monomerce.options.CartListActivity;
-import com.cioc.monomerce.options.WishlistActivity;
 import com.cioc.monomerce.startup.MainActivity;
-import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.ResponseHandlerInterface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -78,7 +69,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_details);
         mContext = ItemDetailsActivity.this;
-        client = new AsyncHttpClient();
+        BackendServer backend = new BackendServer(mContext);
+        client = backend.getHTTPClient();
         listingLites = new ArrayList<>();
 
         //Getting image uri from previous screen
@@ -162,15 +154,15 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
         textViewItemName.setText(lite.getProductName());
         if (lite.getProductDiscount().equals("0")){
-            textViewItemPrice.setText("Rs. "+lite.getProductPrice());
+            textViewItemPrice.setText("\u20B9"+lite.getProductPrice());
             textViewItemDiscount.setVisibility(View.GONE);
             textViewItemDiscountPrice.setVisibility(View.GONE);
         } else {
-            textViewItemPrice.setText("Rs. "+lite.getProductDiscountedPrice());
+            textViewItemPrice.setText("\u20B9"+lite.getProductDiscountedPrice());
             textViewItemDiscount.setVisibility(View.VISIBLE);
             textViewItemDiscount.setText("("+lite.getProductDiscount()+"% OFF)");
             textViewItemDiscountPrice.setVisibility(View.VISIBLE);
-            textViewItemDiscountPrice.setText(lite.getProductPrice());
+            textViewItemDiscountPrice.setText("\u20B9"+lite.getProductPrice());
             textViewItemDiscountPrice.setPaintFlags(textViewItemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
@@ -194,11 +186,10 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//                        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//                        imageUrlUtils.addCartListImageUri(stringImageUri);
                         Toast.makeText(ItemDetailsActivity.this,"Item added to cart.", Toast.LENGTH_SHORT).show();
                         MainActivity.notificationCountCart++;
                         NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+
                     }
 
                     @Override
@@ -206,7 +197,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                         Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT).show();
                     }
                 });
-                
             }
         });
 
@@ -263,8 +253,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
             }
 
             @Override
@@ -304,9 +292,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -327,10 +312,26 @@ public class ItemDetailsActivity extends AppCompatActivity {
             invalidateOptionsMenu();*/
             return true;
         }else if (id == R.id.action_wishlist) {
-//            ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//            imageUrlUtils.addWishlistImageUri(stringImageUri);
+            lite = listingLites.get(0);
             item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_white_24dp));
-            Toast.makeText(getApplicationContext(),"Item added to wishlist.", Toast.LENGTH_SHORT).show();
+            RequestParams params = new RequestParams();
+            params.put("product", lite.getProductPk());
+            params.put("qty", "1");
+            params.put("type", "favourite");
+            params.put("user", "1");
+            client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    Toast.makeText(getApplicationContext(),"Item added to wishlist.", Toast.LENGTH_SHORT).show();
+
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    Toast.makeText(mContext, "This Product is already in wishlist.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -25,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.product.ItemDetailsActivity;
@@ -266,21 +266,19 @@ public class AllItemsShowActivity extends AppCompatActivity {
 
             holder.itemName.setText(parent.getProductName());
             if (parent.getProductDiscount().equals("0")){
-                holder.itemPrice.setText("Rs. "+ price);
+                holder.itemPrice.setText("\u20B9"+ price);
                 holder.itemDiscountPrice.setVisibility(View.GONE);
                 holder.itemDiscount.setVisibility(View.GONE);
 
             } else {
-                holder.itemPrice.setText("Rs. "+price1);
+                holder.itemPrice.setText("\u20B9"+price1);
                 holder.itemDiscountPrice.setVisibility(View.VISIBLE);
-                holder.itemDiscountPrice.setText("Rs. "+price);
+                holder.itemDiscountPrice.setText("\u20B9"+price);
                 holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.itemDiscount.setVisibility(View.VISIBLE);
                 holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
 
             }
-
-
 
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override

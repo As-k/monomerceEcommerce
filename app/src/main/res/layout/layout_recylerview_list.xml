@@ -2,14 +2,12 @@
 <ScrollView android:id="@+id/activity_category_list"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="#f7f7f7"
     android:layout_height="match_parent"
     android:scrollbars="none"
     >
     <LinearLayout android:id="@+id/layout_items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#f7f7f7"
         android:orientation="vertical"
         >
         <android.support.v7.widget.RecyclerView
@@ -38,7 +36,7 @@
             android:textSize="@dimen/text_size_large"
             android:textAlignment="center"
             android:layout_gravity="center"
-            android:background="@drawable/more_item_shap"
+            android:background="@drawable/more_item_shape"
             />
 
     </LinearLayout>

@@ -14,10 +14,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Address;
-import com.cioc.monomerce.entites.Order;
 import com.cioc.monomerce.payment.PaymentActivity;
 import com.githang.stepview.StepView;
 import com.loopj.android.http.AsyncHttpClient;
@@ -45,7 +44,8 @@ public class CheckOutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_out);
         mContext = CheckOutActivity.this;
-        client = new AsyncHttpClient();
+        BackendServer backend = new BackendServer(this);
+        client = backend.getHTTPClient();
         addresses = new ArrayList<>();
         getAddress();
 
@@ -58,7 +58,7 @@ public class CheckOutActivity extends AppCompatActivity {
             @Override
             public void run() {
                 init();
-                textAmount.setText("Rs. "+getIntent().getExtras().getInt("totalPrice"));
+                textAmount.setText("\u20B9"+getIntent().getExtras().getInt("totalPrice"));
                 recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                 recyclerView.setAdapter(new CheckOutActivity.AddressRecyclerViewAdapter(addresses));
                 newAddressBtn.setOnClickListener(new View.OnClickListener() {

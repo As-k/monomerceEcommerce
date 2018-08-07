@@ -23,7 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cioc.monomerce.BackendServer;
+import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.ProductMeta;
 import com.cioc.monomerce.fragments.AllItemsShowActivity;
@@ -41,7 +41,7 @@ import cz.msebera.android.httpclient.Header;
 
 
 public class SearchResultActivity extends AppCompatActivity {
-    AsyncHttpClient httpClient;
+    AsyncHttpClient client;
     ArrayList<ProductMeta> productMetas;
     ListView searchList;
     TextView searchResult;
@@ -53,7 +53,8 @@ public class SearchResultActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        httpClient = new AsyncHttpClient();
+        BackendServer backend = new BackendServer(SearchResultActivity.this);
+        client = backend.getHTTPClient();
         productMetas = new ArrayList<>();
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_all_items);
@@ -71,7 +72,6 @@ public class SearchResultActivity extends AppCompatActivity {
                 finish();
             }
         });
-
 
         searchResult = findViewById(R.id.search_result);
         searchList = findViewById(R.id.search_list);
@@ -125,7 +125,7 @@ public class SearchResultActivity extends AppCompatActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
             productMetas.clear();
-            httpClient.get(BackendServer.url + "/api/ecommerce/searchProduct/?limit=10&search="+query, new JsonHttpResponseHandler() {
+            client.get(BackendServer.url + "/api/ecommerce/searchProduct/?limit=10&search="+query, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     super.onSuccess(statusCode, headers, response);

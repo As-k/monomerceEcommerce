@@ -13,8 +13,7 @@
         >
         <ScrollView android:id="@+id/contacts_form"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:scrollbars="vertical"
             android:scrollbarStyle="outsideOverlay"
             >
@@ -41,13 +40,15 @@
                     android:id="@+id/recycler_view_address"
                     android:scrollbars="none"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/activity_horizontal_margin"
+                    />
 
                 <LinearLayout android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:paddingTop="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/margin_small"
                     >
                     <TextView android:id="@+id/new_address"
                         android:layout_width="match_parent"
