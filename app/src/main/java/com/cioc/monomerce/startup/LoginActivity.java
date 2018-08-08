@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private CookieStore httpCookieStore;
     private AsyncHttpClient client;
     SessionManager sessionManager;
-    public static boolean res, loc;
+//    public static boolean res;
     String csrfId, sessionId;
 
     public static File file;
@@ -132,7 +132,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         for (int i = 1; i < 6; i++) {
             if (requestCode == i){
                 if (grantResults.length > 0
@@ -143,6 +142,11 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    public void register(View view) {
+        Intent i = new Intent(getApplicationContext(), RegistrationActivity.class);
+        startActivity(i);
     }
 
 //    public void forgotPassword(View v){

@@ -179,7 +179,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 RequestParams params = new RequestParams();
-                params.put("product", lite.getProductPk());
+                params.put("product", lite.getPk());
                 params.put("qty", "1");
                 params.put("type", "card");
                 params.put("user", "1");
@@ -204,7 +204,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 RequestParams params = new RequestParams();
-                params.put("product", lite.getProductPk());
+                params.put("product", lite.getPk());
                 params.put("qty", "1");
                 params.put("typ", "cart");
                 params.put("user", "1");
@@ -315,7 +315,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
             lite = listingLites.get(0);
             item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_white_24dp));
             RequestParams params = new RequestParams();
-            params.put("product", lite.getProductPk());
+            params.put("product", lite.getPk());
             params.put("qty", "1");
             params.put("type", "favourite");
             params.put("user", "1");

@@ -71,18 +71,27 @@ public class MyAccountActivity extends AppCompatActivity {
                     String lastName = usrObj.getString("last_name");
                     String email = usrObj.getString("email");
                     JSONObject profileObj = usrObj.getJSONObject("profile");
+                    String mobile = profileObj.getString("mobile");
+                    profileName.setText(firstName+" "+lastName);
 
                     String dpLink = profileObj.getString("displayPicture");
-                    String mobile = profileObj.getString("mobile");
+                    if (dpLink==null||dpLink.equals("null")){
+                        dpLink = BackendServer.url+"/static/images/userIcon.png";
+                    }
 
-                    profileName.setText(firstName+" "+lastName);
 //                    emailId.setText(email);
 //                    if (!mobile.equals("null"))
 //                        mobileNo.setText(mobile);
 
                     String[] image = dpLink.split("/"); //Backend.serverUrl+"/media/HR/images/DP/"
-                    String dp = image[7];
-                    Log.e("image "+dpLink,""+dp);
+                    String dp;
+                    if (dpLink.equals(BackendServer.url+"/static/images/userIcon.png")){
+                        dp = image[5];
+                    } else {
+                        dp = image[7];
+                        Log.e("image "+dpLink,""+dp);
+                    }
+
 
                     client.get(dpLink, new FileAsyncHttpResponseHandler(context) {
                         @Override

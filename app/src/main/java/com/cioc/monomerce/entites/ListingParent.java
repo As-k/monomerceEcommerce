@@ -46,7 +46,7 @@ public class ListingParent {
             this.specifications = str;
 
             JSONArray filesArray = jsonObject.getJSONArray("files");
-            if (filesArray==null){
+            if (filesArray==null||filesArray.equals("null")|| filesArray.equals("")){
                 this.filesAttachment = BackendServer.url+"/static/images/ecommerce.jpg";
             } else {
                 for (int i = 0; i < filesArray.length(); i++) {

@@ -54,12 +54,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".startup.LoginActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
-        <intent-filter>
-            <action android:name="com.cioc.libreerp.LoginActivity" />
+            <intent-filter>
+                <action android:name="com.cioc.libreerp.LoginActivity" />
 
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".startup.MainActivity"
@@ -102,15 +103,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".options.NewAddressActivity"
-            android:label="@string/new_address"
-            />
+            android:label="@string/new_address" />
         <activity
             android:name=".payment.PaymentActivity"
             android:label="@string/payment"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".fragments.AllItemsShowActivity"
-            android:label="@string/title_activity_all_items_show"
+            android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".fragments.FilterItemsActivity"
@@ -129,9 +129,16 @@
             android:name=".options.OrderActivity"
             android:label="@string/title_activity_order"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".options.OrderDetailsActivity"
+            android:label="@string/title_activity_order_details" />
+        <activity
+            android:name=".startup.RegistrationActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".startup.GetOTPActivity"
+            android:theme="@style/AppTheme.NoActionBar">
 
-        <activity android:name=".options.OrderDetailsActivity"
-            android:label="@string/title_activity_order_details"></activity>
+        </activity>
     </application>
 
 </manifest>

@@ -57,6 +57,7 @@ public class CartListActivity extends AppCompatActivity {
     public static LinearLayout layoutCartItems, layoutCartPayments, layoutCartNoItems;
     public AsyncHttpClient client;
     public static int price=0;
+    RecyclerView recyclerView;
 //    public static ArrayList<Cart> cartList = MainActivity.cartList;
     public static ArrayList<Cart> cartList;
 
@@ -80,26 +81,35 @@ public class CartListActivity extends AppCompatActivity {
         mStepView.setSteps(steps);
         mStepView.selectedStep(1);
 
-        final RecyclerView recyclerView = findViewById(R.id.recyclerview);
+        recyclerView = findViewById(R.id.recyclerview);
         textTotalPrice = findViewById(R.id.text_action_bottom1);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                progressBar.setVisibility(View.GONE);
-                RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
-                recyclerView.setLayoutManager(recyclerViewLayoutManager);
-                CartListRecyclerViewAdapter adapter = new CartListActivity.CartListRecyclerViewAdapter(cartList, price);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+               setCartListRecyclerView();
             }
         },1000);
+    }
+
+    void setCartListRecyclerView(){
+        progressBar.setVisibility(View.GONE);
+        RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
+        recyclerView.setLayoutManager(recyclerViewLayoutManager);
+        CartListRecyclerViewAdapter adapter = new CartListActivity.CartListRecyclerViewAdapter(cartList, price);
+        recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                textTotalPrice.setText("\u20B9"+CartListRecyclerViewAdapter.mPrice);
+            }
+        },500);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        textTotalPrice.setText("\u20B9"+CartListRecyclerViewAdapter.mPrice);
     }
 
     public void getCardItem() {
@@ -245,7 +255,6 @@ public class CartListActivity extends AppCompatActivity {
                     int quantRemove = Integer.parseInt(quan);
                     if (quantRemove <= 1) {
                         deleteItem(cart, position);
-
                     } else {
                         quantRemove--;
                         updateItem(String.valueOf(quantRemove), cart);
@@ -255,6 +264,7 @@ public class CartListActivity extends AppCompatActivity {
                         } else mPrice = mPrice - parent.getProductIntDiscountedPrice();
                     }
                     notifyDataSetChanged();
+                    notifyItemChanged(position);
                 }
             });
 
@@ -270,6 +280,7 @@ public class CartListActivity extends AppCompatActivity {
                     } else mPrice = mPrice + parent.getProductIntDiscountedPrice();
                     holder.itemsQuantity.setText(quantAdd+"");
                     notifyDataSetChanged();
+                    notifyItemChanged(position);
                 }
             });
         }
@@ -294,7 +305,7 @@ public class CartListActivity extends AppCompatActivity {
                         layoutCartPayments.setVisibility(View.GONE);
                         mStepView.setVisibility(View.GONE);
                     }
-                    notifyDataSetChanged();
+                    notifyItemChanged(position);
                 }
 
                 @Override
@@ -311,6 +322,7 @@ public class CartListActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "updated cart"+ cart.getPk(), Toast.LENGTH_SHORT).show();
+                    notifyDataSetChanged();
                 }
 
                 @Override
@@ -328,6 +340,7 @@ public class CartListActivity extends AppCompatActivity {
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "onSuccess", Toast.LENGTH_SHORT).show();
                     MainActivity.notificationCountCart--;
+                    notifyDataSetChanged();
                 }
 
                 @Override
