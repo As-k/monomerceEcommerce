@@ -16,6 +16,7 @@ public class ListingParent {
     boolean approved;
     public String filesPk, filesLink, filesAttachment, filesMediaType;
     JSONObject jsonObject;
+    JSONArray array;
 
     public ListingParent() {
     }
@@ -46,11 +47,12 @@ public class ListingParent {
             this.specifications = str;
 
             JSONArray filesArray = jsonObject.getJSONArray("files");
-            if (filesArray==null||filesArray.equals("null")|| filesArray.equals("")){
+            if (filesArray==null|| filesArray.equals("null")|| filesArray.equals("[]")){
                 this.filesAttachment = BackendServer.url+"/static/images/ecommerce.jpg";
             } else {
-                for (int i = 0; i < filesArray.length(); i++) {
-                    JSONObject filesObject = filesArray.getJSONObject(i);
+                array = filesArray;
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject filesObject = array.getJSONObject(i);
                     this.filesPk = filesObject.getString("pk");
                     this.filesLink = filesObject.getString("link");
                     String filesAttachment = filesObject.getString("attachment");

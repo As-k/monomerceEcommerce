@@ -19,18 +19,28 @@ import android.widget.Toast;
 
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.backend.BackendServer;
+import com.cioc.monomerce.entites.Address;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.options.CartListActivity;
+import com.cioc.monomerce.options.CheckOutActivity;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.githang.stepview.StepView;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
@@ -44,14 +54,22 @@ public class PaymentActivity extends AppCompatActivity {
     AsyncHttpClient client;
     RadioGroup radioGroup;
     RadioButton radioButtonCOD, radioButtonCard;
+//    ArrayList<Address> addresses;
+    ArrayList<Cart> cardlist = CartListActivity.cartList;
+    String addressPk;
+    JSONObject jsonObj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
 
+        BackendServer server = new BackendServer(this);
+        client = server.getHTTPClient();
         String address = getIntent().getExtras().getString("address");
-
+        addressPk = getIntent().getExtras().getString("pk");
+//        addresses = CheckOutActivity.addresses;
+        getAddress();
         mContext = PaymentActivity.this;
         BackendServer backend = new BackendServer(this);
         client = backend.getHTTPClient();
@@ -68,7 +86,7 @@ public class PaymentActivity extends AppCompatActivity {
         RecyclerView.LayoutManager recylerViewLayoutManager = new LinearLayoutManager(mContext);
 
         recyclerView.setLayoutManager(recylerViewLayoutManager);
-        recyclerView.setAdapter(new PaymentActivity.PaymentRecyclerViewAdapter(recyclerView, CartListActivity.cartList));
+        recyclerView.setAdapter(new PaymentActivity.PaymentRecyclerViewAdapter(recyclerView, cardlist));
 
         selectedAddress.setText(address);
         textAmount.setText(getIntent().getStringExtra("totalPrice"));
@@ -78,10 +96,19 @@ public class PaymentActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 if (i==R.id.radio_cod){
                     Toast.makeText(PaymentActivity.this, "Cod", Toast.LENGTH_SHORT).show();
+                    paymentBtn.setText("ORDER");
                 }
                 if (i==R.id.radio_card){
                     Toast.makeText(PaymentActivity.this, "Card", Toast.LENGTH_SHORT).show();
+                    paymentBtn.setText("PAYMENT");
                 }
+            }
+        });
+
+        paymentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                payment(paymentBtn.getText().toString().equals("ORDER"));
             }
         });
     }
@@ -95,6 +122,114 @@ public class PaymentActivity extends AppCompatActivity {
         radioButtonCard = findViewById(R.id.radio_card);
         radioButtonCOD = findViewById(R.id.radio_cod);
     }
+
+    public void getAddress() {
+        client.get(BackendServer.url+"/api/ecommerce/address/"+addressPk+"/", new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                jsonObj =  response;
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+        });
+    }
+
+    public void payment(boolean res) {
+//        Address address = addresses.get(CheckOutActivity.pos);
+
+        JSONObject object = new JSONObject();
+        try {
+            object.put("city", jsonObj.getString("city"));
+            object.put("country", jsonObj.getString("country"));
+            object.put("landMark", jsonObj.getString("landMark"));
+            String mobile = jsonObj.getString("mobileNo");
+            if (mobile.equals("null") || mobile==null){
+                object.put("mobile", "");
+            } else object.put("mobile", mobile);
+
+            object.put("mobileNo", "");
+            object.put("lat", "");
+            object.put("lon", "");
+            object.put("pincode", jsonObj.getString("pincode"));
+            object.put("pk", jsonObj.getString("pk"));
+            object.put("primary", jsonObj.getBoolean("primary"));
+            object.put("state", jsonObj.getString("state"));
+            object.put("street", jsonObj.getString("street"));
+            object.put("title", jsonObj.getString("title"));
+            object.put("user", jsonObj.getString("user"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        JSONArray array = new JSONArray();
+        try {
+            for (int i = 0; i < cardlist.size(); i++) {
+                Cart cart = cardlist.get(i);
+                JSONObject product = new JSONObject();
+                product.put("pk", Integer.parseInt(cart.getListingParent().getPk()));
+                product.put("qty", Integer.parseInt(cart.getQuantity()));
+                array.put(product);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestParams params = new RequestParams();
+        params.put("address", object);
+        params.put("products", array);
+        params.put("modeOfShopping", "online");
+        params.put("promoCode", "");
+        params.put("promoCodeDiscount", 0);
+        if (res) {
+            params.put("modeOfPayment", "COD" );
+            params.put("paidAmount", 0 );
+
+            client.post(BackendServer.url+"/api/ecommerce/createOrder/", params, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                    try {
+                        String ordno =response.getString("odnumber");
+                        Toast.makeText(PaymentActivity.this, ""+ordno, Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                    Toast.makeText(PaymentActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                }
+
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                    Toast.makeText(PaymentActivity.this, "onFinish", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+    }
+
+
+
 
     public static class PaymentRecyclerViewAdapter
             extends RecyclerView.Adapter<PaymentActivity.PaymentRecyclerViewAdapter.ViewHolder> {
@@ -160,41 +295,18 @@ public class PaymentActivity extends AppCompatActivity {
             });
 
             holder.productName.setText(parent.getProductName());
-//            holder.itemsQuantity.setText(cart.getQuantity());
             if (parent.getProductDiscount().equals("0")){
                 holder.itemPrice.setText("\u20B9"+parent.getProductPrice());
                 holder.actualPrice.setVisibility(View.GONE);
                 holder.discountPercentage.setVisibility(View.GONE);
-//                mPrice = mPrice + (parent.getProductIntPrice()*Integer.parseInt(cart.getQuantity()));
             } else {
                 holder.itemPrice.setText("\u20B9"+parent.getProductDiscountedPrice());
-//                mPrice = mPrice + (parent.getProductIntDiscountedPrice()*Integer.parseInt(cart.getQuantity()));
                 holder.discountPercentage.setVisibility(View.VISIBLE);
                 holder.discountPercentage.setText("("+parent.getProductDiscount()+"% OFF)");
                 holder.actualPrice.setVisibility(View.VISIBLE);
                 holder.actualPrice.setText("\u20B9"+parent.getProductPrice());
                 holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
             }
-
-//            //Set click action
-//            holder.mLayoutRemove.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//                    imageUrlUtils.removeCartListImageUri(position);
-//                    notifyDataSetChanged();
-//                    //Decrease notification count
-//                    MainActivity.notificationCountCart--;
-//
-//                }
-//            });
-//
-//            //Set click action
-//            holder.mLayoutEdit.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                }
-//            });
         }
 
         @Override

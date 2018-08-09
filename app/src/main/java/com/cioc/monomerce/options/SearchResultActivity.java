@@ -118,6 +118,7 @@ public class SearchResultActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 query = query.toLowerCase();
                 productMetas.clear();
+                productList.clearData();
                 client.get(BackendServer.url + "/api/ecommerce/searchProduct/?limit=10&search="+query, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {

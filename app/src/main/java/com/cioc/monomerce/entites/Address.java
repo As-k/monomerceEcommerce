@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class Address {
     public String pk, user, name, city, street, pincode, state, buyerName, mobile, country, title, landMark, lat, lon;
+    boolean primary;
     ArrayList<String> addressList = new ArrayList<>();
     JSONObject object;
 
@@ -26,8 +27,12 @@ public class Address {
         this.street = object.getString("street");
         this.pincode = object.getString("pincode");
         this.state = object.getString("state");
+        this.primary = object.getBoolean("primary");
 //        this.buyerName = object.getString("buyerName");
-//        this.mobile = object.getString("mobile");
+        String mobile = object.getString("mobileNo");
+        if (mobile.equals("null") || mobile==null){
+            this.mobile = "";
+        } else this.mobile = mobile;
         this.country = object.getString("country");
         this.title = object.getString("title");
         this.landMark = object.getString("landMark");
@@ -138,6 +143,14 @@ public class Address {
 
     public void setLon(String lon) {
         this.lon = lon;
+    }
+
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
     }
 
     public void addAddressList(String addresslist) {

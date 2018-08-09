@@ -60,26 +60,7 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="@dimen/margin_medium"
                         />
-                    <LinearLayout android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="@dimen/margin_medium"
-                        >
-                        <android.support.design.widget.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            >
-                            <EditText
-                                android:layout_width="match_parent"
-                                android:id="@+id/address_city"
-                                android:hint="City*"
-                                android:inputType="textPostalAddress"
-                                style="@style/edit_text_style"/>
-                        </android.support.design.widget.TextInputLayout>
-                        <TextView
-                            android:id="@+id/cityErrTxt"
-                            style="@style/error_text_msg"/>
-                    </LinearLayout>
+
                     <LinearLayout android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -99,6 +80,70 @@
                         <TextView
                             android:id="@+id/streetErrTxt"
                             style="@style/error_text_msg"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        >
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            >
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:id="@+id/address_landmark"
+                                android:hint="Land Mark"
+                                android:inputType="textPostalAddress"
+                                style="@style/edit_text_style"/>
+                        </android.support.design.widget.TextInputLayout>
+                        <TextView
+                            android:id="@+id/landmarkErrTxt"
+                            style="@style/error_text_msg"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        >
+                        <LinearLayout android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            >
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:id="@+id/address_city"
+                                android:hint="City*"
+                                android:inputType="textPostalAddress"
+                                style="@style/edit_text_style"/>
+                        </android.support.design.widget.TextInputLayout>
+                        <TextView
+                            android:id="@+id/cityErrTxt"
+                            style="@style/error_text_msg"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            >
+                            <android.support.design.widget.TextInputLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                                <EditText
+                                    android:layout_width="match_parent"
+                                    android:id="@+id/address_state"
+                                    android:hint="State*"
+                                    android:inputType="textPostalAddress"
+                                    style="@style/edit_text_style"/>
+                            </android.support.design.widget.TextInputLayout>
+                            <TextView
+                                android:id="@+id/stateErrTxt"
+                                style="@style/error_text_msg"/>
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -134,13 +179,13 @@
                                 android:layout_height="wrap_content">
                                 <EditText
                                     android:layout_width="match_parent"
-                                    android:id="@+id/address_state"
-                                    android:hint="State*"
+                                    android:id="@+id/address_country"
+                                    android:hint="Country*"
                                     android:inputType="textPostalAddress"
                                     style="@style/edit_text_style"/>
                             </android.support.design.widget.TextInputLayout>
                             <TextView
-                                android:id="@+id/stateErrTxt"
+                                android:id="@+id/countryErrTxt"
                                 style="@style/error_text_msg"/>
                         </LinearLayout>
                     </LinearLayout>
@@ -193,6 +238,15 @@
                             android:id="@+id/mobileErrTxt"
                             style="@style/error_text_msg"/>
                     </LinearLayout>
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/primary_address"
+                        android:text=" Primary Address "
+                        android:layout_marginBottom="@dimen/margin_medium"
+                        />
+
             </LinearLayout>
                 <LinearLayout android:id="@+id/save_new_address"
                     android:layout_width="match_parent"

@@ -147,7 +147,15 @@ public class ImageListFragment extends Fragment {
                 if (listingParents.size()==0) {
                     progressBar.setVisibility(View.VISIBLE);
                     moreItems.setVisibility(View.GONE);
+                } else if (listingParents.size()>0){
+                    progressBar.setVisibility(View.GONE);
+                    StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                    recyclerView.setLayoutManager(layoutManager);
+                    CategoriesRecyclerViewAdapter viewAdapter = new CategoriesRecyclerViewAdapter(listingParents, fragmentName);
+                    recyclerView.setAdapter(viewAdapter);
+                    viewAdapter.notifyDataSetChanged();
                 }
+
                 if (listingParents.size()>10) {
                     moreItems.setVisibility(View.VISIBLE);
                     moreItems.setOnClickListener(new View.OnClickListener() {
@@ -160,14 +168,8 @@ public class ImageListFragment extends Fragment {
                     });
                 } else
                     moreItems.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                recyclerView.setLayoutManager(layoutManager);
-                CategoriesRecyclerViewAdapter viewAdapter = new CategoriesRecyclerViewAdapter(listingParents, fragmentName);
-                recyclerView.setAdapter(viewAdapter);
-                viewAdapter.notifyDataSetChanged();
             }
-        },2000);
+        },1000);
 
 
 
@@ -262,8 +264,12 @@ public class ImageListFragment extends Fragment {
             }*/
 
             final ListingParent parent = mValues.get(position);
-
-            final Uri uri = Uri.parse(parent.getFilesAttachment());
+            String file;
+            final Uri uri;
+            if (parent.getFilesAttachment().equals("null")){
+                file = BackendServer.url+"/static/images/ecommerce.jpg";
+                uri = Uri.parse(file);
+            }else uri = Uri.parse(parent.getFilesAttachment());
             holder.mImageView.setImageURI(uri);
             Double d = Double.parseDouble(parent.getProductPrice());
             final int price = (int) Math.round(d);

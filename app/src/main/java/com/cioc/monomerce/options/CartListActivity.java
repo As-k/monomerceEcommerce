@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -370,7 +371,11 @@ public class CartListActivity extends AppCompatActivity {
             checkOutAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", CartListRecyclerViewAdapter.mPrice));
+                    if (CartListRecyclerViewAdapter.mPrice<=0){
+                        Log.d("TAG", "price is zero");
+                    } else {
+                        startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", CartListRecyclerViewAdapter.mPrice));
+                    }
                 }
             });
 

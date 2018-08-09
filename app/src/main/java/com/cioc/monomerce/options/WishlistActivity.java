@@ -222,6 +222,14 @@ public class WishlistActivity extends AppCompatActivity {
                 }
             });
 
+            holder.mLayoutRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    deleteItem(cart, position);
+                    notifyDataSetChanged();
+                }
+            });
+
             //Set click action for wishlist
             holder.moveToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -265,13 +273,13 @@ public class WishlistActivity extends AppCompatActivity {
 //                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
 //                    imageUrlUtils.removeCartListImageUri(position);
                     //Decrease notification count
-                    MainActivity.notificationCountCart--;
-                    if (MainActivity.notificationCountCart==0) {
-                        layoutCartNoItems.setVisibility(View.VISIBLE);
+//                    MainActivity.notificationCountCart--;
+//                    if (MainActivity.notificationCountCart==0) {
+//                        layoutCartNoItems.setVisibility(View.VISIBLE);
 //                        layoutCartItems.setVisibility(View.GONE);
 //                        layoutCartPayments.setVisibility(View.GONE);
 //                        mStepView.setVisibility(View.GONE);
-                    }
+//                    }
                     notifyDataSetChanged();
                 }
 

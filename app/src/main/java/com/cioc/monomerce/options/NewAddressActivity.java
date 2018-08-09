@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,9 +36,10 @@ import cz.msebera.android.httpclient.Header;
 
 public class NewAddressActivity extends AppCompatActivity {
     public static Context mContext;
-    EditText city, street, state, pincode, name, mobile;
-    TextView savedAdd, cityErr, streetErr, stateErr, pincodeErr, nameErr, mobileErr, saveLayoutAction, continuePayment;
+    EditText city, street, landMark, state, pincode, country, name, mobile;
+    TextView savedAdd, cityErr, streetErr, stateErr, pincodeErr, landMarkErr, countryErr, nameErr, mobileErr, saveLayoutAction, continuePayment;
     AsyncHttpClient client;
+    CheckBox primaryAdd;
     RecyclerView recyclerViewAddress;
     ArrayList<Address> addressList;
 
@@ -54,19 +56,20 @@ public class NewAddressActivity extends AppCompatActivity {
         init();
         if (!(s==null)){
             addressList = new ArrayList<>();
-            continuePayment.setVisibility(View.GONE);
-            savedAdd.setVisibility(View.VISIBLE);
-            recyclerViewAddress.setVisibility(View.VISIBLE);
             getAddress();
+            continuePayment.setVisibility(View.GONE);
+            recyclerViewAddress.setVisibility(View.VISIBLE);
+            recyclerViewAddress.setVisibility(View.VISIBLE);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if (addressList.size()<=0) {
+                        savedAdd.setVisibility(View.GONE);
+                    }
                     recyclerViewAddress.setLayoutManager(new LinearLayoutManager(mContext));
                     recyclerViewAddress.setAdapter(new AddressAdapter(addressList));
                 }
-            }, 500);
-
-
+            }, 1000);
         }
 
         continuePayment.setOnClickListener(new View.OnClickListener() {
@@ -89,16 +92,21 @@ public class NewAddressActivity extends AppCompatActivity {
         savedAdd = findViewById(R.id.saved_addresses);
         street = findViewById(R.id.address_street);
         city = findViewById(R.id.address_city);
+        landMark = findViewById(R.id.address_landmark);
         state = findViewById(R.id.address_state);
         pincode = findViewById(R.id.address_pincode);
+        country = findViewById(R.id.address_country);
         name = findViewById(R.id.address_name);
         mobile = findViewById(R.id.address_mob);
+        primaryAdd = findViewById(R.id.primary_address);
         saveLayoutAction = findViewById(R.id.add_new_address);
         continuePayment = findViewById(R.id.continue_payment);
         streetErr = findViewById(R.id.streetErrTxt);
+        landMarkErr = findViewById(R.id.landmarkErrTxt);
         cityErr = findViewById(R.id.cityErrTxt);
         stateErr = findViewById(R.id.stateErrTxt);
         pincodeErr = findViewById(R.id.pincodeErrTxt);
+        countryErr = findViewById(R.id.countryErrTxt);
         nameErr = findViewById(R.id.nameErrTxt);
         mobileErr = findViewById(R.id.mobileErrTxt);
         recyclerViewAddress = findViewById(R.id.recycler_view_address);
@@ -132,9 +140,11 @@ public class NewAddressActivity extends AppCompatActivity {
 
     public void save(final boolean res){
         String streetStr = street.getText().toString().trim();
+        String landMarkStr = landMark.getText().toString().trim();
         String cityStr = city.getText().toString().trim();
         String stateStr = state.getText().toString().trim();
         String pincodeStr = pincode.getText().toString().trim();
+        String countryStr = country.getText().toString().trim();
         String nameStr = name.getText().toString().trim();
         String mobStr = mobile.getText().toString().trim();
 
@@ -165,6 +175,12 @@ public class NewAddressActivity extends AppCompatActivity {
         } else {
             pincodeErr.setVisibility(View.GONE);
         }
+        if (countryStr.isEmpty()){
+            countryErr.setVisibility(View.VISIBLE);
+            countryErr.setText("Please provide the necessary details.");
+        } else {
+            countryErr.setVisibility(View.GONE);
+        }
         if (nameStr.isEmpty()){
             nameErr.setVisibility(View.VISIBLE);
             nameErr.setText("Please provide the necessary details.");
@@ -194,6 +210,10 @@ public class NewAddressActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Please provide the necessary details.", Toast.LENGTH_SHORT).show();
             state.requestFocus();
             return;
+        }if (countryStr.length()==0){
+            Toast.makeText(getApplicationContext(), "Please provide the necessary details.", Toast.LENGTH_SHORT).show();
+            country.requestFocus();
+            return;
         }if (nameStr.length()==0){
             Toast.makeText(getApplicationContext(), "Please provide the necessary details.", Toast.LENGTH_SHORT).show();
             name.requestFocus();
@@ -210,9 +230,10 @@ public class NewAddressActivity extends AppCompatActivity {
         params.put("state", stateStr);
         params.put("street", streetStr);
         params.put("pincode", pincodeStr);
-        params.put("primary", false);
-        params.put("landMark", "");
-        params.put("country", "India");
+        params.put("primary", primaryAdd.isChecked());
+        params.put("landMark", landMarkStr);
+        params.put("country", countryStr);
+        params.put("mobileNo", mobStr);
         params.put("user", "1");
         params.put("lat", "");
         params.put("lon", "");
@@ -222,20 +243,24 @@ public class NewAddressActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
                 try {
+                    String pk = response.getString("pk");
                     String title = response.getString("title");
                     String city = response.getString("city");
                     String landMark = response.getString("landMark");
                     String street = response.getString("street");
                     String pincode = response.getString("pincode");
+                    String mobile = response.getString("mobileNo");
                     String state = response.getString("state");
-//                    boolean primary = response.getBoolean("primary");
+                    boolean primary = response.getBoolean("primary");
                     String country = response.getString("country");
 
-                    String addressStr = title+"\n"+street+"\n"+landMark+"\n"+city+", "+state+" "+pincode+"\n"+country;
-
+                    String addressStr = title+"\n"+street+"\n"+landMark+"\n"+city+", "+state+" "+pincode+"\n"+country+" "+mobile;
 
                     if (res){
-                        startActivity(new Intent(mContext, PaymentActivity.class).putExtra("address",addressStr));
+                        startActivity(new Intent(mContext, PaymentActivity.class)
+                                .putExtra("pk",pk)
+                                .putExtra("totalPrice", getIntent().getStringExtra("totalPrice"))
+                                .putExtra("address",addressStr));
                     } else {
                         finish();
                         Toast.makeText(getApplicationContext(), "Saved" +addressStr, Toast.LENGTH_SHORT).show();
@@ -274,7 +299,8 @@ public class NewAddressActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             Address address = addresses.get(position);
-            holder.addresstxt.setText(address.getTitle()+"\n"+address.getStreet()+"\n"+address.getLandMark()+"\n"+address.getCity()+", "+address.getState()+" "+address.getPincode()+"\n"+address.getCountry());
+            holder.addresstxt.setText(address.getTitle()+"\n"+address.getStreet()+"\n"+
+                    address.getLandMark()+"\n"+address.getCity()+", "+address.getState()+" "+address.getPincode()+"\n"+address.getCountry()+" "+address.getMobile());
         }
 
         @Override

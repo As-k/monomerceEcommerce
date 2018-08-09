@@ -37,7 +37,9 @@ public class CheckOutActivity extends AppCompatActivity {
     TextView textAmount, newAddressBtn;
     RecyclerView recyclerView;
     AsyncHttpClient client;
-    ArrayList<Address> addresses;
+    public static ArrayList<Address> addresses;
+    public static int pos;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,8 @@ public class CheckOutActivity extends AppCompatActivity {
                 newAddressBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(mContext, NewAddressActivity.class));
+                        startActivity(new Intent(mContext, NewAddressActivity.class)
+                        .putExtra("totalPrice", textAmount.getText().toString()));
                     }
                 });
             }
@@ -138,6 +141,7 @@ public class CheckOutActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+
             Address address = mAddresslist.get(position);
             holder.addresstxt.setText(address.getTitle()+"\n"+address.getStreet()+"\n"+address.getLandMark()+"\n"+address.getCity()+", "+address.getState()+" "+address.getPincode()+"\n"+address.getCountry());
 //            holder.addresstxt.setText(address);
@@ -145,8 +149,10 @@ public class CheckOutActivity extends AppCompatActivity {
             holder.deliveryAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    pos=position;
                     startActivity(new Intent(mContext, PaymentActivity.class)
                             .putExtra("address", holder.addresstxt.getText().toString())
+                            .putExtra("pk", address.getPk())
                             .putExtra("totalPrice", textAmount.getText().toString()));
 
                 }

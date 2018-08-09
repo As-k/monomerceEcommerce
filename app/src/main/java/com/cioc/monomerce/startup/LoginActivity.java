@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.backend.BackendServer;
+import com.cioc.monomerce.backend.BackgroundService;
 import com.cioc.monomerce.backend.SessionManager;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -239,7 +240,16 @@ public class LoginActivity extends AppCompatActivity {
 
                                 String csrf_token = csrfCookie.getValue();
                                 String session_id = sessionCookie.getValue();
-
+                                File dir = new File(Environment.getExternalStorageDirectory() + "/Monomerce");
+                                Log.e("MyAccountActivity", "" + Environment.getExternalStorageDirectory() + "/Monomerce");
+                                if (dir.exists())
+                                    if (dir.isDirectory()) {
+                                        String[] children = dir.list();
+                                        for (int i = 0; i < children.length; i++) {
+                                            new File(dir, children[i]).delete();
+                                        }
+                                        dir.delete();
+                                    }
                                 file = new File(Environment.getExternalStorageDirectory()+"/Monomerce");
                                 Log.e("directory",""+file.getAbsolutePath());
                                 if (file.mkdir()) {
