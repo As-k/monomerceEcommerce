@@ -203,26 +203,11 @@ public class PaymentActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
                     Toast.makeText(PaymentActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
                 }
 
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    super.onFailure(statusCode, headers, responseString, throwable);
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                    super.onFailure(statusCode, headers, throwable, errorResponse);
-                }
-
-                @Override
-                public void onFinish() {
-                    super.onFinish();
-                    Toast.makeText(PaymentActivity.this, "onFinish", Toast.LENGTH_SHORT).show();
-                }
             });
         }
 
@@ -284,12 +269,23 @@ public class PaymentActivity extends AppCompatActivity {
             final ListingParent parent = cart.getParents().get(0);
             final Uri uri = Uri.parse(cart.getListingParent().getFilesAttachment());
             holder.mImageView.setImageURI(uri);
+//            holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(mContext, ItemDetailsActivity.class);
+//                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
+//                    intent.putExtra(STRING_IMAGE_POSITION, position);
+//                    mContext.startActivity(intent);
+//                }
+//            });
+
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ItemDetailsActivity.class);
                     intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
                     intent.putExtra(STRING_IMAGE_POSITION, position);
+                    intent.putExtra("listingLitePk", parent.getPk());
                     mContext.startActivity(intent);
                 }
             });

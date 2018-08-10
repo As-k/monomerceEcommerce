@@ -10,8 +10,7 @@
         android:id="@+id/registration_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
+        >
 
         <LinearLayout
             android:id="@+id/email_login_form"
@@ -49,7 +48,7 @@
                     android:layout_width="274dp"
                     android:layout_height="wrap_content">
 
-                    <AutoCompleteTextView
+                    <EditText
                         android:id="@+id/username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -81,7 +80,7 @@
                     android:layout_width="274dp"
                     android:layout_height="wrap_content">
 
-                    <AutoCompleteTextView
+                    <EditText
                         android:id="@+id/password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -142,16 +141,18 @@
             <!--android:text="Go Back" />-->
 
 
-            <Button
+            <TextView
                 android:id="@+id/sign_in_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:onClick="userLogin"
                 android:background="@drawable/round_button_primary"
                 android:text="@string/action_sign_in"
                 android:textAllCaps="false"

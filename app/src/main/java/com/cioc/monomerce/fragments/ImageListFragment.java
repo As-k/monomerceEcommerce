@@ -264,12 +264,10 @@ public class ImageListFragment extends Fragment {
             }*/
 
             final ListingParent parent = mValues.get(position);
-            String file;
             final Uri uri;
             if (parent.getFilesAttachment().equals("null")){
-                file = BackendServer.url+"/static/images/ecommerce.jpg";
-                uri = Uri.parse(file);
-            }else uri = Uri.parse(parent.getFilesAttachment());
+                uri = Uri.parse(BackendServer.url+"/static/images/ecommerce.jpg");
+            } else uri = Uri.parse(parent.getFilesAttachment());
             holder.mImageView.setImageURI(uri);
             Double d = Double.parseDouble(parent.getProductPrice());
             final int price = (int) Math.round(d);
@@ -314,7 +312,7 @@ public class ImageListFragment extends Fragment {
                     final ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
                     if (holder.res) {
                         RequestParams params = new RequestParams();
-                        params.put("product", parent.getProductPk());
+                        params.put("product", parent.getPk());
                         params.put("qty", "1");
                         params.put("typ", "favourite");
                         params.put("user", "1");

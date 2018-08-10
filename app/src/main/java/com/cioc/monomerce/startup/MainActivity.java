@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity
         genericProducts = new ArrayList<GenericProduct>();
         offerBannersList = new ArrayList<OfferBanners>();
         cartList = new ArrayList<>();
+
         getGenericProduct();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -137,14 +138,16 @@ public class MainActivity extends AppCompatActivity
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                notificationCountCart = cartList.size();
-                if (viewPager != null) {
-                    getViewpagerFragment();
-                    setupViewPager(viewPager);
-                    tabLayout.setupWithViewPager(viewPager);
+//                while (genericProducts.size()>0) {
+                    notificationCountCart = cartList.size();
+                    if (viewPager != null) {
+                        getViewpagerFragment();
+                        setupViewPager(viewPager);
+                        tabLayout.setupWithViewPager(viewPager);
+//                    }
                 }
             }
-        },1000);
+        },2500);
         getUserDetails();
 
         navHeadLayout.setOnClickListener(new View.OnClickListener() {
@@ -403,6 +406,9 @@ public class MainActivity extends AppCompatActivity
                     JSONObject profileObj = usrObj.getJSONObject("profile");
 
                     String dpLink = profileObj.getString("displayPicture");
+                    if (dpLink.equals("null")||dpLink==null){
+                        dpLink = BackendServer.url+"static/images/userIcon.png";
+                    }
                     String mobile = profileObj.getString("mobile");
 
                     userName.setText(firstName+" "+lastName);

@@ -27,7 +27,7 @@ public class BackendServer {
         final String sessionid = sessionManager.getSessionId();
         AsyncHttpClient client = new AsyncHttpClient();
         client.addHeader("X-CSRFToken" , csrftoken);
-        client.addHeader("COOKIE" , String.format("csrftoken=%s; sessionid=%s" , csrftoken,  sessionid));
+        client.addHeader("COOKIE" , String.format("csrftoken=%s; sessionid=%s" , sessionid , csrftoken));
         return client;
     }
 

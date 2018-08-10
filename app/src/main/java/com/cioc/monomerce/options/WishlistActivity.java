@@ -129,7 +129,7 @@ public class WishlistActivity extends AppCompatActivity {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                         Log.e("Error "+statusCode, "onFailure2");
                     }
-                });
+        });
     }
 
 
@@ -147,7 +147,6 @@ public class WishlistActivity extends AppCompatActivity {
             TextView productName, itemPrice, actualPrice, discountPercentage;
             Button moveToCart;
 //            AsyncHttpClient client = new AsyncHttpClient();
-
 
             public ViewHolder(View view) {
                 super(view);
@@ -256,6 +255,7 @@ public class WishlistActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "onSuccess", Toast.LENGTH_SHORT).show();
+                    mContext.startActivity(new Intent(mContext, WishlistActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
 
                 @Override
@@ -270,16 +270,7 @@ public class WishlistActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "removed"+ cart.getPk(), Toast.LENGTH_SHORT).show();
-//                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//                    imageUrlUtils.removeCartListImageUri(position);
-                    //Decrease notification count
-//                    MainActivity.notificationCountCart--;
-//                    if (MainActivity.notificationCountCart==0) {
-//                        layoutCartNoItems.setVisibility(View.VISIBLE);
-//                        layoutCartItems.setVisibility(View.GONE);
-//                        layoutCartPayments.setVisibility(View.GONE);
-//                        mStepView.setVisibility(View.GONE);
-//                    }
+                    mContext.startActivity(new Intent(mContext, WishlistActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     notifyDataSetChanged();
                 }
 

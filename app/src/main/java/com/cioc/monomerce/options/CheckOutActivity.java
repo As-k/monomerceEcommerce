@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -119,12 +120,15 @@ public class CheckOutActivity extends AppCompatActivity {
             public final View mView;
             TextView addresstxt;
             LinearLayout deliveryAction;
+            ImageView delAdd;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
                 addresstxt =  view.findViewById(R.id.address_text);
                 deliveryAction =  view.findViewById(R.id.delivery_action);
+                delAdd =  itemView.findViewById(R.id.delete_address);
+                delAdd.setVisibility(View.GONE);
             }
         }
 

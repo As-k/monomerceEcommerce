@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Address;
 import com.cioc.monomerce.payment.PaymentActivity;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -66,7 +68,8 @@ public class NewAddressActivity extends AppCompatActivity {
                     if (addressList.size()<=0) {
                         savedAdd.setVisibility(View.GONE);
                     }
-                    recyclerViewAddress.setLayoutManager(new LinearLayoutManager(mContext));
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+                    recyclerViewAddress.setLayoutManager(linearLayoutManager);
                     recyclerViewAddress.setAdapter(new AddressAdapter(addressList));
                 }
             }, 1000);
@@ -301,21 +304,47 @@ public class NewAddressActivity extends AppCompatActivity {
             Address address = addresses.get(position);
             holder.addresstxt.setText(address.getTitle()+"\n"+address.getStreet()+"\n"+
                     address.getLandMark()+"\n"+address.getCity()+", "+address.getState()+" "+address.getPincode()+"\n"+address.getCountry()+" "+address.getMobile());
+            holder.delAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    deleteAdd(address.getPk());
+                }
+            });
         }
 
         @Override
         public int getItemCount() {
             return addresses.size();
         }
+
+        public void deleteAdd(String pk){
+            client.delete(BackendServer.url + "/api/ecommerce/address/" + pk + "/", new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    Toast.makeText(NewAddressActivity.this, "deleted", Toast.LENGTH_SHORT).show();
+                    mContext.startActivity(new Intent(mContext, NewAddressActivity.class)
+                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            .putExtra("newAdd", "set" ));
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    Toast.makeText(NewAddressActivity.this, "deleting failure", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
     private class MyViewHolder extends RecyclerView.ViewHolder {
         TextView addresstxt;
+        ImageView delAdd;
         LinearLayout deliveryAction;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             addresstxt =  itemView.findViewById(R.id.address_text);
             deliveryAction =  itemView.findViewById(R.id.delivery_action);
+            delAdd =  itemView.findViewById(R.id.delete_address);
             deliveryAction.setVisibility(View.GONE);
         }
     }

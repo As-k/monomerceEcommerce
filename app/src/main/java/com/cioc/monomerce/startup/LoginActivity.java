@@ -13,7 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cioc.monomerce.R;
@@ -36,8 +38,8 @@ import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.cookie.Cookie;
 
 public class LoginActivity extends AppCompatActivity {
-    AutoCompleteTextView username, password;//, otpEdit;
-    Button loginButton;//, getOTP;
+    EditText username, password;//, otpEdit;
+    TextView loginButton;//, getOTP;
     LinearLayout llUsername, llPassword;//, llotpEdit;
 //    TextView forgot, goBack;
     BackendServer backend = new BackendServer(this);
@@ -50,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public static File file;
     String TAG = "status";
-    boolean isGettingIntent = true;
+//    boolean isGettingIntent = true;
 
 
     @Override
@@ -61,10 +63,12 @@ public class LoginActivity extends AppCompatActivity {
         context = LoginActivity.this.getApplicationContext();
         getSupportActionBar().hide();
 
-        Bundle b = getIntent().getExtras();
-        if (b!=null){
-            isGettingIntent = b.getBoolean("boolean");
-        }
+//        String b = getIntent().getExtras().getString("res");
+//        if (b.equals("set")){
+//            startActivity(new Intent(this, LoginActivity.class)
+//            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+////            isGettingIntent = b.getBoolean("boolean");
+//        }
 
         sessionManager = new SessionManager(this);
 
@@ -72,14 +76,28 @@ public class LoginActivity extends AppCompatActivity {
         httpCookieStore.clear();
         client = new AsyncHttpClient();
         client.setCookieStore(httpCookieStore);
+        init();
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+//                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+//            return;
+//        }
 
-        isStoragePermissionGranted();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
+        if(!(sessionManager.getCsrfId() == "" && sessionManager.getCsrfId() == "")){
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
+        isStoragePermissionGranted();
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login();
+            }
+        });
 
+    }
+
+    void init() {
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
 //        otpEdit = findViewById(R.id.otpEdit);
@@ -96,20 +114,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.sign_in_button);
 //        getOTP = findViewById(R.id.get_otp);
 //        getOTP.setVisibility(View.GONE);
-
-        if(!(sessionManager.getCsrfId() == "" && sessionManager.getCsrfId() == "")){
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                login();
-            }
-        });
-
     }
+
 
     public  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -187,10 +193,10 @@ public class LoginActivity extends AppCompatActivity {
 //
 //    }
 
-    public void login(){
+    public void login() {
         Toast.makeText(this, BackendServer.url, Toast.LENGTH_LONG).show();
-        String userName = username.getText().toString().trim();
-        String pass = password.getText().toString().trim();
+        String userName = username.getText().toString();
+        String pass = password.getText().toString();
         if (userName.isEmpty()){
             username.setError("Empty");
             username.requestFocus();
@@ -255,7 +261,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if (file.mkdir()) {
                                     sessionManager.setCsrfId(csrf_token);
                                     sessionManager.setSessionId(session_id);
-                                    sessionManager.setUsername(userName);
+                                    sessionManager.setUsername(username.getText().toString());
                                     Toast.makeText(LoginActivity.this, "Dir created", Toast.LENGTH_SHORT).show();
                                     String fileContents = "csrf_token " + sessionManager.getCsrfId() + " session_id " + sessionManager.getSessionId();
                                     FileOutputStream outputStream;
@@ -269,10 +275,10 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                     Log.e("isExternalStorageWritable", "" + context.getFilesDir().getAbsoluteFile().getPath());
 
-                                    if (!isGettingIntent) {
-                                        Intent intent = new Intent();
-                                        setResult(RESULT_OK, intent);
-                                    } else
+//                                    if (!isGettingIntent) {
+//                                        Intent intent = new Intent();
+//                                        setResult(RESULT_OK, intent);
+//                                    } else
                                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                     finish();
                                 } else {

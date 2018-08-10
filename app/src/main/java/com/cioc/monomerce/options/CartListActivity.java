@@ -143,6 +143,7 @@ public class CartListActivity extends AppCompatActivity {
 
         private ArrayList<Cart> mCartlist;
         AsyncHttpClient client;
+        CartListActivity activity;
         public static int mPrice;
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
@@ -306,6 +307,7 @@ public class CartListActivity extends AppCompatActivity {
                         layoutCartPayments.setVisibility(View.GONE);
                         mStepView.setVisibility(View.GONE);
                     }
+                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     notifyItemChanged(position);
                 }
 
@@ -323,6 +325,8 @@ public class CartListActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "updated cart"+ cart.getPk(), Toast.LENGTH_SHORT).show();
+                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+//                    activity.recreate();
                     notifyDataSetChanged();
                 }
 
@@ -340,6 +344,7 @@ public class CartListActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "onSuccess", Toast.LENGTH_SHORT).show();
+                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     MainActivity.notificationCountCart--;
                     notifyDataSetChanged();
                 }
