@@ -111,7 +111,7 @@ public class SearchResultActivity extends AppCompatActivity {
 //        searchView.setSearchableInfo(
 //                searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconified(false);
-        searchView.setIconifiedByDefault(false);
+        searchView.setIconifiedByDefault(true );
         searchItem.expandActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -128,7 +128,6 @@ public class SearchResultActivity extends AppCompatActivity {
                                 JSONObject object = response.getJSONObject(i);
                                 ProductMeta userMeta = new ProductMeta(object);
                                 productMetas.add(userMeta);
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Log.e("JSONObject", "Json parsing error: " + e.getMessage());
@@ -144,7 +143,7 @@ public class SearchResultActivity extends AppCompatActivity {
                     }
                 });
 
-                return true;
+                return false;
             }
 
             @Override
@@ -163,6 +162,8 @@ public class SearchResultActivity extends AppCompatActivity {
             public boolean onClose() {
                 Log.i(TAG, "mSearchView on close ");
                 // TODO Auto-generated method stub
+                searchView.onActionViewCollapsed();
+                finish();
                 return false;
             }
         });
@@ -267,6 +268,7 @@ public class SearchResultActivity extends AppCompatActivity {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                searchView.onActionViewCollapsed();
                 finish();
                 return false;
             }

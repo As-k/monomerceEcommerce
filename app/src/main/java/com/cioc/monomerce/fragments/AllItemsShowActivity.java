@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
@@ -49,6 +52,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
     Button sortBtn, filterBtn;
     AsyncHttpClient client;
     ArrayList<ListingParent> parents;
+    String pk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +67,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
 
 //        ArrayList<Parcelable> stringArray = getIntent().getExtras().getParcelableArrayList("items");
         final String name = getIntent().getExtras().getString("fragmentName");
-        String pk = getIntent().getExtras().getString("pk");
+        pk = getIntent().getExtras().getString("pk");
 
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_all_items);
@@ -117,9 +121,9 @@ public class AllItemsShowActivity extends AppCompatActivity {
             }
         });
     }
-
+    RecyclerView recyclerViewList;
     public void clickBtn(ArrayList<ListingParent> strings){
-        RecyclerView recyclerViewList = findViewById(R.id.recyclerview_all_list);
+        recyclerViewList = findViewById(R.id.recyclerview_all_list);
         sortBtn = findViewById(R.id.sort_action_button);
         filterBtn = findViewById(R.id.filter_action_button);
         setupRecyclerView(recyclerViewList, strings);
@@ -183,19 +187,84 @@ public class AllItemsShowActivity extends AppCompatActivity {
         filterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SeekBar seekBarPrice;
+                Button filterPrice;
                 CrystalRangeSeekbar rangeSeekbar;
                 View view = getLayoutInflater().inflate(R.layout.layout_filter_categories, null, false);
-//                seekBarPrice = view.findViewById(R.id.seek_bar_price);
-                rangeSeekbar = (CrystalRangeSeekbar) view.findViewById(R.id.range_seekbar);
+                rangeSeekbar = view.findViewById(R.id.range_seekbar);
+                // get min and max text view
+                final TextView tvMin = view.findViewById(R.id.min_price);
+                final TextView tvMax = view.findViewById(R.id.max_price);
+                filterPrice = view.findViewById(R.id.show_result);
+//                set listener
+                rangeSeekbar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+                    @Override
+                    public void valueChanged(Number minValue, Number maxValue) {
+                        tvMin.setText("\u20B9"+String.valueOf(minValue));
+                        tvMax.setText("\u20B9"+String.valueOf(maxValue));
+                    }
+                });
 
-                new AlertDialog.Builder(getApplicationContext())
-                        .setView(view)
-                        .create().show();
+//                set final value listener
+                final String[] min = {""};
+                final String[] max = {""};
+                rangeSeekbar.setOnRangeSeekbarFinalValueListener(new OnRangeSeekbarFinalValueListener() {
+                    @Override
+                    public void finalValue(Number minValue, Number maxValue) {
+                        min[0] = String.valueOf(minValue);
+                        max[0] = String.valueOf(maxValue);
+                        Log.d("CRS=>", String.valueOf(minValue) + " : " + String.valueOf(maxValue));
+                    }
+                });
+                AlertDialog.Builder adb = new AlertDialog.Builder(context);
+                adb.setView(view);
+                AlertDialog ad = adb.create();
+                filterPrice.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        filterBy(min[0], max[0], ad);
+                    }
+                });
+                ad.show();
 //                startActivity(new Intent(context, FilterItemsActivity.class));
             }
         });
+    }
 
+    public void filterBy(String min, String max, AlertDialog ad) {
+        client.get(BackendServer.url+"/api/ecommerce/listing/?parent="+pk+"&recursive=1&fields={}&maxPrice="+max+"&minPrice="+min,
+                new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                        super.onSuccess(statusCode, headers, response);
+//                        Toast.makeText(context, min + " : " + max, Toast.LENGTH_SHORT).show();
+                        recyclerViewList.setVisibility(View.GONE);
+                        parents.clear();
+                        for (int i=0; i<response.length(); i++){
+                            try {
+                                JSONObject object = response.getJSONObject(i);
+                                ListingParent parent = new ListingParent(object);
+                                parents.add(parent);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerViewList.setVisibility(View.VISIBLE);
+                                setupRecyclerView(recyclerViewList, parents);
+                                ad.dismiss();
+                            }
+                        },500);
+
+
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+                });
     }
 
     public void setupRecyclerView(RecyclerView recyclerView, ArrayList<ListingParent> items) {

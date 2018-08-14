@@ -124,8 +124,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 list.notifyDataSetChanged();
             }
         },1000);
-
-
     }
 
     public void init() {
@@ -368,8 +366,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-
             return v;
         }
     }

@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +94,7 @@ public class ImageListFragment extends Fragment {
         setupRecyclerView(recyclerViewList);
     }
 
-    public ArrayList<ListingParent> items = null;
+//    public ArrayList<ListingParent> items = null;
     String fragmentName = "";
     private void setupRecyclerView(final RecyclerView recyclerView) {
       /*  if (ImageListFragment.this.getArguments().getInt("type") == 1) {
@@ -111,12 +112,14 @@ public class ImageListFragment extends Fragment {
             if (ImageListFragment.this.getArguments().getInt("type") == i+1) {
                 GenericProduct product = MainActivity.genericProducts.get(i);
                 pk = product.getPk();
+                listingParents.clear();
+                progressBar.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                moreItems.setVisibility(View.GONE);
                 if (ImageListFragment.this.getArguments().getString("pk").equals(pk)) {
-                    listingParents.clear();
+                    Log.e("pk", ""+pk);
                     getItems(pk);
-                    progressBar.setVisibility(View.VISIBLE);
-                    moreItems.setVisibility(View.GONE);
-                    items = listingParents;
+//                    items = listingParents;
                     fragmentName = product.getName();
                 }
             }
@@ -148,16 +151,17 @@ public class ImageListFragment extends Fragment {
                     progressBar.setVisibility(View.VISIBLE);
                     moreItems.setVisibility(View.GONE);
                 } else if (listingParents.size()>0){
+                    recyclerView.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
                     StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                     recyclerView.setLayoutManager(layoutManager);
                     CategoriesRecyclerViewAdapter viewAdapter = new CategoriesRecyclerViewAdapter(listingParents, fragmentName);
                     recyclerView.setAdapter(viewAdapter);
-                    viewAdapter.notifyDataSetChanged();
                 }
 
                 if (listingParents.size()>10) {
                     moreItems.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
                     moreItems.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -169,7 +173,7 @@ public class ImageListFragment extends Fragment {
                 } else
                     moreItems.setVisibility(View.GONE);
             }
-        },2000);
+        },3*1000);
     }
 
     public void getItems(String pk) {

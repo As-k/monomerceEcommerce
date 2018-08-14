@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout android:id="@+id/layout_items"
                   android:layout_width="match_parent"
                   android:layout_height="0dp"
                   android:layout_weight="10"
-                  android:background="#dfdfdf"
+                  android:background="#efefef"
                   android:orientation="vertical"
-                  tools:layout_editor_absoluteY="0dp" tools:layout_editor_absoluteX="0dp">
+                  >
         <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/text_view_style"
-                android:text="Filter By"
-                android:padding="@dimen/margin_small"
-                android:layout_marginStart="0dp"
-                android:elevation="30dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/text_view_style"
+            android:text="Filter By"
+            android:padding="@dimen/margin_small"
+            android:layout_marginStart="0dp"
+            android:elevation="30dp"/>
 
         <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
-                android:id="@+id/range_seekbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            android:id="@+id/range_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg1"
+            android:layout_margin="20dp"
+            app:corner_radius="2"
+            app:min_value="0"
+            app:max_value="1000"
+            app:left_thumb_color="@color/colorAccent"
+            app:right_thumb_color="@color/colorAccent"
+            app:bar_color="#F7BB88"
+            app:left_thumb_color_pressed="#030B47"
+            app:right_thumb_color_pressed="#030B47"
+            app:bar_highlight_color="#E07416"
+            app:data_type="_integer"/>
 
         <RelativeLayout
                 android:layout_width="match_parent"
@@ -35,8 +48,9 @@
             <TextView
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                android:id="@+id/min_price"
                     style="@style/text_view_style"
-                    android:text="\u20B9 499"
+                    android:text="\u20B9 0"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true"
                     android:layout_width="wrap_content"/>
@@ -52,10 +66,11 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                android:id="@+id/max_price"
                     android:layout_weight="1"
                     style="@style/text_view_style"
                     android:gravity="right"
-                    android:text="\u20B9 49999"
+                    android:text="\u20B9 1000"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"/>
         </RelativeLayout>

@@ -22,6 +22,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" >
 
             <ImageView
+                android:id="@+id/image_logo"
                 android:layout_width="80dp"
                 android:layout_height="40dp"
                 android:src="@drawable/sterling_select" />

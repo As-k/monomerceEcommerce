@@ -564,5 +564,4 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setAdapter(mSliderImageFragmentAdapter);
         extensiblePageIndicator.initViewPager(mViewPager);
     }
-
 }

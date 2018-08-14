@@ -95,11 +95,9 @@ public class PaymentActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 if (i==R.id.radio_cod){
-                    Toast.makeText(PaymentActivity.this, "Cod", Toast.LENGTH_SHORT).show();
                     paymentBtn.setText("ORDER");
                 }
                 if (i==R.id.radio_card){
-                    Toast.makeText(PaymentActivity.this, "Card", Toast.LENGTH_SHORT).show();
                     paymentBtn.setText("PAYMENT");
                 }
             }
@@ -140,7 +138,6 @@ public class PaymentActivity extends AppCompatActivity {
 
     public void payment(boolean res) {
 //        Address address = addresses.get(CheckOutActivity.pos);
-
         JSONObject object = new JSONObject();
         try {
             object.put("city", jsonObj.getString("city"));
@@ -165,7 +162,6 @@ public class PaymentActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         JSONArray array = new JSONArray();
         try {
             for (int i = 0; i < cardlist.size(); i++) {
@@ -184,10 +180,10 @@ public class PaymentActivity extends AppCompatActivity {
         params.put("products", array);
         params.put("modeOfShopping", "online");
         params.put("promoCode", "");
-        params.put("promoCodeDiscount", 0);
+        params.put("promoCodeDiscount", "0");
         if (res) {
             params.put("modeOfPayment", "COD" );
-            params.put("paidAmount", 0 );
+            params.put("paidAmount", "0");
 
             client.post(BackendServer.url+"/api/ecommerce/createOrder/", params, new JsonHttpResponseHandler() {
                 @Override
@@ -200,6 +196,12 @@ public class PaymentActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                    Toast.makeText(PaymentActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
