@@ -59,7 +59,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
     private Menu menu;
     AsyncHttpClient client;
     ArrayList<ListingLite> listingLites;
-    public ListingLite lite = null;
+    public ListingLite lite;
     String name, value, fieldType, helpText, unit, jsonData;
     JSONArray jsonArray = new JSONArray();
 
@@ -218,7 +218,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                         NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
                         startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
                     }
-
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                         Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT).show();

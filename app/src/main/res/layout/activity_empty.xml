@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/ivEmptyStates"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
         android:layout_marginBottom="10sp"
         android:src="@drawable/ic_mode_edit_black_18dp" />
 
@@ -18,11 +18,12 @@
         android:id="@+id/tvInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginBottom="100sp"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp"
         android:gravity="center"
         android:text="Please add your content here."
         android:textColor="#848484"
         android:textSize="15sp" />
+
 </LinearLayout>

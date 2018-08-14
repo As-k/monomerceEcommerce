@@ -169,10 +169,7 @@ public class ImageListFragment extends Fragment {
                 } else
                     moreItems.setVisibility(View.GONE);
             }
-        },1000);
-
-
-
+        },2000);
     }
 
     public void getItems(String pk) {
@@ -199,9 +196,6 @@ public class ImageListFragment extends Fragment {
             }
         });
     }
-
-
-
 
     public static class CategoriesRecyclerViewAdapter
             extends RecyclerView.Adapter<CategoriesRecyclerViewAdapter.ViewHolder> {

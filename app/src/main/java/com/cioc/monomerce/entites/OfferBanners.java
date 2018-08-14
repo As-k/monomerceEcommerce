@@ -28,7 +28,7 @@ public class OfferBanners {
             this.level = jsonObject.getString("level");
             this.title = jsonObject.getString("title");
             this.subTitle = jsonObject.getString("subtitle");
-            this.state = jsonObject.getString("state");
+//            this.state = jsonObject.getString("state");
             this.params = jsonObject.getString("params");
 
 

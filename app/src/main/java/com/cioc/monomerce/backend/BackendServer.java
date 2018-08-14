@@ -30,5 +30,4 @@ public class BackendServer {
         client.addHeader("COOKIE" , String.format("csrftoken=%s; sessionid=%s" , sessionid , csrftoken));
         return client;
     }
-
 }

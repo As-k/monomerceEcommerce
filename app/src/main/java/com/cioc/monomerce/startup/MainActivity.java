@@ -9,10 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
+import android.support.annotation.NonNull;
+import android.support.design.widget.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -71,6 +69,7 @@ public class MainActivity extends AppCompatActivity
     public static int notificationCountCart = 0;
     static ViewPager viewPager;
     static TabLayout tabLayout;
+    BottomNavigationView navigationBottom;
     Context context;
     TextView userName;
     LinearLayout navHeadLayout;
@@ -126,6 +125,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationBottom = findViewById(R.id.bottom_navigation);
+        navigation();
 //        View v =  navigationView.inflateHeaderView(R.layout.nav_header_main);
         View v =  navigationView.getHeaderView(0);
         navHeadLayout = v.findViewById(R.id.nav_head_ll);
@@ -158,7 +159,6 @@ public class MainActivity extends AppCompatActivity
         });
 
     }
-
 
     @Override
     protected void onResume() {
@@ -240,7 +240,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-
     public void getGenericProduct() {
         client.get(BackendServer.url+"/api/ecommerce/genericProduct/", new JsonHttpResponseHandler() {
             @Override
@@ -310,8 +309,6 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
-
-
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         for (int i=0; i<genericProducts.size(); i++) {
@@ -357,8 +354,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_item1) {
-            viewPager.setCurrentItem(0);
+//        if (id == R.id.nav_item1) {
+//            viewPager.setCurrentItem(0);
 //        } else if (id == R.id.nav_item2) {
 //            viewPager.setCurrentItem(1);
 //        } else if (id == R.id.nav_item3) {
@@ -369,7 +366,8 @@ public class MainActivity extends AppCompatActivity
 //            viewPager.setCurrentItem(4);
 //        }else if (id == R.id.nav_item6) {
 //            viewPager.setCurrentItem(5);
-        } else if (id == R.id.my_wishlist) {
+//        } else
+        if (id == R.id.my_wishlist) {
             startActivity(new Intent(MainActivity.this, WishlistActivity.class));
         }else if (id == R.id.my_cart) {
             startActivity(new Intent(MainActivity.this, CartListActivity.class));
@@ -379,8 +377,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, HelpCenterActivity.class));
         }else if (id == R.id.contact_us) {
                 startActivity(new Intent(MainActivity.this, FeedBackActivity.class));
-        }else if (id == R.id.my_orders) {
-                startActivity(new Intent(MainActivity.this, OrderActivity.class));
+//        }else if (id == R.id.my_orders) {
+//                startActivity(new Intent(MainActivity.this, OrderActivity.class));
         }else {
                 startActivity(new Intent(MainActivity.this, EmptyActivity.class));
         }
@@ -388,6 +386,34 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void navigation() {
+        navigationBottom.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_cart: {
+                        startActivity(new Intent(MainActivity.this, CartListActivity.class));
+                        return true;
+                    }
+                    case R.id.action_order: {
+                        startActivity(new Intent(MainActivity.this, OrderActivity.class));
+                        return true;
+                    }
+                    case R.id.action_support: {
+                        startActivity(new Intent(MainActivity.this, FeedBackActivity.class));
+                        return true;
+                    }
+                    case R.id.action_home: {
+                        startActivity(new Intent(MainActivity.this, MainActivity.class));
+
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     void getUserDetails() {

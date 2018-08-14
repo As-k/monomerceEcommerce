@@ -9,6 +9,9 @@
     <string name="action_search">Search</string>
     <string name="action_cart">Cart</string>
     <string name="action_notifications">Notifications</string>
+    <string name="action_home">Home</string>
+    <string name="action_orders">Orders</string>
+    <string name="action_support">Support</string>
 
     <string name="item_1">Offers</string>
     <string name="item_2">Electronics</string>
