@@ -182,15 +182,14 @@ public class PaymentActivity extends AppCompatActivity {
         params.put("promoCode", "");
         params.put("promoCodeDiscount", "0");
         if (res) {
-            params.put("modeOfPayment", "COD" );
+            params.put("modeOfPayment", "COD");
             params.put("paidAmount", "0");
-
             client.post(BackendServer.url+"/api/ecommerce/createOrder/", params, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
                     try {
-                        String ordno =response.getString("odnumber");
+                        String ordno = response.getString("odnumber");
                         Toast.makeText(PaymentActivity.this, ""+ordno, Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         e.printStackTrace();

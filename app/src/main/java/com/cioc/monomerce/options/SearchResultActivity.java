@@ -41,7 +41,6 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-
 public class SearchResultActivity extends AppCompatActivity {
     AsyncHttpClient client;
     ArrayList<ProductMeta> productMetas;
@@ -157,16 +156,6 @@ public class SearchResultActivity extends AppCompatActivity {
                 return false;
             }
         });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                Log.i(TAG, "mSearchView on close ");
-                // TODO Auto-generated method stub
-                searchView.onActionViewCollapsed();
-                finish();
-                return false;
-            }
-        });
         return true;
     }
 
@@ -263,16 +252,6 @@ public class SearchResultActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                searchView.onActionViewCollapsed();
-                finish();
-                return false;
-            }
-        });
         super.onBackPressed();
         finish();
     }

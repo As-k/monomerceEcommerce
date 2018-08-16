@@ -63,7 +63,7 @@ public class MyAccountActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 Log.e("MainActivity","onSuccess");
-                try {
+                 try {
                     JSONObject usrObj = response.getJSONObject(0);
                     pk = usrObj.getInt("pk");
                     String username = usrObj.getString("username");

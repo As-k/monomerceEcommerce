@@ -10,12 +10,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -556,12 +558,17 @@ public class MainActivity extends AppCompatActivity
         extensiblePageIndicator = (ExtensiblePageIndicator) findViewById(R.id.flexibleIndicator);
         mSliderImageFragmentAdapter = new SliderImageFragmentAdapter(getSupportFragmentManager());
         for (int i=0; i<offerBannersList.size(); i++) {
-            OfferBanners banners =offerBannersList.get(i);
+            OfferBanners banners = offerBannersList.get(i);
             mSliderImageFragmentAdapter.addFragment(SliderImageFragment.newInstance(android.R.color.transparent, banners.getImage()));
         }
-
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSliderImageFragmentAdapter);
         extensiblePageIndicator.initViewPager(mViewPager);
+        mViewPager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "viewPager", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

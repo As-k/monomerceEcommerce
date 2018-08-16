@@ -196,14 +196,13 @@ public class NewAddressActivity extends AppCompatActivity {
         } else {
             mobileErr.setVisibility(View.GONE);
         }
-        if (cityStr.length()==0){
-            Toast.makeText(getApplicationContext(), "Please provide the necessary details.", Toast.LENGTH_SHORT).show();
-            city.requestFocus();
-            return;
-        }
-        if (streetStr.length()==0){
+        if (streetStr.length()==0) {
             Toast.makeText(getApplicationContext(), "Please provide the necessary details.", Toast.LENGTH_SHORT).show();
             street.requestFocus();
+            return;
+        }if (cityStr.length()==0){
+            Toast.makeText(getApplicationContext(), "Please provide the necessary details.", Toast.LENGTH_SHORT).show();
+            city.requestFocus();
             return;
         }if (pincodeStr.length()==0){
             Toast.makeText(getApplicationContext(), "Please provide the necessary details.", Toast.LENGTH_SHORT).show();
