@@ -9,7 +9,8 @@ import org.json.JSONObject;
  */
 
 public class OfferBanners {
-    public String pk, user, image, imagePortrait, created, level, title, subTitle, state, params;
+    public String pk, user, image, imagePortrait, created, level, title, subTitle;
+    public String pagePk, pageCreated, pageUpdated, pageurl, body, pageTitle;
     boolean active;
     JSONObject jsonObject;
 
@@ -29,7 +30,13 @@ public class OfferBanners {
             this.title = jsonObject.getString("title");
             this.subTitle = jsonObject.getString("subtitle");
 //            this.state = jsonObject.getString("state");
-            this.params = jsonObject.getString("params");
+            JSONObject page = jsonObject.getJSONObject("page");
+            this.pagePk = page.getString("pk");
+            this.pageCreated = page.getString("created");
+            this.pageUpdated = page.getString("updated");
+            this.pageTitle = page.getString("title");
+            this.pageurl = page.getString("pageurl");
+            this.body = page.getString("body");
 
 
         } catch (JSONException e) {
@@ -103,28 +110,60 @@ public class OfferBanners {
         this.subTitle = subTitle;
     }
 
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getParams() {
-        return params;
-    }
-
-    public void setParams(String params) {
-        this.params = params;
-    }
-
     public boolean isActive() {
         return active;
     }
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getPagePk() {
+        return pagePk;
+    }
+
+    public void setPagePk(String pagePk) {
+        this.pagePk = pagePk;
+    }
+
+    public String getPageCreated() {
+        return pageCreated;
+    }
+
+    public void setPageCreated(String pageCreated) {
+        this.pageCreated = pageCreated;
+    }
+
+    public String getPageUpdated() {
+        return pageUpdated;
+    }
+
+    public void setPageUpdated(String pageUpdated) {
+        this.pageUpdated = pageUpdated;
+    }
+
+    public String getPageurl() {
+        return pageurl;
+    }
+
+    public void setPageurl(String pageurl) {
+        this.pageurl = pageurl;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public String getPageTitle() {
+        return pageTitle;
+    }
+
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
     }
 
     public JSONObject getJsonObject() {

@@ -21,7 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".startup.SplashActivity"
+        <activity
+            android:name=".startup.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -53,8 +54,8 @@
 
         <activity
             android:name=".startup.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".startup.LoginActivity"
             android:launchMode="singleTop"
@@ -73,16 +74,17 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".fragments.ViewPagerActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".fragments.ViewPagerActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".product.ItemDetailsActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".options.WishlistActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/my_wishlist" />
+            android:label="@string/my_wishlist"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".options.CartListActivity"
             android:label="@string/my_cart"
@@ -105,8 +107,9 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".miscellaneous.EmptyActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".miscellaneous.EmptyActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".options.CheckOutActivity"
             android:label="@string/checkout"
@@ -114,8 +117,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".options.NewAddressActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/new_address" />
+            android:label="@string/new_address"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".payment.PaymentActivity"
             android:label="@string/payment"
@@ -128,12 +131,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".fragments.FilterItemsActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".options.MyAccountActivity"
-            android:screenOrientation="portrait"
-            android:label="My Account" />
+            android:label="My Account"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".options.HelpCenterActivity"
             android:label="@string/title_activity_help_center"
@@ -141,26 +144,27 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".options.FeedBackActivity"
-            android:screenOrientation="portrait"
-            android:label="Feedback" />
+            android:label="Feedback"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".options.OrderActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_order"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".options.OrderDetailsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_order_details" />
+            android:label="@string/title_activity_order_details"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".startup.RegistrationActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".startup.GetOTPActivity"
+        <activity
+            android:name=".startup.GetOTPActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".startup.WebViewActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

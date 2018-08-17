@@ -246,8 +246,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                 String csrf_token = csrfCookie.getValue();
                                 String session_id = sessionCookie.getValue();
-                                File dir = new File(Environment.getExternalStorageDirectory() + "/Monomerce");
-                                Log.e("MyAccountActivity", "" + Environment.getExternalStorageDirectory() + "/Monomerce");
+                                File dir = new File(Environment.getExternalStorageDirectory() + "/"+getString(R.string.app_name1));
+                                Log.e("MyAccountActivity", "" + Environment.getExternalStorageDirectory() + "/"+getString(R.string.app_name1));
                                 if (dir.exists())
                                     if (dir.isDirectory()) {
                                         String[] children = dir.list();
@@ -256,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
                                         }
                                         dir.delete();
                                     }
-                                file = new File(Environment.getExternalStorageDirectory()+"/Monomerce");
+                                file = new File(Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name1));
                                 Log.e("directory",""+file.getAbsolutePath());
                                 if (file.mkdir()) {
                                     sessionManager.setCsrfId(csrf_token);

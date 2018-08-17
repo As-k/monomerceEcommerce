@@ -1,9 +1,12 @@
 package com.cioc.monomerce.options;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -97,7 +100,7 @@ public class CartListActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        CartListRecyclerViewAdapter adapter = new CartListActivity.CartListRecyclerViewAdapter(cartList, price);
+        CartListRecyclerViewAdapter adapter = new CartListRecyclerViewAdapter(cartList, price);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         new Handler().postDelayed(new Runnable() {
@@ -137,6 +140,19 @@ public class CartListActivity extends AppCompatActivity {
                 });
     }
 
+    @SuppressLint("NewApi")
+    public static final void recreateActivityCompat(final Activity a) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            a.recreate();
+        } else {
+            final Intent intent = a.getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//            a.finish();
+            a.overridePendingTransition(0, 0);
+            a.startActivity(intent);
+            a.overridePendingTransition(0, 0);
+        }
+    }
 
     public static class CartListRecyclerViewAdapter
             extends RecyclerView.Adapter<CartListRecyclerViewAdapter.ViewHolder> {
@@ -346,6 +362,7 @@ public class CartListActivity extends AppCompatActivity {
                     Toast.makeText(mContext, "onSuccess", Toast.LENGTH_SHORT).show();
                     mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     MainActivity.notificationCountCart--;
+//                    recreateActivityCompat(activity);
                     notifyDataSetChanged();
                 }
 

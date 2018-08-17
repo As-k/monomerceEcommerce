@@ -57,9 +57,7 @@ public class OrderActivity extends AppCompatActivity {
         BackendServer backend = new BackendServer(context);
         client = backend.getHTTPClient();
         orderList = new ArrayList<>();
-
         getOrderHistory();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -108,7 +106,6 @@ public class OrderActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                         e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -117,11 +114,7 @@ public class OrderActivity extends AppCompatActivity {
                 Toast.makeText(OrderActivity.this, "Failure", Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
-
-
 
 //    @Override
 //    public void onBackPressed() {
@@ -192,6 +185,7 @@ public class OrderActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, File response) {
                             // Do something with the file `response`
+                            Toast.makeText(OrderActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
                             final int  MEGABYTE = 1024 * 1024;
                             String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
                             File folder = new File(extStorageDirectory, "testthreepdf");
@@ -214,7 +208,6 @@ public class OrderActivity extends AppCompatActivity {
                     });
                 }
             });
-
         }
 
         @Override
@@ -239,25 +232,4 @@ public class OrderActivity extends AppCompatActivity {
             downloadInvoices = itemView.findViewById(R.id.downloads_invoice_action);
         }
     }
-
-    private class DownloadFile extends AsyncTask<String, Void, Void> {
-        @Override
-        protected Void doInBackground(String... strings) {
-            String fileUrl = strings[0];   // -> http://maven.apache.org/maven-1.x/maven.pdf
-            String fileName = strings[1];  // -> maven.pdf
-            String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-            File folder = new File(extStorageDirectory, "testthreepdf");
-            folder.mkdir();
-
-            File pdfFile = new File(folder, fileName);
-            try {
-                pdfFile.createNewFile();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-            FileDownloader.downloadFile(fileUrl, pdfFile);
-            return null;
-        }
-    }
-
 }

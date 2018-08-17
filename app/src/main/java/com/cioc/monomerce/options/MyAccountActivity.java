@@ -100,7 +100,7 @@ public class MyAccountActivity extends AppCompatActivity {
 
                             FileOutputStream outputStream;
                             try {
-                                file1 = new File(Environment.getExternalStorageDirectory()+"/Monomerce"+ "/" + dp);
+                                file1 = new File(Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name1)+ "/" + dp);
                                 if (file1.exists())
                                     file1.delete();
                                 outputStream = new FileOutputStream(file1);
@@ -183,8 +183,8 @@ public class MyAccountActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 sessionManager.clearAll();
-                                File dir = new File(Environment.getExternalStorageDirectory()+"/Monomerce");
-                                Log.e("MyAccountActivity",""+Environment.getExternalStorageDirectory()+"/Monomerce");
+                                File dir = new File(Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name));
+                                Log.e("MyAccountActivity",""+Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name));
                                 if (dir.exists())
                                     if (dir.isDirectory()) {
                                         String[] children = dir.list();

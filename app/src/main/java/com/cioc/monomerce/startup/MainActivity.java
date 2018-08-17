@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -24,8 +25,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -553,7 +556,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-
+    int pos;
     public void getViewpagerFragment() {
         extensiblePageIndicator = (ExtensiblePageIndicator) findViewById(R.id.flexibleIndicator);
         mSliderImageFragmentAdapter = new SliderImageFragmentAdapter(getSupportFragmentManager());
@@ -564,11 +567,39 @@ public class MainActivity extends AppCompatActivity
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSliderImageFragmentAdapter);
         extensiblePageIndicator.initViewPager(mViewPager);
-        mViewPager.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "viewPager", Toast.LENGTH_SHORT).show();
+        GestureDetectorCompat tapGestureDetector = new GestureDetectorCompat(this, new TapGestureListener());
+        mViewPager.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                tapGestureDetector.onTouchEvent(event);
+                return false;
             }
         });
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                pos = position;
+//                Toast.makeText(context, "viewPager"+position, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+    class TapGestureListener extends GestureDetector.SimpleOnGestureListener{
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            OfferBanners banners = offerBannersList.get(pos);
+            startActivity(new Intent(context, WebViewActivity.class)
+                    .putExtra("web",banners.getPageurl()).putExtra("title", banners.getPageTitle()));
+            return super.onSingleTapConfirmed(e);
+        }
     }
 }
