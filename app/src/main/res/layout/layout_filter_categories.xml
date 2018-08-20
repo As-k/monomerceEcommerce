@@ -31,10 +31,10 @@
             app:max_value="1000"
             app:left_thumb_color="@color/colorAccent"
             app:right_thumb_color="@color/colorAccent"
-            app:bar_color="#F7BB88"
-            app:left_thumb_color_pressed="#030B47"
-            app:right_thumb_color_pressed="#030B47"
-            app:bar_highlight_color="#E07416"
+            app:bar_color="#71ad7d"
+            app:left_thumb_color_pressed="#55d58d"
+            app:right_thumb_color_pressed="#55d58d"
+            app:bar_highlight_color="#15673e"
             app:data_type="_integer"/>
 
         <RelativeLayout

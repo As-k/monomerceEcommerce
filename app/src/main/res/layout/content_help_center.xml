@@ -41,7 +41,7 @@
                 android:layout_marginTop="@dimen/margin_small"
                 android:text="Contact us"
                 android:textStyle="normal"
-                android:textColor="@color/gen_black"
+                android:textColor="@color/text_color"
                 android:padding="@dimen/margin_small"
                 android:textSize="@dimen/text_size_large"
                 />
@@ -60,7 +60,7 @@
                     android:text="Toll free no : "
                     android:layout_gravity="center_horizontal"
                     android:textStyle="normal"
-                    android:textColor="@color/gen_black"
+                    android:textColor="@color/text_color"
                     android:paddingLeft="@dimen/margin_medium"
                     android:textSize="@dimen/text_size_medium"
                     />
@@ -91,7 +91,7 @@
                     android:layout_gravity="center_horizontal"
                     android:textStyle="normal"
                     android:paddingLeft="@dimen/margin_medium"
-                    android:textColor="@color/gen_black"
+                    android:textColor="@color/text_color"
                     android:textSize="@dimen/text_size_medium"
                     />
                 <TextView

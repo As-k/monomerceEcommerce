@@ -8,6 +8,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_item_details"
+    android:weightSum="10"
     android:layout_height="match_parent">
 
     <ProgressBar
@@ -221,29 +222,37 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:weightSum="2"
             android:orientation="horizontal"
             android:elevation="30dp"
-            android:background="@color/gen_black">
-            <TextView android:id="@+id/text_action_bottom1"
+            android:background="@color/gen_white">
+            <Button android:id="@+id/text_action_bottom1"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/gen_white"
                 android:text="ADD TO CART"
                 android:textSize="14dp"
-                android:textColor="@color/gen_black"
+                android:textColor="@color/grey_dark1"
                 android:textStyle="bold"
+                android:fontFamily="sans-serif"
                 android:gravity="center"/>
-
-            <TextView android:id="@+id/text_action_bottom2"
-                android:layout_width="0dp"
+            <View
+                android:layout_width="@dimen/view_width_small"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small"
+                android:background="@color/grey_light" />
+
+            <Button android:id="@+id/text_action_bottom2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/colorPrimary"
+                android:background="@null"
                 android:text="BUY NOW"
                 android:textSize="14dp"
-                android:textColor="@color/gen_white"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/colorAccent"
                 android:textStyle="bold"
                 android:gravity="center"/>
         </LinearLayout>

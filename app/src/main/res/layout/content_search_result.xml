@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:text="Search Result"
         android:padding="@dimen/margin_small"
+        android:textColor="@color/text_color"
         android:layout_alignBottom="@id/search_list"
         />
 

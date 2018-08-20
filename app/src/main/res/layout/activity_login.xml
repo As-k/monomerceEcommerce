@@ -74,7 +74,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:scaleType="center"
-                    app:srcCompat="@drawable/lock_icon" />
+                    app:srcCompat="@drawable/ic_lock_green_24dp" />
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="274dp"

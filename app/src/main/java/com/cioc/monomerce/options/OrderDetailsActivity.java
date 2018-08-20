@@ -36,7 +36,8 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class OrderDetailsActivity extends AppCompatActivity {
-    TextView orderShipping, linearLayoutReturn, linearLayoutCancel;
+    TextView orderShipping;
+    Button linearLayoutReturn, linearLayoutCancel;
     RecyclerView recyclerViewOrder;
     Context mContext;
     AsyncHttpClient client;

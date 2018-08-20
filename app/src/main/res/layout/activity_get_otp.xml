@@ -21,7 +21,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/text_color"
             android:text="Verify Communication Details"
             android:textSize="@dimen/text_size_large" />
 
@@ -30,8 +30,8 @@
             android:id="@+id/mobile_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="120dp"
-            android:src="@drawable/mobile_icon" />
+            android:layout_marginTop="118dp"
+            android:src="@drawable/mobile_phone_24dp" />
 
         <EditText
             android:id="@+id/mobile_otp"
@@ -49,8 +49,8 @@
             android:id="@+id/email_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="170dp"
-            android:src="@drawable/email_icon" />
+            android:layout_marginTop="168dp"
+            android:src="@drawable/email_icon_24dp" />
 
         <EditText
             android:id="@+id/email_otp"

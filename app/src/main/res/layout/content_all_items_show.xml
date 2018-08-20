@@ -25,29 +25,47 @@
         android:layout_height="45dp"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:background="@color/gen_black"
+        android:background="@color/gen_white"
         android:visibility="visible">
         <Button android:id="@+id/sort_action_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/orange_light"
+            android:background="@null"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:layout_gravity="center"
             android:text="Sort"
             android:textSize="14dp"
-            android:textColor="@color/gen_white"
+            android:drawableStart="@drawable/sort_arrows_16dp"
+            android:drawableLeft="@drawable/sort_arrows_16dp"
+            android:textColor="@color/grey_dark1"
             android:textStyle="bold"
+            android:fontFamily="sans-serif"
             android:gravity="center"/>
+        <View
+            android:layout_width="@dimen/view_width_small"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@color/grey_light" />
 
         <Button android:id="@+id/filter_action_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="@null"
+            android:fontFamily="sans-serif"
+            android:drawableStart="@drawable/filter_16dp"
+            android:drawableLeft="@drawable/filter_16dp"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
             android:text="Filter"
-            android:textSize="14dp"
-            android:textColor="@color/gen_white"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:textColor="@color/grey_dark1"
             android:textStyle="bold"
-            android:gravity="center"/>
+            android:layout_gravity="center"/>
     </LinearLayout>
 
 </LinearLayout>

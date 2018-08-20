@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         toggle.setDrawerIndicatorEnabled(false);
-        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_menu_white_24dp, getApplicationContext().getTheme());
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_menu_green_24dp, getApplicationContext().getTheme());
         toggle.setHomeAsUpIndicator(drawable);
         toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +138,10 @@ public class MainActivity extends AppCompatActivity
         navHeadLayout = v.findViewById(R.id.nav_head_ll);
         userName = v.findViewById(R.id.user_name);
         userImage = v.findViewById(R.id.user_image);
+        AnimationDrawable animationDrawable = (AnimationDrawable) navHeadLayout.getBackground();
+        animationDrawable.setEnterFadeDuration(2000);
+        animationDrawable.setExitFadeDuration(4000);
+        animationDrawable.start();
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);

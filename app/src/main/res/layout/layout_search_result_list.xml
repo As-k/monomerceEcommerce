@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:text="Search Result"
         android:textSize="@dimen/text_size_large"
-        android:textColor="#5e5b5b"
+        android:textColor="@color/grey_dark1"
         android:padding="@dimen/margin_medium"
         />
 

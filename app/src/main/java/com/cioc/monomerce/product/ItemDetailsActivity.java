@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -50,7 +51,8 @@ import cz.msebera.android.httpclient.Header;
 
 public class ItemDetailsActivity extends AppCompatActivity {
     SimpleDraweeView mImageView;
-    TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount, textViewDescriptions, textViewAddToCart, textViewBuyNow;
+    TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount, textViewDescriptions;
+    Button textViewAddToCart, textViewBuyNow;
     int imagePosition;
     String itemPk, stringImageUri;
 //    RecyclerView specificationsListView;

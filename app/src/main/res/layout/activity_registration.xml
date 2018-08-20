@@ -71,7 +71,7 @@
             android:id="@+id/email_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/email_icon"
+            android:src="@drawable/email_icon_24dp"
             android:layout_marginTop="200dp"
             android:layout_marginLeft="10dp"
             />
@@ -90,7 +90,7 @@
             android:id="@+id/mobile_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/mobile_icon"
+            android:src="@drawable/mobile_phone_24dp"
             android:layout_marginTop="250dp"
             android:layout_marginLeft="10dp"/>
         <EditText
@@ -105,13 +105,14 @@
             android:layout_toRightOf="@+id/mobile_icon"
             android:layout_marginLeft="20dp"
             android:hint="Mobile Number"/>
+
         <ImageView
             android:id="@+id/lock_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="295dp"
-            android:src="@drawable/lock_icon"
-            android:layout_marginLeft="15dp"/>
+            android:src="@drawable/ic_lock_green_24dp" />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -127,9 +128,9 @@
             android:id="@+id/conf_pass_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/lock_icon"
+            android:src="@drawable/ic_lock_green_24dp"
             android:layout_marginTop="340dp"
-            android:layout_marginLeft="15dp"/>
+            android:layout_marginLeft="10dp"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -148,7 +149,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="410dp"
-            android:background="@drawable/button_signup_shape"
+            android:background="@drawable/round_button_primary"
             android:text="Get  OTP"
             android:textAllCaps="false"
             android:textColor="@color/gen_white"

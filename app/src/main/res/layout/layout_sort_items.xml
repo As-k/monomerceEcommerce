@@ -3,15 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
         <TextView
             style="@style/text_view_style"
             android:layout_height="30dp"
             android:text="Sort"
+            android:textColor="@color/text_color"
             android:textSize="@dimen/text_size_large"
             />
-
         <TextView
             style="@style/text_view_style"
             android:layout_height="30dp"
@@ -20,7 +19,6 @@
             android:textAlignment="gravity"
             android:gravity="center_vertical"
             />
-
         <TextView
             style="@style/text_view_style"
             android:layout_height="30dp"
@@ -29,7 +27,6 @@
             android:textAlignment="gravity"
             android:gravity="center_vertical"
             />
-
         <TextView
             style="@style/text_view_style"
             android:layout_height="30dp"
@@ -38,7 +35,6 @@
             android:textAlignment="gravity"
             android:gravity="center_vertical"
             />
-
         <TextView
             style="@style/text_view_style"
             android:layout_height="30dp"

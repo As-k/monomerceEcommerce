@@ -22,10 +22,10 @@
             android:layout_height="wrap_content"
             android:paddingTop="15dp"
             android:paddingBottom="5dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/gen_white"
             app:svTextColor="@color/gen_white"
             app:svCircleColor="@color/grey_light"
-            app:svSelectedColor="@color/orange_light"
+            app:svSelectedColor="@color/text_color"
             android:visibility="visible"/>
 
         <ProgressBar
@@ -66,7 +66,7 @@
                   android:layout_width="0dp"
                   android:layout_height="match_parent"
                   android:layout_weight="1"
-                  android:background="@color/colorPrimary"
+                  android:background="@color/text_color"
                   android:text="CHECKOUT"
                   android:textSize="14dp"
                   android:textColor="@color/gen_white"

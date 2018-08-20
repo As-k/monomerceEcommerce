@@ -14,10 +14,10 @@
         android:layout_height="wrap_content"
         android:paddingTop="15sp"
         android:paddingBottom="5sp"
-        android:background="@color/colorPrimary"
+        android:background="@color/gen_white"
         app:svTextColor="@color/gen_white"
         app:svCircleColor="@color/grey_light"
-        app:svSelectedColor="@color/orange_light"/>
+        app:svSelectedColor="@color/text_color"/>
 
     <LinearLayout android:id="@+id/layout_items"
         android:layout_width="match_parent"
@@ -30,6 +30,7 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/recyclerview_address"
             android:scrollbars="none"
+            android:paddingTop="@dimen/margin_small"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -60,7 +61,7 @@
             android:layout_width="0sp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/colorPrimary"
+            android:background="@color/text_color"
             android:text="+ Add a new Address"
             android:textSize="14sp"
             android:textColor="@color/gen_white"
