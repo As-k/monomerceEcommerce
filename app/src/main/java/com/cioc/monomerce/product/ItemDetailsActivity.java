@@ -60,10 +60,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
     Context mContext;
     private Menu menu;
     AsyncHttpClient client;
-    ArrayList<ListingLite> listingLites;
-    public ListingLite lite;
+    public static ArrayList<ListingLite> listingLites;
+    public static ListingLite lite;
     String name, value, fieldType, helpText, unit, jsonData;
     JSONArray jsonArray = new JSONArray();
+    Toast toast;
 
 
     @Override
@@ -182,11 +183,15 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 params.put("product", lite.getPk());
                 params.put("qty", "1");
                 params.put("type", "card");
-                params.put("user", "1");
+                params.put("user", lite.getUser());
                 client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        Toast.makeText(ItemDetailsActivity.this,"Item added to cart.", Toast.LENGTH_SHORT).show();
+                        if (toast!= null) {
+                            toast.cancel();
+                        }
+                        toast = Toast.makeText(ItemDetailsActivity.this,"Item added to cart.", Toast.LENGTH_SHORT);
+                        toast.show();
                         MainActivity.notificationCountCart++;
                         NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
 
@@ -194,7 +199,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT).show();
+                        if (toast!= null) {
+                            toast.cancel();
+                        }
+                        toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 });
             }
@@ -207,20 +216,28 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 params.put("product", lite.getPk());
                 params.put("qty", "1");
                 params.put("typ", "cart");
-                params.put("user", "1");
+                params.put("user", lite.getUser());
                 client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 //                        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
 //                        imageUrlUtils.addCartListImageUri(stringImageUri);
-                        Toast.makeText(ItemDetailsActivity.this,"Item added to cart.", Toast.LENGTH_SHORT).show();
+                        if (toast!= null) {
+                            toast.cancel();
+                        }
+                        toast = Toast.makeText(mContext, "Item added to cart.", Toast.LENGTH_SHORT);
+                        toast.show();
                         MainActivity.notificationCountCart++;
                         NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
                         startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
                     }
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT).show();
+                        if (toast!= null) {
+                            toast.cancel();
+                        }
+                        toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 });
 
@@ -312,7 +329,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
             return true;
         }else if (id == R.id.action_wishlist) {
             lite = listingLites.get(0);
-            item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_white_24dp));
+            item.setIcon(R.drawable.ic_favorite_white_24dp);
             RequestParams params = new RequestParams();
             params.put("product", lite.getPk());
             params.put("qty", "1");
@@ -321,13 +338,22 @@ public class ItemDetailsActivity extends AppCompatActivity {
             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    Toast.makeText(getApplicationContext(),"Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                    if (toast!= null) {
+                        toast.cancel();
+                    }
+                    toast = Toast.makeText(mContext, "Item added to wishlist.", Toast.LENGTH_SHORT);
+                    toast.show();
 
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                     Toast.makeText(mContext, "This Product is already in wishlist.", Toast.LENGTH_SHORT).show();
+                    if (toast!= null) {
+                        toast.cancel();
+                    }
+                    toast = Toast.makeText(mContext, "This Product is already in wishlist.", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             });
 

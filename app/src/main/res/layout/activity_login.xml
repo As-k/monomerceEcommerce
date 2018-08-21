@@ -141,9 +141,10 @@
             <!--android:text="Go Back" />-->
 
 
-            <TextView
+            <Button
                 android:id="@+id/sign_in_button"
-                style="?android:textAppearanceSmall"
+                style="?android:selectableItemBackground"
+                android:fontFamily="sans-serif"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_gravity="center_horizontal"

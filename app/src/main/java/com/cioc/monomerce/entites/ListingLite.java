@@ -21,6 +21,8 @@ public class ListingLite {
     public String fieldsPk, fieldsName, fieldsValue, fieldsType, fieldsHelpText, fieldsUnit, fieldsData;
     public String filesPk, filesLink, filesAttachment, filesMediaType;
     JSONObject jsonObject;
+    JSONArray filesArray;
+    ArrayList<String> imageUrl = new ArrayList<>();
 
     public String name, value, fieldType, helpText, unit, data;
     ArrayList<Integer> size= new ArrayList<Integer>();
@@ -51,8 +53,8 @@ public class ListingLite {
             this.productIntDiscountedPrice = (int) Math.round(d1);
             this.productDiscountedPrice = String.valueOf(this.productIntDiscountedPrice);
 
-            JSONArray filesArray = jsonObject.getJSONArray("files");
-            if (filesArray==null){
+            this.filesArray = jsonObject.getJSONArray("files");
+            if (filesArray==null||filesArray.equals("null")){
                 this.filesAttachment = BackendServer.url+"/static/images/ecommerce.jpg";
             } else {
                 for (int i = 0; i < filesArray.length(); i++) {
@@ -64,6 +66,7 @@ public class ListingLite {
                         this.filesAttachment = BackendServer.url+"/media/ecommerce/pictureUploads/1532690173_89_admin_ecommerce.jpg";
                     } else this.filesAttachment = filesAttachment;
                     this.filesMediaType = filesObject.getString("mediaType");
+                    imageUrl.add(this.filesAttachment);
                 }
             }
 
@@ -404,6 +407,22 @@ public class ListingLite {
 
     public void setSize(ArrayList<Integer> size) {
         this.size = size;
+    }
+
+    public ArrayList<String> getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(ArrayList<String> imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public JSONArray getFilesArray() {
+        return filesArray;
+    }
+
+    public void setFilesArray(JSONArray filesArray) {
+        this.filesArray = filesArray;
     }
 
     public JSONObject getJsonObject() {

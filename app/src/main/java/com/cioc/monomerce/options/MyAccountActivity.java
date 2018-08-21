@@ -194,7 +194,9 @@ public class MyAccountActivity extends AppCompatActivity {
                                         dir.delete();
                                     }
                                 stopService(new Intent(context, BackgroundService.class));
-                                startActivity(new Intent(context, LoginActivity.class));
+                                startActivity(new Intent(context, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                        Intent.FLAG_ACTIVITY_NEW_TASK));
                                 finish();
                             }
                         })

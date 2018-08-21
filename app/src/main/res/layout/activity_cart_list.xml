@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="10"
+    android:weightSum="1"
     android:gravity="center"
     tools:context="com.cioc.monomerce.options.CartListActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -13,7 +13,7 @@
         android:id="@+id/layout_items"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9.3"
+        android:layout_weight="1.01"
         android:orientation="vertical"
         android:visibility="visible">
         <com.githang.stepview.StepView
@@ -44,8 +44,7 @@
     </LinearLayout>
     <LinearLayout android:id="@+id/layout_payment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.7"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2"
         android:elevation="30dp"
@@ -62,8 +61,10 @@
                   android:textStyle="bold"
                   android:gravity="center"/>
 
-        <TextView android:id="@+id/text_action_bottom2"
+        <Button android:id="@+id/text_action_bottom2"
                   android:layout_width="0dp"
+            style="?android:selectableItemBackground"
+            android:fontFamily="sans-serif"
                   android:layout_height="match_parent"
                   android:layout_weight="1"
                   android:background="@color/text_color"

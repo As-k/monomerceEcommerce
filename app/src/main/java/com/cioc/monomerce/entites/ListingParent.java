@@ -26,6 +26,7 @@ public class ListingParent {
 
         try {
             this.pk = jsonObject.getString("pk");
+
             this.approved = jsonObject.getBoolean("approved");
             this.parentType = jsonObject.getString("parentType");
             this.source = jsonObject.getString("source");
@@ -33,6 +34,7 @@ public class ListingParent {
             JSONObject productObj = jsonObject.getJSONObject("product");
             this.productPk = productObj.getString("pk");
             this.productName = productObj.getString("name");
+            this.user = jsonObject.getString("user");
 //            this.productPrice = productObj.getString("price");
             Double d = Double.parseDouble(productObj.getString("price"));
             this.productIntPrice = (int) Math.round(d);

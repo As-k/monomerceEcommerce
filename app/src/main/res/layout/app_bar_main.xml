@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,6 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:id="@+id/app_bar_layout"
+
+        android:background="@android:color/white"
         android:theme="@style/AppTheme.AppBarOverlay">
 
 
@@ -40,8 +41,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/white"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
                 >
 
                 <ImageView
@@ -49,19 +50,24 @@
                     android:layout_height="40dp"
                     android:src="@drawable/sterling_select" />
 
-                <TextView
-                    android:id="@+id/toolbar_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="4sp"
-                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-                    android:text=""/>
             </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main"/>
+    <include layout="@layout/content_main"
+        android:id="@+id/main"/>
 
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:layout_anchorGravity="bottom"
+        app:layout_anchor="@id/main"
+        android:background="@color/gen_white"
+        app:itemIconTint="@color/text_color"
+        app:itemTextColor="@color/text_color"
+        app:menu="@menu/bottom_navigation_menu" />
 </android.support.design.widget.CoordinatorLayout>

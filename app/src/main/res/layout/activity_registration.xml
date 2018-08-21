@@ -147,6 +147,8 @@
         <Button
             android:id="@+id/registration_button"
             android:layout_width="match_parent"
+            style="?android:selectableItemBackground"
+            android:fontFamily="sans-serif"
             android:layout_height="40dp"
             android:layout_marginTop="410dp"
             android:background="@drawable/round_button_primary"

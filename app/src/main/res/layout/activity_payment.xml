@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="10"
+    android:weightSum="1"
     tools:context="com.cioc.monomerce.payment.PaymentActivity"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.githang.stepview.StepView
@@ -21,7 +21,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9.5"
+        android:layout_weight="1.01"
         android:scrollbars="none">
     <LinearLayout android:id="@+id/layout_items"
         android:layout_width="match_parent"
@@ -179,7 +179,6 @@
     <LinearLayout android:id="@+id/layout_payment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
         android:orientation="horizontal"
         android:weightSum="2"
         android:elevation="30dp"
@@ -197,10 +196,11 @@
             android:fontFamily="sans-serif"
             android:gravity="center"/>
 
-        <TextView android:id="@+id/payment_text_button"
+        <Button android:id="@+id/payment_text_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            style="?android:selectableItemBackground"
             android:fontFamily="sans-serif"
             android:background="@color/text_color"
             android:text="PAYMENT"

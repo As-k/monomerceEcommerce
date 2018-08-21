@@ -90,6 +90,8 @@
             android:layout_marginBottom="110dp"
             android:background="@drawable/round_button_primary"
             android:text="Submit"
+            style="?android:selectableItemBackground"
+            android:fontFamily="sans-serif"
             android:textAllCaps="false"
             android:textColor="@color/gen_white" />
 

@@ -215,6 +215,7 @@ public class ImageListFragment extends Fragment {
             TextView itemName, itemPrice, itemDiscount, itemDiscountPrice;
             boolean res=true;
 
+
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
@@ -263,6 +264,7 @@ public class ImageListFragment extends Fragment {
 
             final ListingParent parent = mValues.get(position);
             final Uri uri;
+
             if (parent.getFilesAttachment().equals("null")){
                 uri = Uri.parse(BackendServer.url+"/static/images/ecommerce.jpg");
             } else uri = Uri.parse(parent.getFilesAttachment());
@@ -307,33 +309,49 @@ public class ImageListFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     AsyncHttpClient client = new AsyncHttpClient();
+
                     final ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
                     if (holder.res) {
                         RequestParams params = new RequestParams();
                         params.put("product", parent.getPk());
                         params.put("qty", "1");
                         params.put("typ", "favourite");
-                        params.put("user", "1");
+                        params.put("user", parent.getUser());
                         client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                                 imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
-                                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
+                                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_white_24dp);
                                 notifyDataSetChanged();
-                                Toast.makeText(mActivity, "Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                                Toast toast = null;
+                                if (toast!= null) {
+                                    toast.cancel();
+                                }
+                                toast = Toast.makeText(mActivity, "Item added to wishlist.", Toast.LENGTH_SHORT);
+                                toast.show();
                             }
 
                             @Override
                             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                Toast.makeText(mActivity, "This Product is already in card.", Toast.LENGTH_SHORT).show();
+                                Toast toast = null;
+                                if (toast!= null) {
+                                    toast.cancel();
+                                }
+                                toast = Toast.makeText(mActivity, "This Product is already in card.", Toast.LENGTH_SHORT);
+                                toast.show();
                             }
                         });
 
                     } else {
                         imageUrlUtils.removeWishlistImageUri(0);
-                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_black_18dp);
+                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_white_24dp);
                         notifyDataSetChanged();
-                        Toast.makeText(mActivity, "Item removed from wishlist.", Toast.LENGTH_SHORT).show();
+                        Toast toast = null;
+                        if (toast!= null) {
+                            toast.cancel();
+                        }
+                        toast = Toast.makeText(mActivity, "Item removed from wishlist.", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
 
                 }

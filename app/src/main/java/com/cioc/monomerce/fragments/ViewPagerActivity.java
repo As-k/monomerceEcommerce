@@ -29,7 +29,12 @@ import android.view.ViewGroup.LayoutParams;
 
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.photoview.view.PhotoView;
+import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
+
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 
 
 /**
@@ -74,17 +79,18 @@ public class ViewPagerActivity extends Activity {
     static class SamplePagerAdapter extends PagerAdapter {
        /* Here I'm adding the demo pics, but you can add your Item related pics , just get your pics based on itemID (use asynctask) and
         fill the urls in arraylist*/
-        private static final String[] sDrawables = ImageUrlUtils.getImageUrls();
+        private static final ArrayList<String> sDrawables = ItemDetailsActivity.listingLites.get(0).getImageUrl();//ImageUrlUtils.getImageUrls();
+//        JSONArray file = ItemDetailsActivity.lite.getImageUrl();
 
         @Override
         public int getCount() {
-            return sDrawables.length;
+            return sDrawables.size();
         }
 
         @Override
         public View instantiateItem(ViewGroup container, int position) {
             PhotoView photoView = new PhotoView(container.getContext());
-            photoView.setImageUri(sDrawables[position]);
+            photoView.setImageUri(sDrawables.get(position));
 
             // Now just add PhotoView to ViewPager and return it
             container.addView(photoView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);

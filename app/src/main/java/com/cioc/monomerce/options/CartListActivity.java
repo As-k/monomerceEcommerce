@@ -54,14 +54,15 @@ import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 
 public class CartListActivity extends AppCompatActivity {
     private static Context mContext;
-    TextView checkOutAction,textTotalPrice;
-    Button bStartShopping;
+    TextView textTotalPrice;
+    Button bStartShopping, checkOutAction;
     private static StepView mStepView;
     ProgressBar progressBar;
     public static LinearLayout layoutCartItems, layoutCartPayments, layoutCartNoItems;
     public AsyncHttpClient client;
     public static int price=0;
     RecyclerView recyclerView;
+    Toast toast;
 //    public static ArrayList<Cart> cartList = MainActivity.cartList;
     public static ArrayList<Cart> cartList;
 
@@ -161,6 +162,7 @@ public class CartListActivity extends AppCompatActivity {
         AsyncHttpClient client;
         CartListActivity activity;
         public static int mPrice;
+        Toast toast;
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final SimpleDraweeView mImageView;
@@ -312,7 +314,11 @@ public class CartListActivity extends AppCompatActivity {
             client.delete(mContext, BackendServer.url + "/api/ecommerce/cart/"+ cart.getPk()+"/", new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    Toast.makeText(mContext, "removed"+ cart.getPk(), Toast.LENGTH_SHORT).show();
+                    if (toast!= null) {
+                        toast.cancel();
+                    }
+                    toast = Toast.makeText(mContext,"removed "+ cart.getPk(), Toast.LENGTH_SHORT);
+                    toast.show();
 //                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
 //                    imageUrlUtils.removeCartListImageUri(position);
                     //Decrease notification count
@@ -329,7 +335,11 @@ public class CartListActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    Toast.makeText(mContext, "removing failure"+ cart.getPk(), Toast.LENGTH_SHORT).show();
+                    if (toast!= null) {
+                        toast.cancel();
+                    }
+                    toast = Toast.makeText(mContext,"removing failure "+ cart.getPk(), Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             });
         }
