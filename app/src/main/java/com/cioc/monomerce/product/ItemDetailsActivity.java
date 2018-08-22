@@ -329,7 +329,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
             return true;
         }else if (id == R.id.action_wishlist) {
             lite = listingLites.get(0);
-            item.setIcon(R.drawable.ic_favorite_white_24dp);
+            item.setIcon(R.drawable.ic_favorite_red_24dp);
             RequestParams params = new RequestParams();
             params.put("product", lite.getPk());
             params.put("qty", "1");

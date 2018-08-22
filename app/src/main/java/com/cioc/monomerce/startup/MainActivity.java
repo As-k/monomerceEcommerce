@@ -603,7 +603,7 @@ public class MainActivity extends AppCompatActivity
         public boolean onSingleTapConfirmed(MotionEvent e) {
             OfferBanners banners = offerBannersList.get(pos);
             startActivity(new Intent(context, WebViewActivity.class)
-                    .putExtra("web",banners.getPageurl()).putExtra("title", banners.getPageTitle()));
+                    .putExtra("web",banners.getBody()).putExtra("title", banners.getPageTitle()));
             return super.onSingleTapConfirmed(e);
         }
     }

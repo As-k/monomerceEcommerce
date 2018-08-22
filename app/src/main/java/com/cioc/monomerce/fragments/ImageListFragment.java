@@ -321,7 +321,7 @@ public class ImageListFragment extends Fragment {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                                 imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
-                                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_white_24dp);
+                                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
                                 notifyDataSetChanged();
                                 Toast toast = null;
                                 if (toast!= null) {
@@ -344,7 +344,7 @@ public class ImageListFragment extends Fragment {
 
                     } else {
                         imageUrlUtils.removeWishlistImageUri(0);
-                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_white_24dp);
+                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                         notifyDataSetChanged();
                         Toast toast = null;
                         if (toast!= null) {

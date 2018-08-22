@@ -18,7 +18,7 @@
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/slider_layout"
             app:contentScrim="@android:color/transparent"
             app:expandedTitleMarginEnd="64dp"
@@ -34,7 +34,8 @@
                 android:layout_marginTop="56dp"
                 android:layout_alignParentTop="true"
                 android:fitsSystemWindows="true"
-                app:layout_collapseMode="none" />
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

@@ -280,16 +280,16 @@ public class PaymentActivity extends AppCompatActivity {
 //                }
 //            });
 
-            holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
-                    intent.putExtra(STRING_IMAGE_POSITION, position);
-                    intent.putExtra("listingLitePk", parent.getPk());
-                    mContext.startActivity(intent);
-                }
-            });
+//            holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(mContext, ItemDetailsActivity.class);
+//                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
+//                    intent.putExtra(STRING_IMAGE_POSITION, position);
+//                    intent.putExtra("listingLitePk", parent.getPk());
+//                    mContext.startActivity(intent);
+//                }
+//            });
 
             holder.productName.setText(parent.getProductName());
             if (parent.getProductDiscount().equals("0")){

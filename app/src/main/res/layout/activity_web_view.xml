@@ -6,12 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".startup.WebViewActivity">
 
-    <WebView
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/offer_web_view"
+        android:text="@string/play_again_desc"
+        android:padding="@dimen/text_size_medium"
+        android:textColor="@color/gen_black"
         >
 
-    </WebView>
+    </TextView>
 
 </android.support.constraint.ConstraintLayout>
