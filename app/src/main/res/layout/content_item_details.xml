@@ -240,6 +240,7 @@
                 android:textSize="14dp"
                 android:textColor="@color/grey_dark1"
                 android:textStyle="bold"
+                style="?android:animateOnClick"
                 android:fontFamily="sans-serif"
                 android:gravity="center"/>
             <View
@@ -254,6 +255,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
+                style="?android:animateOnClick"
                 android:text="BUY NOW"
                 android:textSize="14dp"
                 android:fontFamily="sans-serif"

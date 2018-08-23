@@ -43,7 +43,7 @@
         <receiver
             android:name=".backend.BackgroundReceiver"
             android:enabled="true"
-            android:exported="true"
+            android:exported="false"
             android:label="BackgroundBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.cioc.libreerp.backendservice" />

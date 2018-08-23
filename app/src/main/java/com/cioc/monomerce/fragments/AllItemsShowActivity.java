@@ -33,7 +33,9 @@ import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListen
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,7 +61,8 @@ public class AllItemsShowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_items_show);
         context = AllItemsShowActivity.this;
-        client = new AsyncHttpClient();
+        BackendServer backend = new BackendServer(this);
+        client = backend.getHTTPClient();
         parents = new ArrayList<>();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -275,9 +278,10 @@ public class AllItemsShowActivity extends AppCompatActivity {
 
     public static class AllItemsRecyclerViewAdapter
             extends RecyclerView.Adapter<AllItemsShowActivity.AllItemsRecyclerViewAdapter.ViewHolder> {
-
-        private ArrayList<ListingParent> mValues;
         Context mContext;
+        BackendServer backendServer = new BackendServer(mContext);
+        AsyncHttpClient client = backendServer.getHTTPClient();
+        private ArrayList<ListingParent> mValues;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
@@ -376,20 +380,52 @@ public class AllItemsShowActivity extends AppCompatActivity {
             holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
+                    final ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
                     if (holder.res) {
-                        imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
-                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_black_18dp);
-                        notifyDataSetChanged();
-                        Toast.makeText(mContext, "Item added to wishlist.", Toast.LENGTH_SHORT).show();
+                        RequestParams params = new RequestParams();
+                        params.put("product", parent.getPk());
+                        params.put("qty", "1");
+                        params.put("typ", "favourite");
+                        params.put("user", parent.getUser());
+                        client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
+                                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
+                                notifyDataSetChanged();
+                                Toast toast = null;
+                                if (toast != null) {
+                                    toast.cancel();
+                                }
+                                toast = Toast.makeText(mContext, "Item added to wishlist.", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                Toast toast = null;
+                                if (toast != null) {
+                                    toast.cancel();
+                                }
+                                toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+
                     } else {
                         imageUrlUtils.removeWishlistImageUri(0);
-                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_black_18dp);
+                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                         notifyDataSetChanged();
-                        Toast.makeText(mContext, "Item removed from wishlist.", Toast.LENGTH_SHORT).show();
+                        Toast toast = null;
+                        if (toast != null) {
+                            toast.cancel();
+                        }
+                        toast = Toast.makeText(mContext, "Item removed from wishlist.", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 }
-            });
+
+                });
 
         }
 

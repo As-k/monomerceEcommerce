@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@drawable/sterling_select_banner"
     tools:context="com.cioc.monomerce.startup.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -12,7 +13,7 @@
         android:layout_width="match_parent"
         android:id="@+id/app_bar_layout"
 
-        android:background="@android:color/white"
+        android:background="@android:color/transparent"
         android:theme="@style/AppTheme.AppBarOverlay">
 
 

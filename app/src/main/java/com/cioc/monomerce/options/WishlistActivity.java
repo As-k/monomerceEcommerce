@@ -138,7 +138,8 @@ public class WishlistActivity extends AppCompatActivity {
             extends RecyclerView.Adapter<WishlistActivity.SimpleStringRecyclerViewAdapter.ViewHolder> {
 
         private ArrayList<Cart> mWishlist;
-        AsyncHttpClient client;
+        BackendServer backendServer = new BackendServer(mContext);
+        AsyncHttpClient client = backendServer.getHTTPClient();
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;

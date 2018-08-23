@@ -127,7 +127,8 @@ public class OrderActivity extends AppCompatActivity {
 //    }
 
     private class OrderRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder>{
-        AsyncHttpClient client;
+        BackendServer backend = new BackendServer(context);
+        AsyncHttpClient client = backend.getHTTPClient();
         ArrayList<Order> orderArrayList;
 
         public OrderRecyclerViewAdapter(ArrayList<Order> orders) {
@@ -137,7 +138,6 @@ public class OrderActivity extends AppCompatActivity {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_order_history, parent, false);
-            client = new AsyncHttpClient();
             return new ViewHolder(view);
         }
 

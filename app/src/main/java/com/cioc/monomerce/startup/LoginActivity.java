@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
 //            return;
 //        }
 
-        if(!(sessionManager.getCsrfId() == "" && sessionManager.getCsrfId() == "")){
+        if(!(sessionManager.getCsrfId() == "" && sessionManager.getSessionId() == "")){
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }

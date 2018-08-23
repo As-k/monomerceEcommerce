@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +27,8 @@ import android.widget.Toast;
 
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
+import com.cioc.monomerce.communicator.CartUpdate;
+import com.cioc.monomerce.communicator.RecyclerItemClickListener;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.product.ItemDetailsActivity;
@@ -52,7 +55,7 @@ import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITI
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 
 
-public class CartListActivity extends AppCompatActivity {
+public class CartListActivity extends AppCompatActivity implements CartUpdate {
     private static Context mContext;
     TextView textTotalPrice;
     Button bStartShopping, checkOutAction;
@@ -101,7 +104,7 @@ public class CartListActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        CartListRecyclerViewAdapter adapter = new CartListRecyclerViewAdapter(cartList, price);
+        CartListRecyclerViewAdapter adapter = new CartListRecyclerViewAdapter(cartList, price, this);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         new Handler().postDelayed(new Runnable() {
@@ -110,11 +113,6 @@ public class CartListActivity extends AppCompatActivity {
                 textTotalPrice.setText("\u20B9"+CartListRecyclerViewAdapter.mPrice);
             }
         },500);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     public void getCardItem() {
@@ -155,14 +153,21 @@ public class CartListActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void setValue(String value) {
+        textTotalPrice.setText("\u20B9"+value);
+    }
+
     public static class CartListRecyclerViewAdapter
             extends RecyclerView.Adapter<CartListRecyclerViewAdapter.ViewHolder> {
 
         private ArrayList<Cart> mCartlist;
-        AsyncHttpClient client;
+        BackendServer backendServer = new BackendServer(mContext);
+        AsyncHttpClient client = backendServer.getHTTPClient();
         CartListActivity activity;
         public static int mPrice;
         Toast toast;
+        CartUpdate cartUpdate;
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final SimpleDraweeView mImageView;
@@ -188,9 +193,10 @@ public class CartListActivity extends AppCompatActivity {
             }
         }
 
-        public CartListRecyclerViewAdapter(ArrayList<Cart> carts, int price) {
+        public CartListRecyclerViewAdapter(ArrayList<Cart> carts, int price, CartUpdate listener) {
             mCartlist = carts;
             mPrice = price;
+            cartUpdate = listener;
         }
 
         @Override
@@ -261,7 +267,7 @@ public class CartListActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     moveWishList(cart);
-                    holder.cardWishList.setImageResource(R.drawable.ic_favorite_black_18dp);
+                    holder.cardWishList.setImageResource(R.drawable.ic_favorite_red_24dp);
                     notifyDataSetChanged();
 //                    Toast.makeText(mContext,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
                 }
@@ -277,11 +283,11 @@ public class CartListActivity extends AppCompatActivity {
                         deleteItem(cart, position);
                     } else {
                         quantRemove--;
-                        updateItem(String.valueOf(quantRemove), cart);
                         holder.itemsQuantity.setText(quantRemove + "");
                         if (parent.getProductDiscount().equals("0")) {
                             mPrice = mPrice - parent.getProductIntPrice();
                         } else mPrice = mPrice - parent.getProductIntDiscountedPrice();
+                        updateItem(String.valueOf(quantRemove), cart, mPrice);
                     }
                     notifyDataSetChanged();
                     notifyItemChanged(position);
@@ -294,11 +300,12 @@ public class CartListActivity extends AppCompatActivity {
                     String quan = holder.itemsQuantity.getText().toString();
                     int quantAdd = Integer.parseInt(quan);
                     quantAdd++;
-                    updateItem(String.valueOf(quantAdd), cart);
                     if (parent.getProductDiscount().equals("0")) {
                         mPrice = mPrice + parent.getProductIntPrice();
                     } else mPrice = mPrice + parent.getProductIntDiscountedPrice();
                     holder.itemsQuantity.setText(quantAdd+"");
+                    updateItem(String.valueOf(quantAdd), cart, mPrice);
+
                     notifyDataSetChanged();
                     notifyItemChanged(position);
                 }
@@ -344,14 +351,15 @@ public class CartListActivity extends AppCompatActivity {
             });
         }
 
-        public void updateItem(String qty, final Cart cart) {
+        public void updateItem(String qty, final Cart cart, int price) {
             RequestParams params = new RequestParams();
             params.put("qty", qty);
             client.patch(BackendServer.url + "/api/ecommerce/cart/" + cart.getPk()+ "/", params, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "updated cart"+ cart.getPk(), Toast.LENGTH_SHORT).show();
-                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    cartUpdate.setValue(String.valueOf(price));
+//                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 //                    activity.recreate();
                     notifyDataSetChanged();
                 }
@@ -371,7 +379,7 @@ public class CartListActivity extends AppCompatActivity {
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "onSuccess", Toast.LENGTH_SHORT).show();
                     mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                    MainActivity.notificationCountCart--;
+//                    MainActivity.notificationCountCart--;
 //                    recreateActivityCompat(activity);
                     notifyDataSetChanged();
                 }

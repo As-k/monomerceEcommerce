@@ -141,7 +141,6 @@ public class SearchResultActivity extends AppCompatActivity {
                         Toast.makeText(SearchResultActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
                     }
                 });
-
                 return false;
             }
 
@@ -228,7 +227,6 @@ public class SearchResultActivity extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(), AllItemsShowActivity.class)
                                 .putExtra("pk", product.getPk())
                                 .putExtra("fragmentName", product.getName().toUpperCase()));
-
                     } else {
                         if (type.equals("list")) {
                             Intent intent = new Intent(getApplicationContext(), ItemDetailsActivity.class);
@@ -238,7 +236,6 @@ public class SearchResultActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     }
-
                 }
             });
             return v;

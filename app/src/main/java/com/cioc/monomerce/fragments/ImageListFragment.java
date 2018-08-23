@@ -75,7 +75,8 @@ public class ImageListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = (MainActivity) getActivity();
-        client = new AsyncHttpClient();
+        BackendServer backendServer = new BackendServer(mActivity);
+        client = backendServer.getHTTPClient();
         listingParents = new ArrayList<>();
     }
 
@@ -203,7 +204,8 @@ public class ImageListFragment extends Fragment {
 
     public static class CategoriesRecyclerViewAdapter
             extends RecyclerView.Adapter<CategoriesRecyclerViewAdapter.ViewHolder> {
-
+        BackendServer backendServer = new BackendServer(mActivity);
+        AsyncHttpClient client = backendServer.getHTTPClient();
         private ArrayList<ListingParent> mValues;
         String fname;
 
@@ -308,7 +310,6 @@ public class ImageListFragment extends Fragment {
             holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    AsyncHttpClient client = new AsyncHttpClient();
 
                     final ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
                     if (holder.res) {

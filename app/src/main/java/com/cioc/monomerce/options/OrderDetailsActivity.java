@@ -221,7 +221,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
     private class OrderRecyclerViewAdapter extends RecyclerView.Adapter<ViewHolder> {
         ArrayList<OrderQtyMap> mQtyMaps;
-        AsyncHttpClient client;
+        BackendServer backend = new BackendServer(mContext);
+        AsyncHttpClient client = backend.getHTTPClient();
 
         public OrderRecyclerViewAdapter(ArrayList<OrderQtyMap> qtyMaps) {
             this.mQtyMaps = qtyMaps;
@@ -231,7 +232,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_order_details_item, viewGroup, false);
-            client = new AsyncHttpClient();
             return new ViewHolder(view);
 
         }

@@ -41,6 +41,7 @@
             android:drawableLeft="@drawable/sort_arrows_16dp"
             android:textColor="@color/grey_dark1"
             android:textStyle="bold"
+            style="?android:selectableItemBackground"
             android:fontFamily="sans-serif"
             android:gravity="center"/>
         <View
@@ -60,8 +61,9 @@
             android:drawableLeft="@drawable/filter_16dp"
             android:paddingLeft="40dp"
             android:paddingRight="40dp"
+            style="@style/Animation.Design.BottomSheetDialog"
             android:text="Filter"
-            android:textSize="16dp"
+            android:textSize="14dp"
             android:gravity="center"
             android:textColor="@color/grey_dark1"
             android:textStyle="bold"
