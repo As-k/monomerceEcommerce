@@ -2,6 +2,9 @@ package com.cioc.monomerce.options;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -139,23 +142,15 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                 });
     }
 
-    @SuppressLint("NewApi")
-    public static final void recreateActivityCompat(final Activity a) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            a.recreate();
-        } else {
-            final Intent intent = a.getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//            a.finish();
-            a.overridePendingTransition(0, 0);
-            a.startActivity(intent);
-            a.overridePendingTransition(0, 0);
-        }
-    }
 
     @Override
     public void setValue(String value) {
         textTotalPrice.setText("\u20B9"+value);
+    }
+
+    @Override
+    public void setQuantity(String quantity) {
+
     }
 
     public static class CartListRecyclerViewAdapter
@@ -284,9 +279,9 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                     } else {
                         quantRemove--;
                         holder.itemsQuantity.setText(quantRemove + "");
-                        if (parent.getProductDiscount().equals("0")) {
+                        if (parent.getProductDiscount().equals("0"))
                             mPrice = mPrice - parent.getProductIntPrice();
-                        } else mPrice = mPrice - parent.getProductIntDiscountedPrice();
+                        else mPrice = mPrice - parent.getProductIntDiscountedPrice();
                         updateItem(String.valueOf(quantRemove), cart, mPrice);
                     }
                     notifyDataSetChanged();
@@ -401,6 +396,14 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
         progressBar =  findViewById(R.id.progressBar);
         checkOutAction = findViewById(R.id.text_action_bottom2);
         bStartShopping =  findViewById(R.id.bAddNew);
+        NotificationManager notif=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent intent = new Intent("android.intent.action.MUSIC_PLAYER");
+        Notification notify = new Notification.Builder
+                (getApplicationContext()).setContentTitle("").setContentText("").
+                setContentTitle("").setSmallIcon(R.drawable.sterling_select).build();
+        PendingIntent pi = PendingIntent.getActivities(this, 0, new Intent[]{intent}, 0);
+        notify.flags |= Notification.FLAG_AUTO_CANCEL;
+        notif.notify(0, notify);
 
         if (MainActivity.notificationCountCart >0) {
             layoutCartNoItems.setVisibility(View.GONE);
