@@ -58,6 +58,7 @@ public class WishlistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist);
         mContext = WishlistActivity.this;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         BackendServer backend = new BackendServer(mContext);
         client = backend.getHTTPClient();
         wishList = new ArrayList<>();

@@ -53,7 +53,7 @@ public class MyAccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account);
         this.context = MyAccountActivity.this;
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         sessionManager = new SessionManager(context);
         backend = new BackendServer(context);
         client = backend.getHTTPClient();

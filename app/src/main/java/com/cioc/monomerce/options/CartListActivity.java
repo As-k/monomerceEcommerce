@@ -358,8 +358,8 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "updated cart"+ cart.getPk(), Toast.LENGTH_SHORT).show();
-                    cartUpdate.setValue(String.valueOf(price));
-//                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+//                    cartUpdate.setValue(String.valueOf(price));
+                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 //                    activity.recreate();
                     notifyDataSetChanged();
                 }

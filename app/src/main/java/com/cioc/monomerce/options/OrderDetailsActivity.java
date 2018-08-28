@@ -54,6 +54,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_details);
         mContext = OrderDetailsActivity.this;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         BackendServer backend = new BackendServer(mContext);
         client = backend.getHTTPClient();
         orders = new ArrayList<>();

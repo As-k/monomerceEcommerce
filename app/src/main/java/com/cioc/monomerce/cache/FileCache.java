@@ -1,9 +1,5 @@
 package com.cioc.monomerce.cache;
 
-/**
- * Created by 06peng on 2015-07-03.
- */
-
 import android.content.Context;
 
 import java.io.File;
