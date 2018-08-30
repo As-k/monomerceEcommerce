@@ -42,8 +42,8 @@ public class ListingLite {
 
             JSONObject productObj = jsonObject.getJSONObject("product");
             this.productPk = productObj.getString("pk");
+            this.user = productObj.getString("user");
             this.productName = productObj.getString("name");
-//            this.productPrice = productObj.getString("price");
             Double d = Double.parseDouble(productObj.getString("price"));
             this.productIntPrice = (int) Math.round(d);
             this.productPrice = String.valueOf(this.productIntPrice);

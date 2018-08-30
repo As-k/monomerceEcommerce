@@ -69,6 +69,7 @@
         app:layout_anchor="@id/main"
         android:background="@color/gen_white"
         app:itemIconTint="@color/text_color"
-        app:labelVisibilityMode="unlabeled"
+        app:itemTextColor="@color/text_color"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_navigation_menu" />
 </android.support.design.widget.CoordinatorLayout>

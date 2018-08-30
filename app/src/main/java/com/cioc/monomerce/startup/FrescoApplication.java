@@ -15,5 +15,4 @@ public class FrescoApplication extends Application {
         super.onCreate();
         Fresco.initialize(this, ImagePipelineConfigFactory.getImagePipelineConfig(this));
     }
-
 }

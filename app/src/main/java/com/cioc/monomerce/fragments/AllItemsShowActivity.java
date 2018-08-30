@@ -276,11 +276,10 @@ public class AllItemsShowActivity extends AppCompatActivity {
         recyclerView.setAdapter(new AllItemsShowActivity.AllItemsRecyclerViewAdapter(context, items));
     }
 
-    public static class AllItemsRecyclerViewAdapter
-            extends RecyclerView.Adapter<AllItemsShowActivity.AllItemsRecyclerViewAdapter.ViewHolder> {
+    public static class AllItemsRecyclerViewAdapter extends RecyclerView.Adapter<AllItemsShowActivity.AllItemsRecyclerViewAdapter.ViewHolder> {
         Context mContext;
-        BackendServer backendServer = new BackendServer(mContext);
-        AsyncHttpClient client = backendServer.getHTTPClient();
+        BackendServer backendServer;
+        AsyncHttpClient client;
         private ArrayList<ListingParent> mValues;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -305,8 +304,10 @@ public class AllItemsShowActivity extends AppCompatActivity {
         }
 
         public AllItemsRecyclerViewAdapter(Context context, ArrayList<ListingParent> items) {
-            mValues = items;
             this.mContext = context;
+            mValues = items;
+            backendServer = new BackendServer(mContext);
+            client = backendServer.getHTTPClient();
         }
 
         @Override
@@ -366,12 +367,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
                     Intent intent = new Intent(mContext, ItemDetailsActivity.class);
                     intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
                     intent.putExtra(STRING_IMAGE_POSITION, position);
-//                    intent.putExtra("itemName", parent.getProductName());
                     intent.putExtra("listingLitePk", parent.getPk());
-//                    intent.putExtra("itemPrice", String.valueOf(price));
-//                    intent.putExtra("itemDiscountPrice", String.valueOf(price1));
-//                    intent.putExtra("itemDiscount", parent.getProductDiscount());
-//                    intent.putExtra("fragmentName", fname.toUpperCase());
                     mContext.startActivity(intent);
                 }
             });
