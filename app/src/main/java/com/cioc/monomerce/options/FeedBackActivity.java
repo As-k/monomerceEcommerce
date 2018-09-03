@@ -2,6 +2,7 @@ package com.cioc.monomerce.options;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -16,11 +17,23 @@ public class FeedBackActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_back);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         email = findViewById(R.id.email);
         mobile = findViewById(R.id.mobile);
         message = findViewById(R.id.message);
         feedbackBtn = findViewById(R.id.feedback_button);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

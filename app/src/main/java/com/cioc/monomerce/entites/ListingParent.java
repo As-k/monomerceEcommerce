@@ -15,6 +15,7 @@ public class ListingParent {
     int productIntPrice, productIntDiscountedPrice;
     boolean approved;
     public String filesPk, filesLink, filesAttachment, filesMediaType;
+    String addedCart, addedWish;
     JSONObject jsonObject;
     JSONArray array;
 
@@ -30,6 +31,8 @@ public class ListingParent {
             this.approved = jsonObject.getBoolean("approved");
             this.parentType = jsonObject.getString("parentType");
             this.source = jsonObject.getString("source");
+            this.addedCart = jsonObject.getString("added_cart");
+            this.addedWish = jsonObject.getString("added_saved");
 
             JSONObject productObj = jsonObject.getJSONObject("product");
             this.productPk = productObj.getString("pk");
@@ -39,7 +42,6 @@ public class ListingParent {
             Double d = Double.parseDouble(productObj.getString("price"));
             this.productIntPrice = (int) Math.round(d);
             this.productPrice = String.valueOf(this.productIntPrice);
-
             this.productDiscount = productObj.getString("discount");
 //            this.productDiscountedPrice = productObj.getString("discountedPrice");
             Double d1 = Double.parseDouble(productObj.getString("discountedPrice"));
@@ -214,6 +216,22 @@ public class ListingParent {
 
     public void setFilesMediaType(String filesMediaType) {
         this.filesMediaType = filesMediaType;
+    }
+
+    public String getAddedCart() {
+        return addedCart;
+    }
+
+    public void setAddedCart(String addedCart) {
+        this.addedCart = addedCart;
+    }
+
+    public String getAddedWish() {
+        return addedWish;
+    }
+
+    public void setAddedWish(String addedWish) {
+        this.addedWish = addedWish;
     }
 
     public JSONObject getJsonObject() {

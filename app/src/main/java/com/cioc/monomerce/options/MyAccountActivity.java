@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -204,7 +206,18 @@ public class MyAccountActivity extends AppCompatActivity {
                         .show();
             }
         });
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void init() {
@@ -216,7 +229,6 @@ public class MyAccountActivity extends AppCompatActivity {
         profileName = findViewById(R.id.profile_name);
         profileImage = findViewById(R.id.profile_image);
         logoutBtn = findViewById(R.id.logout_button);
-
     }
 
 
