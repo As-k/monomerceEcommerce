@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@drawable/sterling_select_banner"
     tools:context="com.cioc.monomerce.startup.MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -71,5 +70,6 @@
         android:background="@color/gen_white"
         app:itemIconTint="@color/text_color"
         app:itemTextColor="@color/text_color"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_navigation_menu" />
 </android.support.design.widget.CoordinatorLayout>

@@ -26,7 +26,7 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import java.io.File;
 
 /**
- * Creates ImagePipeline configuration for the sample app
+ * Creates ImagePipeline configuration for the e-commerce app
  */
 public class ImagePipelineConfigFactory {
     private static final String IMAGE_PIPELINE_CACHE_DIR = "imagepipeline_cache";

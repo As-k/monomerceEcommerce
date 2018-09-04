@@ -176,38 +176,51 @@ public class ItemDetailsActivity extends AppCompatActivity {
             textViewDescriptions.setText("\u2022 " +htmlAsSpanned);
         }
 
-        textViewAddToCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RequestParams params = new RequestParams();
-                params.put("product", lite.getPk());
-                params.put("qty", "1");
-                params.put("type", "card");
-                params.put("user", lite.getUser());
-                client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        if (toast!= null) {
-                            toast.cancel();
-                        }
-                        toast = Toast.makeText(ItemDetailsActivity.this,"Item added to cart.", Toast.LENGTH_SHORT);
-                        toast.show();
-                        MainActivity.notificationCountCart++;
-                        NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+        String qunt = lite.getAddedCart();
+        int qntAdd = Integer.parseInt(qunt);
+        if (qntAdd<=0) {
+            textViewAddToCart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RequestParams params = new RequestParams();
+                    params.put("product", lite.getPk());
+                    params.put("qty", "1");
+                    params.put("type", "card");
+                    params.put("user", lite.getUser());
+                    client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            if (toast != null) {
+                                toast.cancel();
+                            }
+                            toast = Toast.makeText(ItemDetailsActivity.this, "Item added to cart.", Toast.LENGTH_SHORT);
+                            toast.show();
+                            MainActivity.notificationCountCart++;
+                            NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
 
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        if (toast!= null) {
-                            toast.cancel();
                         }
-                        toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                });
-            }
-        });
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            if (toast != null) {
+                                toast.cancel();
+                            }
+                            toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    });
+                }
+            });
+        } else {
+            textViewAddToCart.setText("GO TO CART");
+            textViewAddToCart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
+                }
+            });
+
+        }
 
         textViewBuyNow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -220,8 +233,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//                        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//                        imageUrlUtils.addCartListImageUri(stringImageUri);
                         if (toast!= null) {
                             toast.cancel();
                         }
@@ -240,7 +251,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                         toast.show();
                     }
                 });
-
             }
         });
 
@@ -276,7 +286,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
-
     }
 
     @Override
@@ -397,54 +406,4 @@ public class ItemDetailsActivity extends AppCompatActivity {
             return v;
         }
     }
-
-
-//    private class SpecificationsListAdapter extends RecyclerView.Adapter<SpecificationsListAdapter.MyHolder>{
-//        Context context;
-//        JSONArray array;
-//
-//        public SpecificationsListAdapter(Context context, JSONArray jsonArray) {
-//            this.context = context;
-//            this.array = jsonArray;
-//        }
-//
-//        @NonNull
-//        @Override
-//        public SpecificationsListAdapter.MyHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-//            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            View v = layoutInflater.inflate(R.layout.layout_specifications_style, viewGroup, false);
-//            SpecificationsListAdapter.MyHolder myHolder = new SpecificationsListAdapter.MyHolder(v);
-//
-//            return myHolder;
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(@NonNull MyHolder myHolder, int position) {
-//            try {
-//                JSONObject obj = array.getJSONObject(position);
-//                myHolder.propertyName.setText(obj.getString("name"));
-//                myHolder.propertyValue.setText(obj.getString("value"));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return array.length();
-//        }
-//
-//        public class MyHolder extends RecyclerView.ViewHolder{
-//            TextView propertyName, propertyValue;
-//            public MyHolder(@NonNull View itemView) {
-//                super(itemView);
-//
-//                propertyName = itemView.findViewById(R.id.property_name);
-//                propertyValue = itemView.findViewById(R.id.property_value);
-//
-//            }
-//        }
-//    }
-
-
 }

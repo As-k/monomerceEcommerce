@@ -16,6 +16,7 @@ public class ListingLite {
     public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, specifications;
     int productIntPrice, productIntDiscountedPrice;
     boolean approved;
+    public String addedCart, addedWish;
     public String parentPk, parentName;
     public String parentTypePk, parentTypeName, parentTypeMinCost, parentTypeVisual;
     public String fieldsPk, fieldsName, fieldsValue, fieldsType, fieldsHelpText, fieldsUnit, fieldsData;
@@ -37,13 +38,15 @@ public class ListingLite {
             this.pk = jsonObject.getString("pk");
             this.approved = jsonObject.getBoolean("approved");
             this.source = jsonObject.getString("source");
+            this.addedCart = jsonObject.getString("added_cart");
+            this.addedWish = jsonObject.getString("added_saved");
             String str = jsonObject.getString("specifications");
             this.specifications = str;
 
             JSONObject productObj = jsonObject.getJSONObject("product");
             this.productPk = productObj.getString("pk");
+            this.user = productObj.getString("user");
             this.productName = productObj.getString("name");
-//            this.productPrice = productObj.getString("price");
             Double d = Double.parseDouble(productObj.getString("price"));
             this.productIntPrice = (int) Math.round(d);
             this.productPrice = String.valueOf(this.productIntPrice);
@@ -423,6 +426,22 @@ public class ListingLite {
 
     public void setFilesArray(JSONArray filesArray) {
         this.filesArray = filesArray;
+    }
+
+    public String getAddedCart() {
+        return addedCart;
+    }
+
+    public void setAddedCart(String addedCart) {
+        this.addedCart = addedCart;
+    }
+
+    public String getAddedWish() {
+        return addedWish;
+    }
+
+    public void setAddedWish(String addedWish) {
+        this.addedWish = addedWish;
     }
 
     public JSONObject getJsonObject() {

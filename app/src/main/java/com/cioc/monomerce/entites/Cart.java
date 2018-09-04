@@ -26,7 +26,6 @@ public class Cart {
         this.jsonObject = jsonObject;
 
         try {
-
             this.pk = jsonObject.getString("pk");
             this.user = jsonObject.getString("user");
             this.quantity = jsonObject.getString("qty");

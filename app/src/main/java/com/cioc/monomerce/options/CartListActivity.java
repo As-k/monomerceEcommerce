@@ -34,6 +34,7 @@ import com.cioc.monomerce.communicator.CartUpdate;
 import com.cioc.monomerce.communicator.RecyclerItemClickListener;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.ListingParent;
+import com.cioc.monomerce.notification.NotificationCountSetClass;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
@@ -253,7 +254,6 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                 @Override
                 public void onClick(View view) {
                     deleteItem(cart, position);
-                    notifyDataSetChanged();
                 }
             });
 
@@ -263,7 +263,6 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                 public void onClick(View view) {
                     moveWishList(cart);
                     holder.cardWishList.setImageResource(R.drawable.ic_favorite_red_24dp);
-                    notifyDataSetChanged();
 //                    Toast.makeText(mContext,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -284,8 +283,6 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                         else mPrice = mPrice - parent.getProductIntDiscountedPrice();
                         updateItem(String.valueOf(quantRemove), cart, mPrice);
                     }
-                    notifyDataSetChanged();
-                    notifyItemChanged(position);
                 }
             });
 
@@ -300,9 +297,6 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                     } else mPrice = mPrice + parent.getProductIntDiscountedPrice();
                     holder.itemsQuantity.setText(quantAdd+"");
                     updateItem(String.valueOf(quantAdd), cart, mPrice);
-
-                    notifyDataSetChanged();
-                    notifyItemChanged(position);
                 }
             });
         }
@@ -321,8 +315,6 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                     }
                     toast = Toast.makeText(mContext,"removed "+ cart.getPk(), Toast.LENGTH_SHORT);
                     toast.show();
-//                    ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//                    imageUrlUtils.removeCartListImageUri(position);
                     //Decrease notification count
                     MainActivity.notificationCountCart--;
                     if (MainActivity.notificationCountCart==0) {
@@ -332,7 +324,6 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                         mStepView.setVisibility(View.GONE);
                     }
                     mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                    notifyItemChanged(position);
                 }
 
                 @Override
@@ -353,10 +344,8 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     Toast.makeText(mContext, "updated cart"+ cart.getPk(), Toast.LENGTH_SHORT).show();
-                    cartUpdate.setValue(String.valueOf(price));
-//                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-//                    activity.recreate();
-                    notifyDataSetChanged();
+//                    cartUpdate.setValue(String.valueOf(price));
+                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
 
                 @Override
@@ -372,11 +361,8 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
             client.patch(BackendServer.url+"/api/ecommerce/cart/"+ cart.getPk()+"/", params, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    Toast.makeText(mContext, "onSuccess", Toast.LENGTH_SHORT).show();
+                    MainActivity.notificationCountCart--;
                     mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-//                    MainActivity.notificationCountCart--;
-//                    recreateActivityCompat(activity);
-                    notifyDataSetChanged();
                 }
 
                 @Override
@@ -405,7 +391,7 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
         notify.flags |= Notification.FLAG_AUTO_CANCEL;
         notif.notify(0, notify);
 
-        if (MainActivity.notificationCountCart >0) {
+        if (MainActivity.notificationCountCart > 0) {
             layoutCartNoItems.setVisibility(View.GONE);
             layoutCartItems.setVisibility(View.VISIBLE);
             layoutCartPayments.setVisibility(View.VISIBLE);
@@ -414,7 +400,7 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
             checkOutAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (CartListRecyclerViewAdapter.mPrice<=0){
+                    if (CartListRecyclerViewAdapter.mPrice <= 0){
                         Log.d("TAG", "price is zero");
                     } else {
                         startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", CartListRecyclerViewAdapter.mPrice));
@@ -428,8 +414,6 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
             layoutCartPayments.setVisibility(View.GONE);
             mStepView.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
-
-
             bStartShopping.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

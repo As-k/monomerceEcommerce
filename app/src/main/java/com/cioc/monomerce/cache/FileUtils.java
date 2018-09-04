@@ -1,8 +1,5 @@
 package com.cioc.monomerce.cache;
 
-/**
- * Created by 06peng on 2015-07-03.
- */
 
 import java.io.InputStream;
 import java.io.OutputStream;
