@@ -246,16 +246,11 @@ public class ImageListFragment extends Fragment {
                 holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        String quan = holder.itemsQuantity.getText().toString();
-//                        int quantAdd = Integer.parseInt(quan);
-//                        quantAdd++;
-
-//                        updateItem("1", parent, holder);
                         RequestParams params = new RequestParams();
                         params.put("product", parent.getPk());
                         params.put("qty", "1");
                         params.put("typ", "cart");
-//                        params.put("user", parent.getUser());
+                        params.put("user", parent.getUser());
                         client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -329,14 +324,12 @@ public class ImageListFragment extends Fragment {
                         }
                     }
                 });
-
                 holder.itemsQuantityAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String quan = holder.itemsQuantity.getText().toString();
                         int quantAdd = Integer.parseInt(quan);
                         quantAdd++;
-                        holder.itemsQuantity.setText(quantAdd+"");
                         updateItem(String.valueOf(quantAdd), parent, holder);
                     }
                 });
@@ -379,15 +372,14 @@ public class ImageListFragment extends Fragment {
             //Set click action for wishlist
             String quntWish = parent.getAddedWish();
             int qntWishAdd = Integer.parseInt(quntWish);
-//            final ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
             if (qntWishAdd==0) {
                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                 holder.res = true;
             }else {
                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
-//                imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
                 holder.res = false;
             }
+
             holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -396,11 +388,10 @@ public class ImageListFragment extends Fragment {
                         params.put("product", parent.getPk());
                         params.put("qty", "1");
                         params.put("typ", "favourite");
-//                        params.put("user", parent.getUser());
+                        params.put("user", parent.getUser());
                         client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//                                imageUrlUtils.addWishlistImageUri(parent.getFilesAttachment());
                                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
                                 notifyDataSetChanged();
                                 Toast toast = null;
@@ -449,12 +440,16 @@ public class ImageListFragment extends Fragment {
 
         public void updateItem(String qty, final ListingParent parent, ViewHolder holder) {
             RequestParams params = new RequestParams();
+            params.put("product", parent.getPk());
             params.put("qty", qty);
-            client.patch(BackendServer.url + "/api/ecommerce/cart/" + parent.getPk()+ "/", params, new AsyncHttpResponseHandler() {
+            params.put("typ", "cart");
+            params.put("user", parent.getUser());
+            client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    holder.itemsQuantity.setText(qty+"");
                     Toast.makeText(mActivity, "updated cart"+ parent.getPk(), Toast.LENGTH_SHORT).show();
-                    mActivity.startActivity(new Intent(mActivity, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+//                    mActivity.startActivity(new Intent(mActivity, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                     notifyDataSetChanged();
                 }
 

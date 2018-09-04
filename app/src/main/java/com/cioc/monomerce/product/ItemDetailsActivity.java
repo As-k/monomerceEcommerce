@@ -240,7 +240,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                         toast.show();
                     }
                 });
-
             }
         });
 
@@ -276,7 +275,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
-
     }
 
     @Override
@@ -397,54 +395,4 @@ public class ItemDetailsActivity extends AppCompatActivity {
             return v;
         }
     }
-
-
-//    private class SpecificationsListAdapter extends RecyclerView.Adapter<SpecificationsListAdapter.MyHolder>{
-//        Context context;
-//        JSONArray array;
-//
-//        public SpecificationsListAdapter(Context context, JSONArray jsonArray) {
-//            this.context = context;
-//            this.array = jsonArray;
-//        }
-//
-//        @NonNull
-//        @Override
-//        public SpecificationsListAdapter.MyHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-//            LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            View v = layoutInflater.inflate(R.layout.layout_specifications_style, viewGroup, false);
-//            SpecificationsListAdapter.MyHolder myHolder = new SpecificationsListAdapter.MyHolder(v);
-//
-//            return myHolder;
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(@NonNull MyHolder myHolder, int position) {
-//            try {
-//                JSONObject obj = array.getJSONObject(position);
-//                myHolder.propertyName.setText(obj.getString("name"));
-//                myHolder.propertyValue.setText(obj.getString("value"));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return array.length();
-//        }
-//
-//        public class MyHolder extends RecyclerView.ViewHolder{
-//            TextView propertyName, propertyValue;
-//            public MyHolder(@NonNull View itemView) {
-//                super(itemView);
-//
-//                propertyName = itemView.findViewById(R.id.property_name);
-//                propertyValue = itemView.findViewById(R.id.property_value);
-//
-//            }
-//        }
-//    }
-
-
 }
