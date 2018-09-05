@@ -257,6 +257,8 @@ public class ImageListFragment extends Fragment {
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                                 holder.mLayoutItemCart2.setVisibility(View.GONE);
                                 holder.itemsQuantity.setVisibility(View.VISIBLE);
+                                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                holder.res = true;
                                 Toast toast = null;
                                 if (toast!= null) {
                                     toast.cancel();
@@ -383,7 +385,7 @@ public class ImageListFragment extends Fragment {
                     if (holder.res) {
                         RequestParams params = new RequestParams();
                         params.put("product", parent.getPk());
-                        params.put("qty", "1");
+                        params.put("qty", 1);
                         params.put("typ", "favourite");
                         params.put("user", parent.getUser());
                         client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
@@ -392,6 +394,9 @@ public class ImageListFragment extends Fragment {
                                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
                                 holder.itemsQuantity.setVisibility(View.GONE);
                                 holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                                MainActivity.notificationCountCart--;
+                                NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+                                holder.res = false;
                                 Toast toast = null;
                                 if (toast!= null) {
                                     toast.cancel();
@@ -413,15 +418,16 @@ public class ImageListFragment extends Fragment {
                     } else {
                         RequestParams params = new RequestParams();
                         params.put("product", parent.getPk());
-                        params.put("qty", "0");
+                        params.put("qty", 0);
                         params.put("typ", "favourite");
                         params.put("user", parent.getUser());
-                        client.post(BackendServer.url + "/api/ecommerce/cart/", new AsyncHttpResponseHandler() {
+                        client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                                 holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
                                 holder.itemsQuantity.setVisibility(View.GONE);
+                                holder.res = true;
                                 if (toast!= null) {
                                     toast.cancel();
                                 }
@@ -431,7 +437,11 @@ public class ImageListFragment extends Fragment {
 
                             @Override
                             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                Toast.makeText(mContext, "removing failure"+ parent.getPk(), Toast.LENGTH_SHORT).show();
+                                if (toast!= null) {
+                                    toast.cancel();
+                                }
+                                toast = Toast.makeText(mActivity, "Removing failure", Toast.LENGTH_SHORT);
+                                toast.show();
                             }
                         });
                     }

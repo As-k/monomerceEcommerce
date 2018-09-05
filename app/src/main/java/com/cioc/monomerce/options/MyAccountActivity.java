@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -101,19 +102,25 @@ public class MyAccountActivity extends AppCompatActivity {
                             // Do something with the file `response`
 
                             FileOutputStream outputStream;
+                            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100 /*ignored for PNG*/, bos);
+                            byte[] bitmapdata = bos.toByteArray();
                             try {
                                 file1 = new File(Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name1)+ "/" + dp);
-                                if (file1.exists())
+                                if (file1.exists()) {
                                     file1.delete();
-                                outputStream = new FileOutputStream(file1);
-                                outputStream.write(dp.getBytes());
+                                }
+                                String path = file1.getAbsolutePath() + ".png";
+
+                                outputStream = new FileOutputStream(path);
+                                outputStream.write(bitmapdata);
                                 outputStream.close();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             Log.e("image",""+file1.getAbsolutePath());
-                            Bitmap pp = BitmapFactory.decodeFile(file.getAbsolutePath());
-                            profileImage.setImageBitmap(pp);
+                            profileImage.setImageBitmap(bitmap);
                         }
                         @Override
                         public void onFailure(int statusCode, Header[] headers,Throwable e, File file) {
