@@ -3,6 +3,7 @@ package com.cioc.monomerce.options;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -236,7 +237,7 @@ public class OrderActivity extends AppCompatActivity {
 //                            } catch (IOException e){
 //                                e.printStackTrace();
 //                            }
-                        /*    Document document = new Document();
+                            Document document = new Document();
                             String directoryPath = android.os.Environment.getExternalStorageDirectory().toString();
                             try {
                                 PdfWriter.getInstance(document, new FileOutputStream(Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name1)+ "/invoice_"+ Calendar.getInstance().getTime()+ ".pdf")); //  Change pdf's name.
@@ -254,9 +255,9 @@ public class OrderActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             } catch (IOException e) {
                                 e.printStackTrace();
-                            } */
+                            }
 
-                        convertText(response.getAbsolutePath(), Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name1)+ "/invoice_"+ Calendar.getInstance().getTime()+ ".pdf");
+//                        convertText(response.getAbsolutePath(), Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name1)+ "/invoice_"+ Calendar.getInstance().getTime()+ ".pdf");
                             Toast.makeText(OrderActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -317,7 +318,7 @@ public class OrderActivity extends AppCompatActivity {
         }
     }
     private void showAlertDialog(String title, String message) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(OrderActivity.this);
         alertDialogBuilder.setTitle(title);
         alertDialogBuilder
                 .setMessage(message)
