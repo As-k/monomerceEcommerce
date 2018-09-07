@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
@@ -175,41 +176,52 @@ public class PaymentActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        RequestParams params = new RequestParams();
-        params.put("address", object);
-        params.put("products", array);
-        params.put("modeOfShopping", "online");
-        params.put("promoCode", "");
-        params.put("promoCodeDiscount", "0");
-        if (res) {
-            params.put("modeOfPayment", "COD");
-            params.put("paidAmount", "0");
-            client.post(BackendServer.url+"/api/ecommerce/createOrder/", params, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    super.onSuccess(statusCode, headers, response);
-                    try {
-                        String ordno = response.getString("odnumber");
-                        Toast.makeText(PaymentActivity.this, ""+ordno, Toast.LENGTH_SHORT).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+        JSONObject params = new JSONObject();
+        try {
+            params.put("address", object);
+            params.put("products", array);
+            params.put("modeOfShopping", "online");
+            params.put("promoCode", "");
+            params.put("promoCodeDiscount", "0");
+
+            if (res) {
+                params.put("modeOfPayment", "COD");
+                params.put("paidAmount", "0");
+                StringEntity entity = null;
+
+                try{
+                    entity = new StringEntity(params.toString());
+                }catch(Exception e){
+
+                }
+                client.post(mContext,BackendServer.url+"/api/ecommerce/createOrder/", entity,"application/json", new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        super.onSuccess(statusCode, headers, response);
+                        try {
+                            String ordno = response.getString("odnumber");
+                            Toast.makeText(PaymentActivity.this, ""+ordno, Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
 
-                }
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                        Toast.makeText(PaymentActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+                    }
 
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    super.onFailure(statusCode, headers, throwable, errorResponse);
-                    Toast.makeText(PaymentActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    super.onFailure(statusCode, headers, responseString, throwable);
-                    Toast.makeText(PaymentActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
-                }
-
-            });
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                        Toast.makeText(PaymentActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
     }

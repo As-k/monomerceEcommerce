@@ -26,6 +26,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,6 +42,7 @@ import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.GenericProduct;
+import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.entites.OfferBanners;
 import com.cioc.monomerce.fragments.ImageListFragment;
 import com.cioc.monomerce.miscellaneous.EmptyActivity;
@@ -65,6 +67,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity
     private SliderImageFragmentAdapter mSliderImageFragmentAdapter;
     private ViewPager mViewPager;
     private ExtensiblePageIndicator extensiblePageIndicator;
+    public static ArrayList<HashMap> hashMapList;
 
     AsyncHttpClient client;
 
@@ -167,7 +171,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(context, MyAccountActivity.class));
             }
         });
-
     }
 
     @Override
@@ -199,7 +202,6 @@ public class MainActivity extends AppCompatActivity
                     exit = false;
                 }
             }, 3 * 1000);
-
         }
 
     }
@@ -225,17 +227,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
             startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
             return true;
         }else if (id == R.id.action_cart) {
-
            /* NotificationCountSetClass.setAddToCart(MainActivity.this, item, notificationCount);
             invalidateOptionsMenu();*/
             startActivity(new Intent(MainActivity.this, CartListActivity.class));
@@ -264,7 +261,6 @@ public class MainActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                 }
-
             }
 
             @Override
@@ -282,12 +278,10 @@ public class MainActivity extends AppCompatActivity
                         JSONObject object = response.getJSONObject(i);
                         OfferBanners banners = new OfferBanners(object);
                         offerBannersList.add(banners);
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-
             }
 
             @Override
@@ -320,15 +314,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        Adapter adapter = new Adapter(getSupportFragmentManager());
+        ListFragmentAdapter adapter = new ListFragmentAdapter(getSupportFragmentManager());
+        hashMapList = new ArrayList<>();
         for (int i=0; i<genericProducts.size(); i++) {
             ImageListFragment fragment = new ImageListFragment();
             Bundle bundle = new Bundle();
             GenericProduct product = genericProducts.get(i);
             bundle.putInt("type", i+1);
             bundle.putString("pk", product.getPk());
+//            getItems(product.getPk());
             fragment.setArguments(bundle);
             adapter.addFragment(fragment, product.getName());
+
         }
 //        fragment = new ImageListFragment();
 //        bundle = new Bundle();
@@ -356,6 +353,31 @@ public class MainActivity extends AppCompatActivity
 //        fragment.setArguments(bundle);
 //        adapter.addFragment(fragment, getString(R.string.item_6));
         viewPager.setAdapter(adapter);
+    }
+
+    public void getItems(String pk) {
+        client.get(BackendServer.url+"/api/ecommerce/listing/?parent="+pk+"&recursive=1", new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                super.onSuccess(statusCode, headers, response);
+                for (int i=0; i<response.length(); i++){
+                    try {
+                        JSONObject object = response.getJSONObject(i);
+                        ListingParent parent = new ListingParent(object);
+                        HashMap<Integer, ListingParent> hmap = new HashMap<Integer, ListingParent>();
+                        hashMapList.add(hmap);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                Toast.makeText(context, "onFailure", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -387,8 +409,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, HelpCenterActivity.class));
         }else if (id == R.id.contact_us) {
                 startActivity(new Intent(MainActivity.this, FeedBackActivity.class));
-//        }else if (id == R.id.my_orders) {
-//                startActivity(new Intent(MainActivity.this, OrderActivity.class));
         }else {
                 startActivity(new Intent(MainActivity.this, EmptyActivity.class));
         }
@@ -416,8 +436,7 @@ public class MainActivity extends AppCompatActivity
                         return true;
                     }
                     case R.id.action_home: {
-                        startActivity(new Intent(MainActivity.this, MainActivity.class));
-
+//                        startActivity(new Intent(MainActivity.this, MainActivity.class));
                         return true;
                     }
                 }
@@ -434,7 +453,6 @@ public class MainActivity extends AppCompatActivity
                 super.onSuccess(statusCode, headers, response);
                 try {
                     JSONObject usrObj = response.getJSONObject(0);
-//                    pk = usrObj.getInt("pk");
                     String username = usrObj.getString("username");
                     String firstName = usrObj.getString("first_name");
                     String lastName = usrObj.getString("last_name");
@@ -450,46 +468,9 @@ public class MainActivity extends AppCompatActivity
                     userName.setText(firstName+" "+lastName);
                     Uri uri = Uri.parse(dpLink);
                     userImage.setImageURI(uri);
-//                    emailId.setText(email);
-//                    if (!mobile.equals("null"))
-//                        mobileNo.setText(mobile);
-
-//                    String[] image = dpLink.split("/"); //Backend.serverUrl+"/media/HR/images/DP/"
-//                    String dp = image[7];
-//                    Log.e("image "+dpLink,""+dp);
-
-//                    client.get(dpLink, new FileAsyncHttpResponseHandler() {
-//                        @Override
-//                        public void onSuccess(int statusCode, Header[] headers, File file) {
-//                            // Do something with the file `response`
-//
-//                            FileOutputStream outputStream;
-//                            try {
-//                                file1 = new File(Environment.getExternalStorageDirectory()+"/Monomerce"+ "/" + dp);
-//                                if (file1.exists())
-//                                    file1.delete();
-//                                outputStream = new FileOutputStream(file1);
-//                                outputStream.write(dp.getBytes());
-//                                outputStream.close();
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                            Log.e("image",""+file1.getAbsolutePath());
-//                            Bitmap pp = BitmapFactory.decodeFile(file.getAbsolutePath());
-//                            profileImage.setImageBitmap(pp);
-//                        }
-//                        @Override
-//                        public void onFailure(int statusCode, Header[] headers,Throwable e, File file) {
-//                            // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-//                            Log.e("failure-image",""+file.getAbsolutePath());
-//                            System.out.println("failure");
-//                            System.out.println(statusCode);
-//                        }
-//                    });
                 } catch (JSONException e){
                     e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -506,11 +487,11 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    static class Adapter extends FragmentPagerAdapter {
+    static class ListFragmentAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
 
-        public Adapter(FragmentManager fm) {
+        public ListFragmentAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -579,22 +560,18 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
-
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
                 pos = position;
-//                Toast.makeText(context, "viewPager"+position, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
     }

@@ -43,7 +43,6 @@ public class CheckOutActivity extends AppCompatActivity {
     public static ArrayList<Address> addresses;
     public static int pos;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,15 +108,7 @@ public class CheckOutActivity extends AppCompatActivity {
 
 
     public class AddressRecyclerViewAdapter extends RecyclerView.Adapter<CheckOutActivity.AddressRecyclerViewAdapter.ViewHolder> {
-
         private ArrayList<Address> mAddresslist;
-//        private RecyclerView mRecyclerView;
-
-//        String[] add = {"4th Floor, Venkateshwara Heritage, Kudlu Hosa Road, Opp Sai Purna Premium Apartment, Sai Meadows, Kudlu, Bengaluru, Karnataka 560068",
-//                "HYVA Primus, #45/155, 5th Main, Road Next to IBM Bannerghatta Main, Bengaluru, Karnataka 560029"};
-
-
-
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             TextView addresstxt;
@@ -149,9 +140,8 @@ public class CheckOutActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
             Address address = mAddresslist.get(position);
-            holder.addresstxt.setText(address.getTitle()+"\n"+address.getStreet()+"\n"+address.getLandMark()+"\n"+address.getCity()+", "+address.getState()+" "+address.getPincode()+"\n"+address.getCountry());
-//            holder.addresstxt.setText(address);
-//            holder.addresstxt.setText(add[position]);
+            holder.addresstxt.setText(address.getTitle()+"\n"+address.getStreet()+"\n"+address.getLandMark()+"\n"
+                    +address.getCity()+", "+address.getState()+" "+address.getPincode()+"\n"+address.getCountry());
             holder.deliveryAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -160,15 +150,12 @@ public class CheckOutActivity extends AppCompatActivity {
                             .putExtra("address", holder.addresstxt.getText().toString())
                             .putExtra("pk", address.getPk())
                             .putExtra("totalPrice", textAmount.getText().toString()));
-
                 }
             });
-
         }
 
         @Override
         public void onViewRecycled(CheckOutActivity.AddressRecyclerViewAdapter.ViewHolder holder) {
-
         }
 
         @Override

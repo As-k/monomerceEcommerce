@@ -1,7 +1,5 @@
 package com.cioc.monomerce.options;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,11 +26,11 @@ import android.widget.Toast;
 
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
-import com.cioc.monomerce.communicator.CartUpdate;
-import com.cioc.monomerce.communicator.RecyclerItemClickListener;
+import com.cioc.monomerce.communicator.DecreaseQuntItem;
+import com.cioc.monomerce.communicator.IncreaseQuntItem;
+import com.cioc.monomerce.communicator.NotifyDataChanged;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.ListingParent;
-import com.cioc.monomerce.notification.NotificationCountSetClass;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
@@ -59,7 +55,7 @@ import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITI
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 
 
-public class CartListActivity extends AppCompatActivity implements CartUpdate {
+public class CartListActivity extends AppCompatActivity implements DecreaseQuntItem, IncreaseQuntItem, NotifyDataChanged {
     private static Context mContext;
     TextView textTotalPrice;
     Button bStartShopping, checkOutAction;
@@ -67,11 +63,12 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
     ProgressBar progressBar;
     public static LinearLayout layoutCartItems, layoutCartPayments, layoutCartNoItems;
     public AsyncHttpClient client;
-    public static int price=0;
+    public int totalPrice=0;
     RecyclerView recyclerView;
     Toast toast;
 //    public static ArrayList<Cart> cartList = MainActivity.cartList;
     public static ArrayList<Cart> cartList;
+    CartListRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +84,7 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
         final ArrayList<String> cartlistImageUri = imageUrlUtils.getCartListImageUri();
         //Show cart layout based on items
         setCartLayout();
-
+        totalPrice=0;
 
         List<String> steps = Arrays.asList(new String[]{"Selected Items", "Shipping Address", "Review Your Order"});
         mStepView.setSteps(steps);
@@ -108,13 +105,14 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
         progressBar.setVisibility(View.GONE);
         RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        CartListRecyclerViewAdapter adapter = new CartListRecyclerViewAdapter(cartList, price, this);
+        adapter = new CartListRecyclerViewAdapter(cartList, totalPrice, this, this, this);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                textTotalPrice.setText("\u20B9"+CartListRecyclerViewAdapter.mPrice);
+                totalPrice = CartListRecyclerViewAdapter.mPrice;
+                textTotalPrice.setText("\u20B9"+totalPrice);
             }
         },500);
     }
@@ -143,16 +141,23 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                 });
     }
 
-
     @Override
-    public void setValue(String value) {
-        textTotalPrice.setText("\u20B9"+value);
+    public void setRemovePrice(int price) {
+        totalPrice = totalPrice-price;
+        textTotalPrice.setText("\u20B9"+totalPrice);
     }
 
     @Override
-    public void setQuantity(String quantity) {
-
+    public void setAddPrice(int price) {
+        totalPrice = totalPrice+price;
+        textTotalPrice.setText("\u20B9"+totalPrice);
     }
+
+    @Override
+    public void dataChange() {
+        adapter.notifyDataSetChanged();
+    }
+
 
     public static class CartListRecyclerViewAdapter
             extends RecyclerView.Adapter<CartListRecyclerViewAdapter.ViewHolder> {
@@ -163,7 +168,9 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
         CartListActivity activity;
         public static int mPrice;
         Toast toast;
-        CartUpdate cartUpdate;
+        DecreaseQuntItem decreaseQuntItem;
+        IncreaseQuntItem increaseQuntItem;
+        NotifyDataChanged notifyDataChanged;
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final SimpleDraweeView mImageView;
@@ -189,10 +196,12 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
             }
         }
 
-        public CartListRecyclerViewAdapter(ArrayList<Cart> carts, int price, CartUpdate listener) {
+        public CartListRecyclerViewAdapter(ArrayList<Cart> carts, int price, DecreaseQuntItem dQuntItem, IncreaseQuntItem aQuntItem, NotifyDataChanged dataChanged ) {
             mCartlist = carts;
             mPrice = price;
-            cartUpdate = listener;
+            decreaseQuntItem = dQuntItem;
+            increaseQuntItem = aQuntItem;
+            notifyDataChanged = dataChanged;
         }
 
         @Override
@@ -272,6 +281,7 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                 @Override
                 public void onClick(View view) {
                     String quan = holder.itemsQuantity.getText().toString();
+                    int price = 0;
                     int quantRemove = Integer.parseInt(quan);
                     if (quantRemove <= 1) {
                         deleteItem(cart, position);
@@ -279,9 +289,11 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                         quantRemove--;
                         holder.itemsQuantity.setText(quantRemove + "");
                         if (parent.getProductDiscount().equals("0"))
-                            mPrice = mPrice - parent.getProductIntPrice();
-                        else mPrice = mPrice - parent.getProductIntDiscountedPrice();
-                        updateItem(String.valueOf(quantRemove), cart, mPrice);
+//                            mPrice = mPrice - parent.getProductIntPrice();
+                            price = parent.getProductIntPrice();
+                        else price = parent.getProductIntDiscountedPrice();
+                        updateItem(String.valueOf(quantRemove), cart, price);
+                        decreaseQuntItem.setRemovePrice(price);
                     }
                 }
             });
@@ -290,13 +302,15 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                 @Override
                 public void onClick(View view) {
                     String quan = holder.itemsQuantity.getText().toString();
+                    int price = 0;
                     int quantAdd = Integer.parseInt(quan);
                     quantAdd++;
                     if (parent.getProductDiscount().equals("0")) {
-                        mPrice = mPrice + parent.getProductIntPrice();
-                    } else mPrice = mPrice + parent.getProductIntDiscountedPrice();
+                        price = parent.getProductIntPrice();
+                    } else price = parent.getProductIntDiscountedPrice();
                     holder.itemsQuantity.setText(quantAdd+"");
-                    updateItem(String.valueOf(quantAdd), cart, mPrice);
+                    updateItem(String.valueOf(quantAdd), cart, price);
+                    increaseQuntItem.setAddPrice(price);
                 }
             });
         }
@@ -323,6 +337,7 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                         layoutCartPayments.setVisibility(View.GONE);
                         mStepView.setVisibility(View.GONE);
                     }
+                    notifyDataChanged.dataChange();
                     mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
 
@@ -343,9 +358,13 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
             client.patch(BackendServer.url + "/api/ecommerce/cart/" + cart.getPk()+ "/", params, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    Toast.makeText(mContext, "updated cart"+ cart.getPk(), Toast.LENGTH_SHORT).show();
-//                    cartUpdate.setValue(String.valueOf(price));
-                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    if (toast!= null) {
+                        toast.cancel();
+                    }
+                    toast = Toast.makeText(mContext,"updated "+ cart.getPk(), Toast.LENGTH_SHORT);
+                    toast.show();
+
+//                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
 
                 @Override
@@ -362,6 +381,7 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     MainActivity.notificationCountCart--;
+                    notifyDataSetChanged();
                     mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
 
@@ -382,14 +402,14 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
         progressBar =  findViewById(R.id.progressBar);
         checkOutAction = findViewById(R.id.text_action_bottom2);
         bStartShopping =  findViewById(R.id.bAddNew);
-        NotificationManager notif=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent intent = new Intent("android.intent.action.MUSIC_PLAYER");
-        Notification notify = new Notification.Builder
-                (getApplicationContext()).setContentTitle("").setContentText("").
-                setContentTitle("").setSmallIcon(R.drawable.sterling_select).build();
-        PendingIntent pi = PendingIntent.getActivities(this, 0, new Intent[]{intent}, 0);
-        notify.flags |= Notification.FLAG_AUTO_CANCEL;
-        notif.notify(0, notify);
+//        NotificationManager notif=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+//        Intent intent = new Intent("android.intent.action.MUSIC_PLAYER");
+//        Notification notify = new Notification.Builder
+//                (getApplicationContext()).setContentTitle("").setContentText("").
+//                setContentTitle("").setSmallIcon(R.drawable.sterling_select).build();
+//        PendingIntent pi = PendingIntent.getActivities(this, 0, new Intent[]{intent}, 0);
+//        notify.flags |= Notification.FLAG_AUTO_CANCEL;
+//        notif.notify(0, notify);
 
         if (MainActivity.notificationCountCart > 0) {
             layoutCartNoItems.setVisibility(View.GONE);
@@ -400,10 +420,10 @@ public class CartListActivity extends AppCompatActivity implements CartUpdate {
             checkOutAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (CartListRecyclerViewAdapter.mPrice <= 0){
+                    if (totalPrice <= 0){
                         Log.d("TAG", "price is zero");
                     } else {
-                        startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", CartListRecyclerViewAdapter.mPrice));
+                        startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", totalPrice));
                     }
                 }
             });

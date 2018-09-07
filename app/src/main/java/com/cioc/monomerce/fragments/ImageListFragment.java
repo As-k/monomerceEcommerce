@@ -25,6 +25,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -99,7 +101,7 @@ public class ImageListFragment extends Fragment {
     String fragmentName = "";
     private void setupRecyclerView(final RecyclerView recyclerView) {
         for (int i=0; i<MainActivity.genericProducts.size(); i++) {
-            if (ImageListFragment.this.getArguments().getInt("type") == i+1) {
+            if (ImageListFragment.this.getArguments().getInt("type") == i + 1) {
                 GenericProduct product = MainActivity.genericProducts.get(i);
                 pk = product.getPk();
                 listingParents.clear();
@@ -107,44 +109,45 @@ public class ImageListFragment extends Fragment {
                 recyclerView.setVisibility(View.GONE);
                 moreItems.setVisibility(View.GONE);
                 if (ImageListFragment.this.getArguments().getString("pk").equals(pk)) {
-                    Log.e("pk", ""+pk);
+                    Log.e("pk", "" + pk);
                     getItems(pk);
 //                    items = listingParents;
                     fragmentName = product.getName();
+
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (listingParents.size() == 0) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        moreItems.setVisibility(View.GONE);
+                    } else if (listingParents.size() > 0) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                        recyclerView.setLayoutManager(layoutManager);
+                        CategoriesRecyclerViewAdapter viewAdapter = new CategoriesRecyclerViewAdapter(listingParents, fragmentName);
+                        recyclerView.setAdapter(viewAdapter);
+                        viewAdapter.notifyDataSetChanged();
+                    }
+                    if (listingParents.size() > 10) {
+                        moreItems.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        moreItems.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                getContext().startActivity(new Intent(getContext(), AllItemsShowActivity.class)
+                                        .putExtra("pk", pk)
+                                        .putExtra("fragmentName", fragmentName.toUpperCase()));
+                            }
+                        });
+                    } else
+                        moreItems.setVisibility(View.GONE);
+                }
+            }, 3 * 1000);
                 }
             }
         }
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (listingParents.size()==0) {
-                    progressBar.setVisibility(View.VISIBLE);
-                    moreItems.setVisibility(View.GONE);
-                } else if (listingParents.size()>0){
-                    recyclerView.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                    StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                    recyclerView.setLayoutManager(layoutManager);
-                    CategoriesRecyclerViewAdapter viewAdapter = new CategoriesRecyclerViewAdapter(listingParents, fragmentName);
-                    recyclerView.setAdapter(viewAdapter);
-                    viewAdapter.notifyDataSetChanged();
-                }
-                if (listingParents.size()>10) {
-                    moreItems.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    moreItems.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            getContext().startActivity(new Intent(getContext(), AllItemsShowActivity.class)
-                                    .putExtra("pk", pk)
-                                    .putExtra("fragmentName", fragmentName.toUpperCase()));
-                        }
-                    });
-                } else
-                    moreItems.setVisibility(View.GONE);
-            }
-        },3*1000);
     }
 
     public void getItems(String pk) {
@@ -284,54 +287,6 @@ public class ImageListFragment extends Fragment {
             } else {
                 holder.itemsQuantity.setVisibility(View.VISIBLE);
                 holder.mLayoutItemCart2.setVisibility(View.GONE);
-//                holder.itemsQuantity.setText(""+qntAdd);
-//                holder.itemsQuantityRemove.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        String quan = holder.itemsQuantity.getText().toString();
-//                        int quantRemove = Integer.parseInt(quan);
-////                        if (quantRemove <= 1) {
-//////                            deleteItem(cart, position);
-////                            client.delete(mActivity, BackendServer.url + "/api/ecommerce/cart/"+ parent.getPk()+"/", new AsyncHttpResponseHandler() {
-////                                @Override
-////                                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-////                                    if (toast!= null) {
-////                                        toast.cancel();
-////                                    }
-////                                    toast = Toast.makeText(mActivity,"removed "+ parent.getPk(), Toast.LENGTH_SHORT);
-////                                    toast.show();
-////                                    //Decrease notification count
-////                                    MainActivity.notificationCountCart--;
-////                                    if (MainActivity.notificationCountCart==0) {
-////                                        holder.mLayoutItemCart1.setVisibility(View.GONE);
-////                                        holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
-////                                    }
-////                                    mActivity.startActivity(new Intent(mActivity, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-////                                    notifyItemChanged(position);
-////                                }
-////
-////                                @Override
-////                                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-////                                    if (toast!= null) {
-////                                        toast.cancel();
-////                                    }
-////                                    toast = Toast.makeText(mActivity,"removing failure "+ parent.getPk(), Toast.LENGTH_SHORT);
-////                                    toast.show();
-////                                }
-////                            });
-////                        } else
-//                            updateItem(String.valueOf(quantRemove--), parent, holder);
-////                        }
-//                    }
-//                });
-//                holder.itemsQuantityAdd.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        String quan = holder.itemsQuantity.getText().toString();
-//                        int quantAdd = Integer.parseInt(quan);
-//                        updateItem(String.valueOf(quantAdd++), parent, holder);
-//                    }
-//                });
             }
 
             if (parent.getFilesAttachment().equals("null")){
