@@ -3,12 +3,14 @@ package com.cioc.monomerce.options;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +33,7 @@ import com.cioc.monomerce.communicator.IncreaseQuntItem;
 import com.cioc.monomerce.communicator.NotifyDataChanged;
 import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.ListingParent;
+import com.cioc.monomerce.payment.PaymentActivity;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
@@ -63,12 +66,13 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
     ProgressBar progressBar;
     public static LinearLayout layoutCartItems, layoutCartPayments, layoutCartNoItems;
     public AsyncHttpClient client;
-    public int totalPrice=0;
+    public int totalPrice = 0;
     RecyclerView recyclerView;
     Toast toast;
-//    public static ArrayList<Cart> cartList = MainActivity.cartList;
+    //    public static ArrayList<Cart> cartList = MainActivity.cartList;
     public static ArrayList<Cart> cartList;
     CartListRecyclerViewAdapter adapter;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +88,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
         final ArrayList<String> cartlistImageUri = imageUrlUtils.getCartListImageUri();
         //Show cart layout based on items
         setCartLayout();
-        totalPrice=0;
+        totalPrice = 0;
 
         List<String> steps = Arrays.asList(new String[]{"Selected Items", "Shipping Address", "Review Your Order"});
         mStepView.setSteps(steps);
@@ -96,12 +100,12 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-               setCartListRecyclerView();
+                setCartListRecyclerView();
             }
-        },1000);
+        }, 1000);
     }
 
-    void setCartListRecyclerView(){
+    void setCartListRecyclerView() {
         progressBar.setVisibility(View.GONE);
         RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
@@ -112,10 +116,11 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
             @Override
             public void run() {
                 totalPrice = CartListRecyclerViewAdapter.mPrice;
-                textTotalPrice.setText("\u20B9"+totalPrice);
+                textTotalPrice.setText("\u20B9" + totalPrice);
             }
-        },500);
+        }, 500);
     }
+
 
     public void getCardItem() {
         client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&user=1&typ=cart",
@@ -165,7 +170,6 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
         private ArrayList<Cart> mCartlist;
         BackendServer backendServer = new BackendServer(mContext);
         AsyncHttpClient client = backendServer.getHTTPClient();
-        CartListActivity activity;
         public static int mPrice;
         Toast toast;
         DecreaseQuntItem decreaseQuntItem;
@@ -331,7 +335,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
                     toast.show();
                     //Decrease notification count
                     MainActivity.notificationCountCart--;
-                    if (MainActivity.notificationCountCart==0) {
+                    if (MainActivity.notificationCountCart == 0) {
                         layoutCartNoItems.setVisibility(View.VISIBLE);
                         layoutCartItems.setVisibility(View.GONE);
                         layoutCartPayments.setVisibility(View.GONE);

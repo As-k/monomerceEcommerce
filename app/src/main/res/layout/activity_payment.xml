@@ -18,6 +18,8 @@
         app:svTextColor="@color/gen_white"
         app:svCircleColor="@color/grey_light"
         app:svSelectedColor="@color/text_color"/>
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"

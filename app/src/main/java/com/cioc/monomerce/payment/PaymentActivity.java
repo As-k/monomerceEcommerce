@@ -1,10 +1,13 @@
 package com.cioc.monomerce.payment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,13 +27,17 @@ import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.options.CartListActivity;
 import com.cioc.monomerce.options.CheckOutActivity;
+import com.cioc.monomerce.options.OrderActivity;
 import com.cioc.monomerce.product.ItemDetailsActivity;
+import com.cioc.monomerce.startup.LoginActivity;
+import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.githang.stepview.StepView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.roger.catloadinglibrary.CatLoadingView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,6 +66,8 @@ public class PaymentActivity extends AppCompatActivity {
     ArrayList<Cart> cardlist = CartListActivity.cartList;
     String addressPk;
     JSONObject jsonObj;
+    CatLoadingView mView;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +83,7 @@ public class PaymentActivity extends AppCompatActivity {
         mContext = PaymentActivity.this;
         BackendServer backend = new BackendServer(this);
         client = backend.getHTTPClient();
+        mView = new CatLoadingView();
         init();
 //        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
 //        ArrayList<String> cartlistImageUri = imageUrlUtils.getCartListImageUri();
@@ -194,13 +204,42 @@ public class PaymentActivity extends AppCompatActivity {
                 }catch(Exception e){
 
                 }
+//                mView.show(getSupportFragmentManager(), "");
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setMessage("Please Wait...");
+                progressDialog.setProgressStyle(R.style.Widget_AppCompat_ProgressBar);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            while (progressDialog.getProgress() <= progressDialog
+                                    .getMax()) {
+                                Thread.sleep(200);
+                                handle.sendMessage(handle.obtainMessage());
+                                if (progressDialog.getProgress() == progressDialog.getMax()) {
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
                 client.post(mContext,BackendServer.url+"/api/ecommerce/createOrder/", entity,"application/json", new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
                         try {
                             String ordno = response.getString("odnumber");
-                            Toast.makeText(PaymentActivity.this, ""+ordno, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PaymentActivity.this, "Order No. "+ordno, Toast.LENGTH_SHORT).show();
+                            MainActivity.notificationCountCart=0;
+                            startActivity(new Intent(PaymentActivity.this, OrderActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                    Intent.FLAG_ACTIVITY_NEW_TASK));
+                            finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -226,7 +265,13 @@ public class PaymentActivity extends AppCompatActivity {
 
     }
 
-
+    Handler handle = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            progressDialog.incrementProgressBy(0);
+        }
+    };
 
 
     public static class PaymentRecyclerViewAdapter
