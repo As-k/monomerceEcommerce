@@ -149,7 +149,7 @@
                             android:layout_height="wrap_content"
                             android:backgroundTint="@android:color/transparent"
                             android:hint="@string/prompt_otp"
-                            android:inputType="number"
+                            android:inputType="number|textPassword"
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textSize="@dimen/text_size_large"
