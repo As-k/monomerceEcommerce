@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -39,21 +40,18 @@ import cz.msebera.android.httpclient.cookie.Cookie;
 
 public class LoginActivity extends AppCompatActivity {
     EditText username, password;//, otpEdit;
-    TextView loginButton;//, getOTP;
+    Button loginButton;//, getOTP;
+    TextInputLayout tilUser, tilPass;
     LinearLayout llUsername, llPassword;//, llotpEdit;
 //    TextView forgot, goBack;
-    BackendServer backend = new BackendServer(this);
     Context context;
     private CookieStore httpCookieStore;
     private AsyncHttpClient client;
     SessionManager sessionManager;
-//    public static boolean res;
     String csrfId, sessionId;
-
     public static File file;
     String TAG = "status";
 //    boolean isGettingIntent = true;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +61,6 @@ public class LoginActivity extends AppCompatActivity {
         context = LoginActivity.this.getApplicationContext();
         getSupportActionBar().hide();
 
-//        String b = getIntent().getExtras().getString("res");
-//        if (b.equals("set")){
-//            startActivity(new Intent(this, LoginActivity.class)
-//            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-////            isGettingIntent = b.getBoolean("boolean");
-//        }
-
         sessionManager = new SessionManager(this);
 
         httpCookieStore = new PersistentCookieStore(this);
@@ -77,12 +68,6 @@ public class LoginActivity extends AppCompatActivity {
         client = new AsyncHttpClient();
         client.setCookieStore(httpCookieStore);
         init();
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-//                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-//            return;
-//        }
-
         if(!(sessionManager.getCsrfId() == "" && sessionManager.getSessionId() == "")){
             startActivity(new Intent(this, MainActivity.class));
             finish();
@@ -99,7 +84,9 @@ public class LoginActivity extends AppCompatActivity {
 
     void init() {
         username = findViewById(R.id.username);
+        tilUser = findViewById(R.id.til_user);
         password = findViewById(R.id.password);
+        tilPass = findViewById(R.id.til_password);
 //        otpEdit = findViewById(R.id.otpEdit);
 
 //        forgot= findViewById(R.id.forgot_password);
@@ -204,13 +191,17 @@ public class LoginActivity extends AppCompatActivity {
         String userName = username.getText().toString();
         String pass = password.getText().toString();
         if (userName.isEmpty()){
-            username.setError("Empty");
+            tilUser.setErrorEnabled(true);
+            tilUser.setError("User name is required.");
             username.requestFocus();
         } else {
+            tilUser.setErrorEnabled(false);
             if (pass.isEmpty()){
-                password.setError("Empty");
+                tilPass.setErrorEnabled(true);
+                tilPass.setError("Password is required.");
                 password.requestFocus();
             } else {
+                tilPass.setErrorEnabled(false);
                 csrfId = sessionManager.getCsrfId();
                 sessionId = sessionManager.getSessionId();
                 if (csrfId.equals("") && sessionId.equals("")) {
@@ -280,12 +271,7 @@ public class LoginActivity extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
                                     Log.e("isExternalStorageWritable", "" + context.getFilesDir().getAbsoluteFile().getPath());
-
-//                                    if (!isGettingIntent) {
-//                                        Intent intent = new Intent();
-//                                        setResult(RESULT_OK, intent);
-//                                    } else
-                                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                     finish();
                                 } else {
                                     Toast.makeText(LoginActivity.this, "Dir not created", Toast.LENGTH_SHORT).show();

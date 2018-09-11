@@ -24,6 +24,7 @@
     <color name="bg">#e7e7e7</color>
     <color name="bg1">#f7f7f7</color>
     <color name="text_color">#18592E</color>
+    <color name="text_link_color">#077d85</color>
 
     <!-- dots inactive colors -->
     <color name="dot_dark_screen1">#FFFFFF</color>

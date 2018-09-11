@@ -47,7 +47,8 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="274dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/til_user">
 
                     <EditText
                         android:id="@+id/username"
@@ -79,7 +80,8 @@
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="274dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:id="@+id/til_password">
 
                     <EditText
                         android:id="@+id/password"
@@ -159,6 +161,7 @@
                 android:text="@string/action_sign_in"
                 android:textAllCaps="false"
                 android:textColor="#ffffff"
+                android:textSize="@dimen/text_size_large"
                 android:textStyle="bold" />
 
             <TextView

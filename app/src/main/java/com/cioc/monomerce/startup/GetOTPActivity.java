@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -40,7 +41,7 @@ import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.cookie.Cookie;
 
 public class GetOTPActivity extends AppCompatActivity {
-    EditText mobOTP, emailidOTP;
+    private EditText mobOTP, emailidOTP;
     Context context;
     TextView termCon;
     CheckBox termConCB;
@@ -203,7 +204,17 @@ public class GetOTPActivity extends AppCompatActivity {
                         String csrf_token = csrfCookie.getValue();
                         String session_id = sessionCookie.getValue();
 
-                        file = new File(Environment.getExternalStorageDirectory()+"/Monomerce");
+                        File dir = new File(Environment.getExternalStorageDirectory() + "/"+getString(R.string.app_name1));
+                        Log.e("MyAccountActivity", "" + Environment.getExternalStorageDirectory() + "/"+getString(R.string.app_name1));
+                        if (dir.exists())
+                            if (dir.isDirectory()) {
+                                String[] children = dir.list();
+                                for (int i = 0; i < children.length; i++) {
+                                    new File(dir, children[i]).delete();
+                                }
+                                dir.delete();
+                            }
+                        file = new File(Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name1));
                         Log.e("directory",""+file.getAbsolutePath());
                         if (file.mkdir()) {
                             sessionManager.setCsrfId(csrf_token);
@@ -234,8 +245,6 @@ public class GetOTPActivity extends AppCompatActivity {
                     }
                     Log.e("LoginActivity", "  finished");
                 }
-
-
             });
 
 

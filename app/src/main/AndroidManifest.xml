@@ -162,9 +162,15 @@
         <activity
             android:name=".startup.GetOTPActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".startup.WebViewActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".startup.WebViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".startup.SignUpWithMobileActivity"
+            android:label="@string/title_activity_sign_up"
             android:screenOrientation="portrait"></activity>
+        <activity android:name=".startup.LoginPageActivity"></activity>
     </application>
 
 </manifest>

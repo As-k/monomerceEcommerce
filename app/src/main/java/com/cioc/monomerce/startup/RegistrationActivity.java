@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.cioc.monomerce.R;
@@ -23,8 +24,9 @@ import java.util.regex.Pattern;
 import cz.msebera.android.httpclient.Header;
 
 public class RegistrationActivity extends AppCompatActivity {
-    EditText firstName, lastName, emailId, mobileNo, password, confPassword;
-    Button registrationBtn;
+    EditText firstName, lastName, emailId, mobileNo, password, confPassword, mobileNoform2;
+    Button registrationBtn1, registrationBtn2;
+    LinearLayout form1, form2;
     AsyncHttpClient client;
     private Pattern pattern;
     private Matcher matcher;
@@ -42,7 +44,7 @@ public class RegistrationActivity extends AppCompatActivity {
         client = new AsyncHttpClient();
         init();
         pattern = Pattern.compile(EMAIL_PATTERN);
-        registrationBtn.setOnClickListener(new View.OnClickListener() {
+        registrationBtn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 submit();
@@ -58,7 +60,11 @@ public class RegistrationActivity extends AppCompatActivity {
         mobileNo = findViewById(R.id.mobile_no);
         password = findViewById(R.id.password_txt);
         confPassword = findViewById(R.id.confirm_password);
-        registrationBtn = findViewById(R.id.registration_button);
+        registrationBtn1 = findViewById(R.id.registration_button);
+        form1 = findViewById(R.id.full_form1);
+        form2 = findViewById(R.id.full_form2);
+        registrationBtn2 = findViewById(R.id.registration_button2);
+        mobileNoform2 = findViewById(R.id.mobile_no_txt);
     }
 
     public void submit() {
