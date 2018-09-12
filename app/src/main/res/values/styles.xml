@@ -20,6 +20,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="AppTheme." parent="android:Theme.Material.Light.DarkActionBar">
+        <item name="android:colorControlHighlight">@color/your_custom_color</item>
+    </style>
 
     <style name="edit_text_style">
         <item name="android:drawablePadding">5dp</item>

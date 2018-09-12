@@ -37,6 +37,7 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.cookie.Cookie;
+import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class LoginPageActivity extends AppCompatActivity {
     private EditText mobile, mobileOtp;
@@ -82,6 +83,7 @@ public class LoginPageActivity extends AppCompatActivity {
         mobile = findViewById(R.id.mobile_no);
         tilMobile = findViewById(R.id.til_mobile);
         loginButton = findViewById(R.id.sign_in_button);
+        loginForm = findViewById(R.id.login_form);
         otpVerifyForm = findViewById(R.id.otp_verify_layout);
         otpVerifyForm.setVisibility(View.GONE);
         mobileOtp = findViewById(R.id.otpEdit);
@@ -151,13 +153,19 @@ public class LoginPageActivity extends AppCompatActivity {
             tilMobile.setErrorEnabled(false);
             RequestParams params = new RequestParams();
             params.put("id", mobStr);
-            params.put("csrfmiddlewaretoken", "Pi6NVXyIlYPFDj9bpUcZvLijxZ8mpNXsdjfbuu6SNqkBcsM493IK1XFzLKliuTSro");
 
-            client.post(BackendServer.url+"/generateOTP/", new JsonHttpResponseHandler() {
+            client.post(mContext,BackendServer.url+"/generateOTP/", params, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
-                    Toast.makeText(LoginPageActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                    otpVerifyForm.setVisibility(View.VISIBLE);
+                    loginForm.setVisibility(View.GONE);
+                    verifyBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            loginFromOTP(mobStr);
+                        }
+                    });
                 }
 
                 @Override
@@ -165,17 +173,10 @@ public class LoginPageActivity extends AppCompatActivity {
                     super.onFailure(statusCode, headers, responseString, throwable);
                     Toast.makeText(LoginPageActivity.this, "Failure", Toast.LENGTH_SHORT).show();
                 }
-
-                @Override
-                public void onFinish() {
-                    super.onFinish();
-                    List<Cookie> lst = httpCookieStore.getCookies();
-                }
             });
         }
     }
-
-    public void loginFromOTP(View v){
+    public void loginFromOTP(String mob){
         Toast.makeText(this, BackendServer.url, Toast.LENGTH_LONG).show();
         String mobOtp = mobileOtp.getText().toString();
         if (mobOtp.isEmpty()){
@@ -188,7 +189,8 @@ public class LoginPageActivity extends AppCompatActivity {
             sessionId = sessionManager.getSessionId();
             if (csrfId.equals("") && sessionId.equals("")) {
                 RequestParams params = new RequestParams();
-                params.put("username", mobOtp);
+                params.put("username", mob);
+                params.put("otp", mobOtp);
                 client.post(BackendServer.url + "/login/?mode=api", params, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject c) {

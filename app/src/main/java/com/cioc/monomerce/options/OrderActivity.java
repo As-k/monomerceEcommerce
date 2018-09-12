@@ -31,6 +31,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -72,6 +73,13 @@ public class OrderActivity extends AppCompatActivity {
     Context context;
     AsyncHttpClient client;
     public static ArrayList<Order> orderList;
+    private LinearLayoutManager manager;
+    private Boolean isScrolling = false;
+    private int currentItems, totalItems, scrollOutItems;
+    private String token = "";
+    private OrderRecyclerViewAdapter adapter;
+    private ProgressBar orderProgressBar;
+    private RecyclerView orderRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +89,8 @@ public class OrderActivity extends AppCompatActivity {
         BackendServer backend = new BackendServer(context);
         client = backend.getHTTPClient();
         orderList = new ArrayList<>();
+        orderRecyclerView = findViewById(R.id.order_list);
+        orderProgressBar = findViewById(R.id.progressBar_order);
         getOrderHistory();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -99,24 +109,49 @@ public class OrderActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        final RecyclerView orderRecyclerView = findViewById(R.id.order_list);
-        final ProgressBar orderProgressBar = findViewById(R.id.progressBar_order);
-
+        orderProgressBar.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 orderProgressBar.setVisibility(View.GONE);
-                orderRecyclerView.setLayoutManager(new LinearLayoutManager(OrderActivity.this));
+                manager = new LinearLayoutManager(OrderActivity.this);
+                orderRecyclerView.setLayoutManager(manager);
 
-                OrderRecyclerViewAdapter adapter = new OrderRecyclerViewAdapter(orderList);
+                adapter = new OrderRecyclerViewAdapter(orderList);
                 orderRecyclerView.setAdapter(adapter);
             }
         },2000);
+
+//        orderRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+//                    isScrolling = true;
+//                }
+//            }
+//
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//
+//                currentItems = manager.getChildCount();
+//                totalItems = manager.getItemCount();
+//                scrollOutItems = manager.findFirstVisibleItemPosition();
+//
+//                if(isScrolling && (currentItems + scrollOutItems == totalItems)) {
+//                    orderProgressBar.setVisibility(View.VISIBLE);
+//                    isScrolling = false;
+//                    getOrderHistory();
+//
+//                }
+//            }
+//        });
+
     }
 
     public void getOrderHistory(){
-        client.get(BackendServer.url+"/api/ecommerce/order/?&Name__contains=&offset=0&user=1", new JsonHttpResponseHandler() {
+        client.get(BackendServer.url+"/api/ecommerce/order/?&Name__contains=&offset=0", new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
@@ -126,6 +161,7 @@ public class OrderActivity extends AppCompatActivity {
                         JSONObject object = response.getJSONObject(i);
                         Order order = new Order(object);
                         orderList.add(order);
+                        orderProgressBar.setVisibility(View.GONE);
                     }
                 } catch (JSONException e) {
                         e.printStackTrace();

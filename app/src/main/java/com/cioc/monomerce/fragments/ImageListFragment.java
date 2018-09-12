@@ -262,7 +262,6 @@ public class ImageListFragment extends Fragment {
                                 holder.itemsQuantity.setVisibility(View.VISIBLE);
                                 holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                                 holder.res = true;
-                                Toast toast = null;
                                 if (toast!= null) {
                                     toast.cancel();
                                 }
@@ -274,7 +273,6 @@ public class ImageListFragment extends Fragment {
 
                             @Override
                             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                Toast toast = null;
                                 if (toast!= null) {
                                     toast.cancel();
                                 }
@@ -352,7 +350,6 @@ public class ImageListFragment extends Fragment {
                                 MainActivity.notificationCountCart--;
                                 NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
                                 holder.res = false;
-                                Toast toast = null;
                                 if (toast!= null) {
                                     toast.cancel();
                                 }
@@ -366,7 +363,7 @@ public class ImageListFragment extends Fragment {
                                 if (toast!= null) {
                                     toast.cancel();
                                 }
-                                toast = Toast.makeText(mActivity, "This Product is already in card.", Toast.LENGTH_SHORT);
+                                toast = Toast.makeText(mActivity, "This Product is already in wishlist.", Toast.LENGTH_SHORT);
                                 toast.show();
                             }
                         });
@@ -400,29 +397,6 @@ public class ImageListFragment extends Fragment {
                             }
                         });
                     }
-                }
-            });
-        }
-
-
-        public void updateItem(String qty, final ListingParent parent, ViewHolder holder) {
-            RequestParams params = new RequestParams();
-            params.put("product", parent.getPk());
-            params.put("qty", qty);
-            params.put("typ", "cart");
-            params.put("user", parent.getUser());
-            client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    Toast.makeText(mActivity, "updated cart"+ parent.getPk(), Toast.LENGTH_SHORT).show();
-                    holder.itemsQuantity.setText(qty+"");
-//                    mActivity.startActivity(new Intent(mActivity, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    Toast.makeText(mActivity, "failure cart"+ parent.getPk(), Toast.LENGTH_SHORT).show();
                 }
             });
         }

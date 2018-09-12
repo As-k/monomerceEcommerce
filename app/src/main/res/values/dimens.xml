@@ -12,6 +12,7 @@
     <dimen name="slide_title">30dp</dimen>
     <dimen name="slide_desc">16dp</dimen>
     <dimen name="desc_padding">40dp</dimen>
+    <dimen name="vertical_margin">50dp</dimen>
     <dimen name="view_width_small">1dp</dimen>
     <dimen name="view_width_xsmall">0.5dp</dimen>
     <dimen name="margin_small">4dp</dimen>

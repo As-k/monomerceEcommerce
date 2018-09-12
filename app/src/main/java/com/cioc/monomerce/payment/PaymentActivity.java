@@ -233,9 +233,9 @@ public class PaymentActivity extends AppCompatActivity {
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
                         try {
+                            MainActivity.notificationCountCart=0;
                             String ordno = response.getString("odnumber");
                             Toast.makeText(PaymentActivity.this, "Order No. "+ordno, Toast.LENGTH_SHORT).show();
-                            MainActivity.notificationCountCart=0;
                             startActivity(new Intent(PaymentActivity.this, OrderActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
                                     Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                     Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -250,12 +250,14 @@ public class PaymentActivity extends AppCompatActivity {
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                         Toast.makeText(PaymentActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
                         Toast.makeText(PaymentActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
                     }
                 });
             }

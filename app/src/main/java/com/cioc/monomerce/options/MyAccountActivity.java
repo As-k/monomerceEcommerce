@@ -25,6 +25,7 @@ import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.backend.BackgroundService;
 import com.cioc.monomerce.backend.SessionManager;
 import com.cioc.monomerce.startup.LoginActivity;
+import com.cioc.monomerce.startup.LoginPageActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -203,7 +204,7 @@ public class MyAccountActivity extends AppCompatActivity {
                                         dir.delete();
                                     }
                                 stopService(new Intent(context, BackgroundService.class));
-                                startActivity(new Intent(context, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+                                startActivity(new Intent(context, LoginPageActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
                                         Intent.FLAG_ACTIVITY_CLEAR_TASK |
                                         Intent.FLAG_ACTIVITY_NEW_TASK));
                                 finish();

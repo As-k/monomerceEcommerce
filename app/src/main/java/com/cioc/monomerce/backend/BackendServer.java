@@ -11,7 +11,7 @@ import com.loopj.android.http.AsyncHttpClient;
 public class BackendServer {
 
 //    public String url = "http://10.0.2.2:8000/";
-//    public static String url = "http://192.168.1.119:8000/";
+//    public static String url = "http://192.168.0.10:8000/";
     public static String url = "http://sterlingselect.in/";
 //    public static String url = "http://192.168.43.9:8000/";
     public Context context;
@@ -26,7 +26,7 @@ public class BackendServer {
         final String csrftoken = sessionManager.getCsrfId();
         final String sessionid = sessionManager.getSessionId();
         AsyncHttpClient client = new AsyncHttpClient();
-        client.addHeader("X-CSRFToken" , csrftoken);
+        client.addHeader("X-CSRFToken" , sessionid);
         if (sessionid.length()>csrftoken.length()) {
             client.addHeader("COOKIE", String.format("csrftoken=%s; sessionid=%s", sessionid, csrftoken));
         } else {

@@ -19,12 +19,14 @@
     <color name="red_light">#e11212</color>
     <color name="text_red">#ec6060</color>
 
+
     <!-- Screens background color-->
     <color name="bg_screen1">#18592E</color>
     <color name="bg">#e7e7e7</color>
     <color name="bg1">#f7f7f7</color>
     <color name="text_color">#18592E</color>
     <color name="text_link_color">#077d85</color>
+    <color name="your_custom_color">#2a7c46</color>
 
     <!-- dots inactive colors -->
     <color name="dot_dark_screen1">#FFFFFF</color>

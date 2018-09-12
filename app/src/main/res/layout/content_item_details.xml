@@ -235,12 +235,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/gen_white"
                 android:text="ADD TO CART"
                 android:textSize="14dp"
                 android:textColor="@color/grey_dark1"
                 android:textStyle="bold"
                 style="?android:animateOnClick"
+                android:background="?android:attr/selectableItemBackground"
                 android:fontFamily="sans-serif"
                 android:gravity="center"/>
             <View
@@ -254,7 +254,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@null"
+                android:background="?android:attr/selectableItemBackground"
                 style="?android:animateOnClick"
                 android:text="BUY NOW"
                 android:textSize="14dp"
