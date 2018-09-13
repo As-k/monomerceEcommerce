@@ -36,6 +36,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.client.CookieStore;
@@ -164,6 +166,7 @@ public class SignUpWithMobileActivity extends AppCompatActivity {
                             String mobile = response.getString("mobile");
                             signUpForm.setVisibility(View.GONE);
                             otpVerifyForm.setVisibility(View.VISIBLE);
+                            getSmsOTP();
                             verifyBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -277,6 +280,26 @@ public class SignUpWithMobileActivity extends AppCompatActivity {
         signUpForm.setVisibility(View.VISIBLE);
         otpVerifyForm.setVisibility(View.GONE);
     }
+    private void getSmsOTP() {
+        IncomingSMS.bindListener(new SmsListener() {
+            @Override
+            public void messageReceived(String messageText) {
+                String otp = parseCode(messageText);
+                mobileOtp.setText(otp);
 
+            }
+        });
+    }
+
+
+    private String parseCode(String message) {
+        Pattern p = Pattern.compile("\\b\\d{4}\\b");
+        Matcher m = p.matcher(message);
+        String code = "";
+        while (m.find()) {
+            code = m.group(0);
+        }
+        return code;
+    }
 
 }

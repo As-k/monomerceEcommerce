@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/user_name"
         android:layout_marginTop="@dimen/nav_header_vertical_spacing"
-        android:text="Ashish Kumar"
+        android:text="Sign In"
         android:textColor="@color/gen_white"
         android:drawableRight="@drawable/ic_arrow_right_white_24dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />

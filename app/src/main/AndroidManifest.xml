@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
         android:name=".startup.FrescoApplication"
@@ -21,6 +23,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <receiver android:name=".startup.IncomingSMS"
+            android:exported="true"
+            >
+            <intent-filter >
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".startup.SplashActivity"
             android:screenOrientation="portrait"
@@ -169,8 +180,12 @@
         <activity
             android:name=".startup.SignUpWithMobileActivity"
             android:label="@string/title_activity_sign_up"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".startup.LoginPageActivity"></activity>
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".startup.LoginPageActivity"
+            android:screenOrientation="portrait" >
+
+        </activity>
     </application>
 
 </manifest>

@@ -11,6 +11,7 @@ public class SessionManager {
     private String csrfId = "csrftoken";
     private String sessionId = "sessionid";
     private String userName = "username";
+    private String loginVerify = "login";
 
     public SessionManager(Context context) {
         this.context = context;
@@ -33,6 +34,14 @@ public class SessionManager {
 
     public void setSessionId(String session) {
         spe.putString(sessionId, session);
+        spe.apply();
+    }
+    public Boolean getLoginVerify() {
+        return sp.getBoolean(loginVerify, false);
+    }
+
+    public void setLoginVerify(Boolean session) {
+        spe.putBoolean(loginVerify, session);
         spe.apply();
     }
 

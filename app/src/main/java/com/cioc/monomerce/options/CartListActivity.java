@@ -35,6 +35,7 @@ import com.cioc.monomerce.entites.Cart;
 import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.payment.PaymentActivity;
 import com.cioc.monomerce.product.ItemDetailsActivity;
+import com.cioc.monomerce.startup.LoginPageActivity;
 import com.cioc.monomerce.startup.MainActivity;
 import com.cioc.monomerce.utility.ImageUrlUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -123,7 +124,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
 
 
     public void getCardItem() {
-        client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&user=1&typ=cart",
+        client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&typ=cart",
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -424,10 +425,14 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
             checkOutAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (totalPrice <= 0){
-                        Log.d("TAG", "price is zero");
+                    if (MainActivity.username.equals("")) {
+                        startActivity(new Intent(mContext, LoginPageActivity.class));
                     } else {
-                        startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", totalPrice));
+                        if (totalPrice <= 0) {
+                            Log.d("TAG", "price is zero");
+                        } else {
+                            startActivity(new Intent(getApplicationContext(), CheckOutActivity.class).putExtra("totalPrice", totalPrice));
+                        }
                     }
                 }
             });

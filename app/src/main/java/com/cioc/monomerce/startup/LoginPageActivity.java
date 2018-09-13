@@ -3,6 +3,7 @@ package com.cioc.monomerce.startup;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
@@ -20,24 +21,23 @@ import android.widget.Toast;
 
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.backend.BackendServer;
-import com.cioc.monomerce.backend.BackgroundService;
 import com.cioc.monomerce.backend.SessionManager;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.cookie.Cookie;
-import cz.msebera.android.httpclient.entity.StringEntity;
 
 public class LoginPageActivity extends AppCompatActivity {
     private EditText mobile, mobileOtp;
@@ -65,16 +65,19 @@ public class LoginPageActivity extends AppCompatActivity {
         httpCookieStore.clear();
         client = new AsyncHttpClient();
         client.setCookieStore(httpCookieStore);
-        if(!(sessionManager.getCsrfId() == "" && sessionManager.getSessionId() == "")){
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }
+        sessionManager.clearAll();
+//        if(!(sessionManager.getCsrfId() == "" && sessionManager.getSessionId() == "")){
+//            startActivity(new Intent(this, MainActivity.class));
+//            finish();
+//        }
         isStoragePermissionGranted();
+
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 login();
+
             }
         });
     }
@@ -97,8 +100,9 @@ public class LoginPageActivity extends AppCompatActivity {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.PROCESS_OUTGOING_CALLS) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(Manifest.permission.PROCESS_OUTGOING_CALLS) == PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED
                     && checkSelfPermission(Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
                 Log.v(TAG,"Permission is granted");
                 return true;
@@ -107,7 +111,7 @@ public class LoginPageActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CALL_PHONE ,
                         Manifest.permission.READ_PHONE_STATE , Manifest.permission.PROCESS_OUTGOING_CALLS,
-                        Manifest.permission.SEND_SMS}, 1);
+                        Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS}, 1);
                 return false;
             }
         }
@@ -120,7 +124,7 @@ public class LoginPageActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        for (int i = 1; i < 6; i++) {
+        for (int i = 1; i < 7; i++) {
             if (requestCode == i){
                 if (grantResults.length > 0
                         && grantResults[i-1] == PackageManager.PERMISSION_GRANTED) {
@@ -160,6 +164,7 @@ public class LoginPageActivity extends AppCompatActivity {
                     super.onSuccess(statusCode, headers, response);
                     otpVerifyForm.setVisibility(View.VISIBLE);
                     loginForm.setVisibility(View.GONE);
+                    getSmsOTP();
                     verifyBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -176,6 +181,7 @@ public class LoginPageActivity extends AppCompatActivity {
             });
         }
     }
+
     public void loginFromOTP(String mob){
         Toast.makeText(this, BackendServer.url, Toast.LENGTH_LONG).show();
         String mobOtp = mobileOtp.getText().toString();
@@ -254,7 +260,9 @@ public class LoginPageActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                                 Log.e("isExternalStorageWritable", "" + mContext.getFilesDir().getAbsoluteFile().getPath());
-                                startActivity(new Intent(mContext, MainActivity.class));
+                                startActivity(new Intent(mContext, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                        Intent.FLAG_ACTIVITY_NEW_TASK));
                                 finish();
                             } else {
                                 Toast.makeText(mContext, "Dir not created", Toast.LENGTH_SHORT).show();
@@ -265,5 +273,27 @@ public class LoginPageActivity extends AppCompatActivity {
                 });
             }
         }
+    }
+
+    private void getSmsOTP() {
+        IncomingSMS.bindListener(new SmsListener() {
+            @Override
+            public void messageReceived(String messageText) {
+                String otp = parseCode(messageText);
+                mobileOtp.setText(otp);
+
+            }
+        });
+    }
+
+
+    private String parseCode(String message) {
+        Pattern p = Pattern.compile("\\b\\d{4}\\b");
+        Matcher m = p.matcher(message);
+        String code = "";
+        while (m.find()) {
+            code = m.group(0);
+        }
+        return code;
     }
 }

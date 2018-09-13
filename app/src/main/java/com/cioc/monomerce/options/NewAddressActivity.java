@@ -37,7 +37,7 @@ import cz.msebera.android.httpclient.Header;
 
 
 public class NewAddressActivity extends AppCompatActivity {
-    public static Context mContext;
+    public Context mContext;
     EditText city, street, landMark, state, pincode, country, name, mobile;
     TextView savedAdd, cityErr, streetErr, stateErr, pincodeErr, landMarkErr, countryErr, nameErr, mobileErr, saveLayoutAction, continuePayment;
     AsyncHttpClient client;

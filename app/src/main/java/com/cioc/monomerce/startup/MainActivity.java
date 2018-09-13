@@ -76,19 +76,21 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static int notificationCountCart = 0;
+    public static String username = "";
+    private  String userPK;
     static ViewPager viewPager;
     static TabLayout tabLayout;
     BottomNavigationView navigationBottom;
     Context context;
-    TextView userName;
+    TextView prflName;
     LinearLayout navHeadLayout;
     SimpleDraweeView userImage;
     private SliderImageFragmentAdapter mSliderImageFragmentAdapter;
     private ViewPager mViewPager;
     private ExtensiblePageIndicator extensiblePageIndicator;
-    public static ArrayList<HashMap> hashMapList;
+//    public static ArrayList<HashMap> hashMapList;
 
-    AsyncHttpClient client;
+    private AsyncHttpClient client;
 
     public static ArrayList<GenericProduct> genericProducts;
     public static ArrayList<OfferBanners> offerBannersList;
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatActivity
         genericProducts = new ArrayList<GenericProduct>();
         offerBannersList = new ArrayList<OfferBanners>();
         cartList = new ArrayList<>();
-
+        getUserDetails();
         getGenericProduct();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity
 //        View v =  navigationView.inflateHeaderView(R.layout.nav_header_main);
         View v =  navigationView.getHeaderView(0);
         navHeadLayout = v.findViewById(R.id.nav_head_ll);
-        userName = v.findViewById(R.id.user_name);
+        prflName = v.findViewById(R.id.user_name);
         userImage = v.findViewById(R.id.user_image);
         AnimationDrawable animationDrawable = (AnimationDrawable) navHeadLayout.getBackground();
         animationDrawable.setEnterFadeDuration(2000);
@@ -163,12 +165,15 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         },2500);
-        getUserDetails();
+
 
         navHeadLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(context, MyAccountActivity.class));
+                if (username.equals(""))
+                    startActivity(new Intent(context, LoginPageActivity.class));
+                else
+                    startActivity(new Intent(context, MyAccountActivity.class));
             }
         });
     }
@@ -228,21 +233,25 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_search) {
-            startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
-            return true;
-        }else if (id == R.id.action_cart) {
+        if (username.equals("")) {
+            startActivity(new Intent(context, LoginPageActivity.class));
+        } else {
+            //noinspection SimplifiableIfStatement
+            if (id == R.id.action_search) {
+                startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
+                return true;
+            } else if (id == R.id.action_cart) {
            /* NotificationCountSetClass.setAddToCart(MainActivity.this, item, notificationCount);
             invalidateOptionsMenu();*/
-            startActivity(new Intent(MainActivity.this, CartListActivity.class));
+                startActivity(new Intent(MainActivity.this, CartListActivity.class));
 
            /* notificationCount=0;//clear notification count
             invalidateOptionsMenu();*/
-            return true;
-        }else {
-            startActivity(new Intent(MainActivity.this, EmptyActivity.class));
+                return true;
+            } else {
+                startActivity(new Intent(MainActivity.this, EmptyActivity.class));
 
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -290,7 +299,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&user=1&typ=cart",
+        client.get(BackendServer.url+"/api/ecommerce/cart/?&typ=cart&user="+userPK,
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -315,7 +324,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         ListFragmentAdapter adapter = new ListFragmentAdapter(getSupportFragmentManager());
-        hashMapList = new ArrayList<>();
+//        hashMapList = new ArrayList<>();
         for (int i=0; i<genericProducts.size(); i++) {
             ImageListFragment fragment = new ImageListFragment();
             Bundle bundle = new Bundle();
@@ -355,30 +364,30 @@ public class MainActivity extends AppCompatActivity
         viewPager.setAdapter(adapter);
     }
 
-    public void getItems(String pk) {
-        client.get(BackendServer.url+"/api/ecommerce/listing/?parent="+pk+"&recursive=1", new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                super.onSuccess(statusCode, headers, response);
-                for (int i=0; i<response.length(); i++){
-                    try {
-                        JSONObject object = response.getJSONObject(i);
-                        ListingParent parent = new ListingParent(object);
-                        HashMap<Integer, ListingParent> hmap = new HashMap<Integer, ListingParent>();
-                        hashMapList.add(hmap);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                Toast.makeText(context, "onFailure", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    public void getItems(String pk) {
+//        client.get(BackendServer.url+"/api/ecommerce/listing/?parent="+pk+"&recursive=1", new JsonHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+//                super.onSuccess(statusCode, headers, response);
+//                for (int i=0; i<response.length(); i++){
+//                    try {
+//                        JSONObject object = response.getJSONObject(i);
+//                        ListingParent parent = new ListingParent(object);
+//                        HashMap<Integer, ListingParent> hmap = new HashMap<Integer, ListingParent>();
+//                        hashMapList.add(hmap);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+//                super.onFailure(statusCode, headers, throwable, errorResponse);
+//                Toast.makeText(context, "onFailure", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -399,18 +408,22 @@ public class MainActivity extends AppCompatActivity
 //        }else if (id == R.id.nav_item6) {
 //            viewPager.setCurrentItem(5);
 //        } else
-        if (id == R.id.my_wishlist) {
-            startActivity(new Intent(MainActivity.this, WishlistActivity.class));
-        }else if (id == R.id.my_cart) {
-            startActivity(new Intent(MainActivity.this, CartListActivity.class));
-        }else if (id == R.id.my_account) {
-            startActivity(new Intent(MainActivity.this, MyAccountActivity.class));
-        }else if (id == R.id.help_center) {
+        if (username.equals("")) {
+            startActivity(new Intent(context, LoginPageActivity.class));
+        } else {
+            if (id == R.id.my_wishlist) {
+                startActivity(new Intent(MainActivity.this, WishlistActivity.class));
+            } else if (id == R.id.my_cart) {
+                startActivity(new Intent(MainActivity.this, CartListActivity.class));
+            } else if (id == R.id.my_account) {
+                startActivity(new Intent(MainActivity.this, MyAccountActivity.class));
+            } else if (id == R.id.help_center) {
                 startActivity(new Intent(MainActivity.this, HelpCenterActivity.class));
-        }else if (id == R.id.contact_us) {
+            } else if (id == R.id.contact_us) {
                 startActivity(new Intent(MainActivity.this, FeedBackActivity.class));
-        }else {
+            } else {
                 startActivity(new Intent(MainActivity.this, EmptyActivity.class));
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -422,22 +435,27 @@ public class MainActivity extends AppCompatActivity
         navigationBottom.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_cart: {
-                        startActivity(new Intent(MainActivity.this, CartListActivity.class));
-                        return true;
-                    }
-                    case R.id.action_order: {
-                        startActivity(new Intent(MainActivity.this, OrderActivity.class));
-                        return true;
-                    }
-                    case R.id.action_support: {
-                        startActivity(new Intent(MainActivity.this, FeedBackActivity.class));
-                        return true;
-                    }
-                    case R.id.action_home: {
+                if (username.equals("")) {
+                    startActivity(new Intent(context, LoginPageActivity.class));
+                    return true;
+                } else {
+                    switch (item.getItemId()) {
+                        case R.id.action_cart: {
+                            startActivity(new Intent(MainActivity.this, CartListActivity.class));
+                            return true;
+                        }
+                        case R.id.action_order: {
+                            startActivity(new Intent(MainActivity.this, OrderActivity.class));
+                            return true;
+                        }
+                        case R.id.action_support: {
+                            startActivity(new Intent(MainActivity.this, FeedBackActivity.class));
+                            return true;
+                        }
+                        case R.id.action_home: {
 //                        startActivity(new Intent(MainActivity.this, MainActivity.class));
-                        return true;
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -453,7 +471,8 @@ public class MainActivity extends AppCompatActivity
                 super.onSuccess(statusCode, headers, response);
                 try {
                     JSONObject usrObj = response.getJSONObject(0);
-                    String username = usrObj.getString("username");
+                    userPK = usrObj.getString("pk");
+                    username = usrObj.getString("username");
                     String firstName = usrObj.getString("first_name");
                     String lastName = usrObj.getString("last_name");
                     String email = usrObj.getString("email");
@@ -465,7 +484,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     String mobile = profileObj.getString("mobile");
 
-                    userName.setText(firstName+" "+lastName);
+                    prflName.setText(firstName+" "+lastName);
                     Uri uri = Uri.parse(dpLink);
                     userImage.setImageURI(uri);
                 } catch (JSONException e){
@@ -578,10 +597,15 @@ public class MainActivity extends AppCompatActivity
     class TapGestureListener extends GestureDetector.SimpleOnGestureListener{
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            OfferBanners banners = offerBannersList.get(pos);
-            startActivity(new Intent(context, WebViewActivity.class)
-                    .putExtra("web",banners.getBody()).putExtra("title", banners.getPageTitle()));
-            return super.onSingleTapConfirmed(e);
+            if (username.equals("")) {
+                startActivity(new Intent(context, LoginPageActivity.class));
+                return super.onSingleTapConfirmed(e);
+            } else {
+                OfferBanners banners = offerBannersList.get(pos);
+                startActivity(new Intent(context, WebViewActivity.class)
+                        .putExtra("web", banners.getBody()).putExtra("title", banners.getPageTitle()));
+                return super.onSingleTapConfirmed(e);
+            }
         }
     }
 }

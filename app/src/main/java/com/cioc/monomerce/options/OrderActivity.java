@@ -92,6 +92,8 @@ public class OrderActivity extends AppCompatActivity {
         orderRecyclerView = findViewById(R.id.order_list);
         orderProgressBar = findViewById(R.id.progressBar_order);
         getOrderHistory();
+        manager = new LinearLayoutManager(OrderActivity.this);
+        orderRecyclerView.setLayoutManager(manager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -114,9 +116,6 @@ public class OrderActivity extends AppCompatActivity {
             @Override
             public void run() {
                 orderProgressBar.setVisibility(View.GONE);
-                manager = new LinearLayoutManager(OrderActivity.this);
-                orderRecyclerView.setLayoutManager(manager);
-
                 adapter = new OrderRecyclerViewAdapter(orderList);
                 orderRecyclerView.setAdapter(adapter);
             }
@@ -143,7 +142,14 @@ public class OrderActivity extends AppCompatActivity {
 //                    orderProgressBar.setVisibility(View.VISIBLE);
 //                    isScrolling = false;
 //                    getOrderHistory();
-//
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            orderProgressBar.setVisibility(View.GONE);
+//                            adapter = new OrderRecyclerViewAdapter(orderList);
+//                            orderRecyclerView.setAdapter(adapter);
+//                        }
+//                    },2000);
 //                }
 //            }
 //        });
@@ -151,7 +157,7 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     public void getOrderHistory(){
-        client.get(BackendServer.url+"/api/ecommerce/order/?&Name__contains=&offset=0", new JsonHttpResponseHandler() {
+        client.get(this,BackendServer.url+"/api/ecommerce/order/?&Name__contains=&offset=0", new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
@@ -161,7 +167,7 @@ public class OrderActivity extends AppCompatActivity {
                         JSONObject object = response.getJSONObject(i);
                         Order order = new Order(object);
                         orderList.add(order);
-                        orderProgressBar.setVisibility(View.GONE);
+//                        orderProgressBar.setVisibility(View.GONE);
                     }
                 } catch (JSONException e) {
                         e.printStackTrace();

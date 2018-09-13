@@ -68,10 +68,10 @@ public class LoginActivity extends AppCompatActivity {
         client = new AsyncHttpClient();
         client.setCookieStore(httpCookieStore);
         init();
-        if(!(sessionManager.getCsrfId() == "" && sessionManager.getSessionId() == "")){
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        }
+//        if(!(sessionManager.getCsrfId() == "" && sessionManager.getSessionId() == "")){
+//            startActivity(new Intent(this, MainActivity.class));
+//            finish();
+//        }
         isStoragePermissionGranted();
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override

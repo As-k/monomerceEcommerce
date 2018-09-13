@@ -246,8 +246,6 @@ public class GetOTPActivity extends AppCompatActivity {
                     Log.e("LoginActivity", "  finished");
                 }
             });
-
-
         }
     }
 
