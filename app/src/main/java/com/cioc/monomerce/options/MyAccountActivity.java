@@ -26,6 +26,7 @@ import com.cioc.monomerce.backend.BackgroundService;
 import com.cioc.monomerce.backend.SessionManager;
 import com.cioc.monomerce.startup.LoginActivity;
 import com.cioc.monomerce.startup.LoginPageActivity;
+import com.cioc.monomerce.startup.MainActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -193,6 +194,7 @@ public class MyAccountActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 sessionManager.clearAll();
+                                MainActivity.username = "";
                                 File dir = new File(Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name));
                                 Log.e("MyAccountActivity",""+Environment.getExternalStorageDirectory()+"/"+getString(R.string.app_name));
                                 if (dir.exists())

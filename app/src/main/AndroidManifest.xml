@@ -176,7 +176,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".startup.WebViewActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:label=""/>
         <activity
             android:name=".startup.SignUpWithMobileActivity"
             android:label="@string/title_activity_sign_up"

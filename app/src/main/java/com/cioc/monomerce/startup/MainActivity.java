@@ -408,22 +408,28 @@ public class MainActivity extends AppCompatActivity
 //        }else if (id == R.id.nav_item6) {
 //            viewPager.setCurrentItem(5);
 //        } else
-        if (username.equals("")) {
-            startActivity(new Intent(context, LoginPageActivity.class));
-        } else {
-            if (id == R.id.my_wishlist) {
-                startActivity(new Intent(MainActivity.this, WishlistActivity.class));
-            } else if (id == R.id.my_cart) {
-                startActivity(new Intent(MainActivity.this, CartListActivity.class));
-            } else if (id == R.id.my_account) {
-                startActivity(new Intent(MainActivity.this, MyAccountActivity.class));
-            } else if (id == R.id.help_center) {
-                startActivity(new Intent(MainActivity.this, HelpCenterActivity.class));
-            } else if (id == R.id.contact_us) {
-                startActivity(new Intent(MainActivity.this, FeedBackActivity.class));
+
+        if (id == R.id.help_center) {
+            startActivity(new Intent(MainActivity.this, HelpCenterActivity.class));
+        } else if (id == R.id.contact_us) {
+            startActivity(new Intent(MainActivity.this, FeedBackActivity.class));
+        } else if (id == R.id.terms_conditions) {
+            startActivity(new Intent(MainActivity.this, WebViewActivity.class)
+                    .putExtra("term", false));
+        }else {
+            if (username.equals("")) {
+                startActivity(new Intent(context, LoginPageActivity.class));
             } else {
-                startActivity(new Intent(MainActivity.this, EmptyActivity.class));
+                if (id == R.id.my_wishlist) {
+                    startActivity(new Intent(MainActivity.this, WishlistActivity.class));
+                } else if (id == R.id.my_cart) {
+                    startActivity(new Intent(MainActivity.this, CartListActivity.class));
+                } else if (id == R.id.my_account) {
+                    startActivity(new Intent(MainActivity.this, MyAccountActivity.class));
+                } else
+                    startActivity(new Intent(MainActivity.this, EmptyActivity.class));
             }
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -470,6 +476,7 @@ public class MainActivity extends AppCompatActivity
                 Log.e("MainActivity","onSuccess");
                 super.onSuccess(statusCode, headers, response);
                 try {
+
                     JSONObject usrObj = response.getJSONObject(0);
                     userPK = usrObj.getString("pk");
                     username = usrObj.getString("username");
@@ -483,7 +490,6 @@ public class MainActivity extends AppCompatActivity
                         dpLink = BackendServer.url+"static/images/userIcon.png";
                     }
                     String mobile = profileObj.getString("mobile");
-
                     prflName.setText(firstName+" "+lastName);
                     Uri uri = Uri.parse(dpLink);
                     userImage.setImageURI(uri);
@@ -603,7 +609,9 @@ public class MainActivity extends AppCompatActivity
             } else {
                 OfferBanners banners = offerBannersList.get(pos);
                 startActivity(new Intent(context, WebViewActivity.class)
-                        .putExtra("web", banners.getBody()).putExtra("title", banners.getPageTitle()));
+                        .putExtra("term", true)
+                        .putExtra("body", banners.getBody())
+                        .putExtra("title", banners.getPageTitle()));
                 return super.onSingleTapConfirmed(e);
             }
         }

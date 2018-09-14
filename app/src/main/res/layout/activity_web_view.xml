@@ -4,17 +4,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".startup.WebViewActivity">
 
-    <TextView
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/offer_web_view"
-        android:text="@string/play_again_desc"
-        android:padding="@dimen/text_size_medium"
-        android:textColor="@color/gen_black"
-        >
+        android:layout_height="match_parent">
 
-    </TextView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/offer_web_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/text_size_medium"
+                android:text="@string/play_again_desc"
+                android:textColor="@color/gen_black"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="51dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/offer_web_view" />
+        </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

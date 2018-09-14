@@ -329,6 +329,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
             client.delete(mContext, BackendServer.url + "/api/ecommerce/cart/"+ cart.getPk()+"/", new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    int pos = mCartlist.indexOf(cart);
                     if (toast!= null) {
                         toast.cancel();
                     }
@@ -342,8 +343,8 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
                         layoutCartPayments.setVisibility(View.GONE);
                         mStepView.setVisibility(View.GONE);
                     }
-                    notifyDataChanged.dataChange();
-                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    notifyItemRemoved(pos);
+//                    mContext.startActivity(new Intent(mContext, CartListActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 }
 
                 @Override

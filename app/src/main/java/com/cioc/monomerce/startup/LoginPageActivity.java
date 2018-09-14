@@ -49,7 +49,7 @@ public class LoginPageActivity extends AppCompatActivity {
     private CookieStore httpCookieStore;
     private AsyncHttpClient client;
     private SessionManager sessionManager;
-    private String csrfId, sessionId;
+    private String csrfId, sessionId, mobileStr;
     private File file;
     String TAG = LoginPageActivity.class.getName();
     @Override
@@ -63,7 +63,8 @@ public class LoginPageActivity extends AppCompatActivity {
         sessionManager = new SessionManager(this);
         httpCookieStore = new PersistentCookieStore(this);
         httpCookieStore.clear();
-        client = new AsyncHttpClient();
+        BackendServer server =  new BackendServer(this);
+        client = new AsyncHttpClient(true, 80, 443);
         client.setCookieStore(httpCookieStore);
         sessionManager.clearAll();
 //        if(!(sessionManager.getCsrfId() == "" && sessionManager.getSessionId() == "")){
@@ -148,15 +149,15 @@ public class LoginPageActivity extends AppCompatActivity {
 
     public void login(){
         Toast.makeText(this, BackendServer.url, Toast.LENGTH_LONG).show();
-        String mobStr = mobile.getText().toString();
-        if (mobStr.isEmpty()){
+        mobileStr = mobile.getText().toString();
+        if (mobileStr.isEmpty()){
             tilMobile.setErrorEnabled(true);
             tilMobile.setError("Mobile no. is required.");
             mobile.requestFocus();
         } else {
             tilMobile.setErrorEnabled(false);
             RequestParams params = new RequestParams();
-            params.put("id", mobStr);
+            params.put("id", mobileStr);
 
             client.post(mContext,BackendServer.url+"/generateOTP/", params, new JsonHttpResponseHandler() {
                 @Override
@@ -168,7 +169,7 @@ public class LoginPageActivity extends AppCompatActivity {
                     verifyBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            loginFromOTP(mobStr);
+                            loginFromOTP(mobileStr);
                         }
                     });
                 }
@@ -281,7 +282,7 @@ public class LoginPageActivity extends AppCompatActivity {
             public void messageReceived(String messageText) {
                 String otp = parseCode(messageText);
                 mobileOtp.setText(otp);
-
+                loginFromOTP(mobileStr);
             }
         });
     }

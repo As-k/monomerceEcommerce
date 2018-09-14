@@ -64,7 +64,8 @@ public class SignUpWithMobileActivity extends AppCompatActivity {
         mContext = SignUpWithMobileActivity.this;
         init();
         sessionManager = new SessionManager(this);
-        client = new AsyncHttpClient();
+        BackendServer server =  new BackendServer(this);
+        client = new AsyncHttpClient(true,80, 443);
         getOTPBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -166,7 +167,7 @@ public class SignUpWithMobileActivity extends AppCompatActivity {
                             String mobile = response.getString("mobile");
                             signUpForm.setVisibility(View.GONE);
                             otpVerifyForm.setVisibility(View.VISIBLE);
-                            getSmsOTP();
+                            getSmsOTP(pk, token, mobile);
                             verifyBtn.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -192,7 +193,6 @@ public class SignUpWithMobileActivity extends AppCompatActivity {
     public void verify(String pk, String token, String mobile){
         httpCookieStore = new PersistentCookieStore(this);
         httpCookieStore.clear();
-        client = new AsyncHttpClient();
         client.setCookieStore(httpCookieStore);
 
         String mobOtp = mobileOtp.getText().toString().trim();
@@ -280,13 +280,13 @@ public class SignUpWithMobileActivity extends AppCompatActivity {
         signUpForm.setVisibility(View.VISIBLE);
         otpVerifyForm.setVisibility(View.GONE);
     }
-    private void getSmsOTP() {
+    private void getSmsOTP(String pk, String token, String mobile) {
         IncomingSMS.bindListener(new SmsListener() {
             @Override
             public void messageReceived(String messageText) {
                 String otp = parseCode(messageText);
                 mobileOtp.setText(otp);
-
+                verify(pk, token, mobile);
             }
         });
     }
