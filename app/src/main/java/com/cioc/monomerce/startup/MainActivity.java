@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
 
     public static int notificationCountCart = 0;
     public static String username = "";
-    private  String userPK;
+    public static String userPK;
     static ViewPager viewPager;
     static TabLayout tabLayout;
     BottomNavigationView navigationBottom;
@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity
         offerBannersList = new ArrayList<OfferBanners>();
         cartList = new ArrayList<>();
         getUserDetails();
-        getGenericProduct();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -152,19 +151,25 @@ public class MainActivity extends AppCompatActivity
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         initCollapsingToolbar();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-//                while (genericProducts.size()>0) {
-                    notificationCountCart = cartList.size();
-                    if (viewPager != null) {
-                        getViewpagerFragment();
-                        setupViewPager(viewPager);
-                        tabLayout.setupWithViewPager(viewPager);
-//                    }
-                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //                while (genericProducts.size()>0) {
+                        notificationCountCart = cartList.size();
+                        if (viewPager != null) {
+                            getViewpagerFragment();
+                            setupViewPager(viewPager);
+                            tabLayout.setupWithViewPager(viewPager);
+                    }
+                    }
+                }, 2000);
+                getGenericProduct();
             }
-        },2500);
+        },500);
 
 
         navHeadLayout.setOnClickListener(new View.OnClickListener() {

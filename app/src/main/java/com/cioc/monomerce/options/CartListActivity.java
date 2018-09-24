@@ -124,7 +124,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
 
 
     public void getCardItem() {
-        client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&typ=cart",
+        client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&typ=cart&user="+MainActivity.userPK,
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {

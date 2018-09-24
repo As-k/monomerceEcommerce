@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.ListingLite;
@@ -50,7 +52,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 
 public class ItemDetailsActivity extends AppCompatActivity {
-    SimpleDraweeView mImageView;
+    ImageView mImageView;
     TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount, textViewDescriptions;
     Button textViewAddToCart, textViewBuyNow;
     int imagePosition;
@@ -126,11 +128,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 specificationsListView.setAdapter(list);
                 list.notifyDataSetChanged();
             }
-        },1000);
+        },1500);
     }
 
     public void init() {
-        mImageView = findViewById(R.id.image1);
+        mImageView = findViewById(R.id.item_image);
         textViewItemName = findViewById(R.id.item_name);
         textViewItemPrice = findViewById(R.id.item_price);
         textViewItemDiscountPrice = findViewById(R.id.actual_price);
@@ -141,8 +143,13 @@ public class ItemDetailsActivity extends AppCompatActivity {
         textViewDescriptions = findViewById(R.id.description_txt);
         lite = listingLites.get(0);
 
-        Uri uri = Uri.parse(lite.getFilesAttachment());
-        mImageView.setImageURI(uri);
+//        Uri uri = Uri.parse(lite.getFilesAttachment());
+//        mImageView.setImageURI(uri);
+        Glide.with(mContext)
+                .load(lite.getFilesAttachment())
+                .into(mImageView);
+
+
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

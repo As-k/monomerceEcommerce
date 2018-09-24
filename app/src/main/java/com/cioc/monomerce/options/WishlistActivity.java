@@ -120,7 +120,7 @@ public class WishlistActivity extends AppCompatActivity {
     }
 
     public void getWishListItem() {
-        client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&typ=favourite",
+        client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&typ=favourite&user="+MainActivity.userPK,
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {

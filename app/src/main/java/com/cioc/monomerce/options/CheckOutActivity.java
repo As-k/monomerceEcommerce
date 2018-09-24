@@ -20,6 +20,7 @@ import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Address;
 import com.cioc.monomerce.payment.PaymentActivity;
+import com.cioc.monomerce.startup.MainActivity;
 import com.githang.stepview.StepView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -36,7 +37,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class CheckOutActivity extends AppCompatActivity {
     private static Context mContext;
-    TextView textAmount;
+    TextView textAmount, textAddNewAddress;
     Button newAddressBtn;
     RecyclerView recyclerView;
     AsyncHttpClient client;
@@ -52,26 +53,28 @@ public class CheckOutActivity extends AppCompatActivity {
         client = backend.getHTTPClient();
         addresses = new ArrayList<>();
         getAddress();
-
         StepView mStepView = (StepView) findViewById(R.id.step_view);
         List<String> steps = Arrays.asList(new String[]{"Selected Items", "Shipping Address", "Review Your Order"});
         mStepView.setSteps(steps);
         mStepView.selectedStep(2);
+        init();
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                init();
-                textAmount.setText("\u20B9"+getIntent().getExtras().getInt("totalPrice"));
-                recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-                recyclerView.setAdapter(new CheckOutActivity.AddressRecyclerViewAdapter(addresses));
+                textAmount.setText("\u20B9" + getIntent().getExtras().getInt("totalPrice"));
                 newAddressBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(mContext, NewAddressActivity.class)
-                        .putExtra("totalPrice", textAmount.getText().toString()));
-                    }
-                });
+                        @Override
+                        public void onClick(View v) {
+                            startActivity(new Intent(mContext, NewAddressActivity.class)
+                                    .putExtra("totalPrice", textAmount.getText().toString()));
+                        }
+                    });
+                if (checkAddress()) {
+                    recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                    recyclerView.setAdapter(new CheckOutActivity.AddressRecyclerViewAdapter(addresses));
+                }
+
             }
         },1000);
     }
@@ -79,11 +82,23 @@ public class CheckOutActivity extends AppCompatActivity {
     public void init(){
         newAddressBtn = findViewById(R.id.text_action_continue);
         textAmount = findViewById(R.id.text_action_amount);
+        textAddNewAddress = findViewById(R.id.no_address);
         recyclerView = findViewById(R.id.recyclerview_address);
     }
 
+    public boolean checkAddress() {
+        if(addresses.size()==0) {
+            recyclerView.setVisibility(View.GONE);
+            textAddNewAddress.setVisibility(View.VISIBLE);
+            return false;
+        } else {
+            recyclerView.setVisibility(View.GONE);
+            textAddNewAddress.setVisibility(View.VISIBLE);
+            return true;
+        }
+    }
     public void getAddress() {
-        client.get(BackendServer.url+"/api/ecommerce/address/", new JsonHttpResponseHandler() {
+        client.get(BackendServer.url+"/api/ecommerce/address/?user="+ MainActivity.userPK, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);

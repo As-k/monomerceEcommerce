@@ -1,5 +1,6 @@
 package com.cioc.monomerce.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 
+import com.bumptech.glide.Glide;
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.ListingParent;
@@ -53,10 +55,13 @@ import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 
 public class AllItemsShowActivity extends AppCompatActivity {
     public Context context;
+    private RecyclerView recyclerViewList;
+    private ProgressBar progressBar;
     Button sortBtn, filterBtn;
     AsyncHttpClient client;
     ArrayList<ListingParent> parents;
     String pk;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,17 +96,28 @@ public class AllItemsShowActivity extends AppCompatActivity {
             }
         });
 
+        init();
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerViewList.setVisibility(View.GONE);
         getItems(pk);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 getSupportActionBar().setTitle(name);
+                progressBar.setVisibility(View.GONE);
+                recyclerViewList.setVisibility(View.VISIBLE);
                 clickBtn(parents);
             }
-        },1000);
+        },1500);
 
     }
 
+    public void init(){
+        recyclerViewList = findViewById(R.id.recyclerview_all_list);
+        progressBar = findViewById(R.id.progressBar);
+        sortBtn = findViewById(R.id.sort_action_button);
+        filterBtn = findViewById(R.id.filter_action_button);
+    }
     public void getItems(String pk) {
         client.get(BackendServer.url+"/api/ecommerce/listing/?parent="+pk+"&recursive=1", new JsonHttpResponseHandler() {
             @Override
@@ -126,11 +142,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
             }
         });
     }
-    RecyclerView recyclerViewList;
     public void clickBtn(ArrayList<ListingParent> strings){
-        recyclerViewList = findViewById(R.id.recyclerview_all_list);
-        sortBtn = findViewById(R.id.sort_action_button);
-        filterBtn = findViewById(R.id.filter_action_button);
         setupRecyclerView(recyclerViewList, strings);
         sortBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -289,7 +301,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            public final SimpleDraweeView mImageView;
+            public final ImageView mImageView;
             public final LinearLayout mLayoutItem, mLayoutItemCart2;//, mLayoutItemCart2;
             public final ImageView mImageViewWishlist, mCartImageBtn;// itemsQuantityAdd, itemsQuantityRemove;
             TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity;
@@ -298,7 +310,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mImageView = (SimpleDraweeView) view.findViewById(R.id.image1);
+                mImageView = view.findViewById(R.id.image1);
                 mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item);
 //                mLayoutItemCart1 = (LinearLayout) view.findViewById(R.id.layout_action1_cart);
                 mLayoutItemCart2 = (LinearLayout) view.findViewById(R.id.layout_action2_cart);
@@ -327,22 +339,23 @@ public class AllItemsShowActivity extends AppCompatActivity {
             return new AllItemsShowActivity.AllItemsRecyclerViewAdapter.ViewHolder(view);
         }
 
-        @Override
-        public void onViewRecycled(AllItemsShowActivity.AllItemsRecyclerViewAdapter.ViewHolder holder) {
-            if (holder.mImageView.getController() != null) {
-                holder.mImageView.getController().onDetach();
-            }
-            if (holder.mImageView.getTopLevelDrawable() != null) {
-                holder.mImageView.getTopLevelDrawable().setCallback(null);
-//                ((BitmapDrawable) holder.mImageView.getTopLevelDrawable()).getBitmap().recycle();
-            }
-        }
+//        @Override
+//        public void onViewRecycled(AllItemsShowActivity.AllItemsRecyclerViewAdapter.ViewHolder holder) {
+//            if (holder.mImageView.getController() != null) {
+//                holder.mImageView.getController().onDetach();
+//            }
+//            if (holder.mImageView.getTopLevelDrawable() != null) {
+//                holder.mImageView.getTopLevelDrawable().setCallback(null);
+////                ((BitmapDrawable) holder.mImageView.getTopLevelDrawable()).getBitmap().recycle();
+//            }
+//        }
 
         @Override
         public void onBindViewHolder(final AllItemsShowActivity.AllItemsRecyclerViewAdapter.ViewHolder holder, final int position) {
 
             final ListingParent parent = mValues.get(position);
             final Uri uri;
+            String link;
             String qunt = parent.getAddedCart();
             int qntAdd = Integer.parseInt(qunt);
             if (qntAdd<=0){
@@ -390,9 +403,16 @@ public class AllItemsShowActivity extends AppCompatActivity {
                 holder.itemsQuantity.setVisibility(View.VISIBLE);
             }
             if (parent.getFilesAttachment().equals("null")){
-                uri = Uri.parse(BackendServer.url+"/static/images/ecommerce.jpg");
-            } else uri = Uri.parse(parent.getFilesAttachment());
-            holder.mImageView.setImageURI(uri);
+//                uri = Uri.parse(BackendServer.url+"/static/images/ecommerce.jpg");
+                link = BackendServer.url+"/static/images/ecommerce.jpg";
+            } else
+                link = parent.getFilesAttachment();
+//                uri = Uri.parse(parent.getFilesAttachment());
+//            holder.mImageView.setImageURI(uri);
+            Glide.with(mContext)
+                    .load(link)
+                    .into(holder.mImageView);
+
             Double d = Double.parseDouble(parent.getProductPrice());
             final int price = (int) Math.round(d);
             Double d1 = Double.parseDouble(parent.getProductDiscountedPrice());

@@ -24,6 +24,7 @@
         android:layout_height="0dp"
         android:layout_weight="1.01"
         android:orientation="vertical"
+
         >
 
         <android.support.v7.widget.RecyclerView
@@ -32,7 +33,17 @@
             android:scrollbars="none"
             android:paddingTop="@dimen/margin_small"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:visibility="visible"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/no_address"
+            android:text="Add a new Address"
+            android:gravity="center"
+            android:textSize="@dimen/text_size_large"
+            />
 
     </LinearLayout>
 

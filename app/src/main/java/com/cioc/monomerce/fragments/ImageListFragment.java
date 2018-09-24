@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.GenericProduct;
@@ -163,7 +164,7 @@ public class ImageListFragment extends Fragment {
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            public final SimpleDraweeView mImageView;
+            public final ImageView mImageView;
             public final LinearLayout mLayoutItem, mLayoutItemCart2;//, mLayoutItemCart2;
             public final ImageView mImageViewWishlist, mCartImageBtn;//itemsQuantityAdd, itemsQuantityRemove,
             TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity;
@@ -173,7 +174,7 @@ public class ImageListFragment extends Fragment {
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mImageView = (SimpleDraweeView) view.findViewById(R.id.image1);
+                mImageView =  view.findViewById(R.id.image1);
                 mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item);
 //                mLayoutItemCart1 = (LinearLayout) view.findViewById(R.id.layout_action1_cart);
                 mLayoutItemCart2 = (LinearLayout) view.findViewById(R.id.layout_action2_cart);
@@ -205,16 +206,16 @@ public class ImageListFragment extends Fragment {
             return mValues.size()>10 ? 10 : mValues.size();
         }
 
-        @Override
-        public void onViewRecycled(ViewHolder holder) {
-            if (holder.mImageView.getController() != null) {
-                holder.mImageView.getController().onDetach();
-            }
-            if (holder.mImageView.getTopLevelDrawable() != null) {
-                holder.mImageView.getTopLevelDrawable().setCallback(null);
-//                ((BitmapDrawable) holder.mImageView.getTopLevelDrawable()).getBitmap().recycle();
-            }
-        }
+//        @Override
+//        public void onViewRecycled(ViewHolder holder) {
+//            if (holder.mImageView.getController() != null) {
+//                holder.mImageView.getController().onDetach();
+//            }
+//            if (holder.mImageView.getTopLevelDrawable() != null) {
+//                holder.mImageView.getTopLevelDrawable().setCallback(null);
+////                ((BitmapDrawable) holder.mImageView.getTopLevelDrawable()).getBitmap().recycle();
+//            }
+//        }
 
         @Override
         public int getItemViewType(int position) {
@@ -225,6 +226,7 @@ public class ImageListFragment extends Fragment {
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             final ListingParent parent = mValues.get(position);
             final Uri uri;
+            String link;
             String qunt = parent.getAddedCart();
             int qntAdd = Integer.parseInt(qunt);
             if (qntAdd==0){
@@ -241,7 +243,7 @@ public class ImageListFragment extends Fragment {
                             params.put("product", parent.getPk());
                             params.put("qty", "1");
                             params.put("typ", "cart");
-                            params.put("user", parent.getUser());
+                            params.put("user", MainActivity.userPK);
                             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -276,9 +278,16 @@ public class ImageListFragment extends Fragment {
             }
 
             if (parent.getFilesAttachment().equals("null")){
-                uri = Uri.parse(BackendServer.url+"/static/images/ecommerce.jpg");
-            } else uri = Uri.parse(parent.getFilesAttachment());
-            holder.mImageView.setImageURI(uri);
+//                uri = Uri.parse(BackendServer.url+"/static/images/ecommerce.jpg");
+                link = BackendServer.url+"/static/images/ecommerce.jpg";
+            } else
+                link = parent.getFilesAttachment();
+//                uri = Uri.parse(parent.getFilesAttachment());
+//            holder.mImageView.setImageURI(uri);
+            Glide.with(mActivity)
+                    .load(link)
+                    .into(holder.mImageView);
+
             Double d = Double.parseDouble(parent.getProductPrice());
             final int price = (int) Math.round(d);
             Double d1 = Double.parseDouble(parent.getProductDiscountedPrice());
@@ -335,7 +344,7 @@ public class ImageListFragment extends Fragment {
                             params.put("product", parent.getPk());
                             params.put("qty", 1);
                             params.put("typ", "favourite");
-                            params.put("user", parent.getUser());
+                            params.put("user", MainActivity.userPK);
                             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -367,7 +376,7 @@ public class ImageListFragment extends Fragment {
                             params.put("product", parent.getPk());
                             params.put("qty", 0);
                             params.put("typ", "favourite");
-                            params.put("user", parent.getUser());
+                            params.put("user", MainActivity.userPK);
                             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {

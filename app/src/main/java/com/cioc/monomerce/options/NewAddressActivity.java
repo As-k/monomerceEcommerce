@@ -22,6 +22,7 @@ import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Address;
 import com.cioc.monomerce.payment.PaymentActivity;
+import com.cioc.monomerce.startup.MainActivity;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -118,7 +119,7 @@ public class NewAddressActivity extends AppCompatActivity {
     }
 
     public void getAddress() {
-        client.get(BackendServer.url+"/api/ecommerce/address/", new JsonHttpResponseHandler() {
+        client.get(BackendServer.url+"/api/ecommerce/address/?user="+ MainActivity.userPK, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
@@ -236,7 +237,7 @@ public class NewAddressActivity extends AppCompatActivity {
         params.put("landMark", landMarkStr);
         params.put("country", countryStr);
         params.put("mobileNo", mobStr);
-        params.put("user", "1");
+        params.put("user", MainActivity.userPK);
         params.put("lat", "");
         params.put("lon", "");
 
