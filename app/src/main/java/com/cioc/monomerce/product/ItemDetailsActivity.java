@@ -7,10 +7,14 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
@@ -33,15 +37,21 @@ import com.bumptech.glide.Glide;
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.ListingLite;
+import com.cioc.monomerce.entites.ListingParent;
+import com.cioc.monomerce.fragments.ImageListFragment;
 import com.cioc.monomerce.fragments.ViewPagerActivity;
 import com.cioc.monomerce.notification.NotificationCountSetClass;
 import com.cioc.monomerce.options.CartListActivity;
+import com.cioc.monomerce.startup.LoginPageActivity;
 import com.cioc.monomerce.startup.MainActivity;
+import com.cioc.monomerce.startup.SliderImageFragment;
+import com.cioc.monomerce.startup.SliderImageFragmentAdapter;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.merhold.extensiblepageindicator.ExtensiblePageIndicator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,23 +61,29 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
+import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
+import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
+
 public class ItemDetailsActivity extends AppCompatActivity {
-    ImageView mImageView;
+//    ImageView mImageView;
+    private SliderImageFragmentAdapter mSliderImageFragmentAdapter;
+    private ViewPager mViewPager;
+    private ExtensiblePageIndicator extensiblePageIndicator;
     TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount, textViewDescriptions;
     Button textViewAddToCart, textViewBuyNow;
     int imagePosition;
     String itemPk, stringImageUri;
-//    RecyclerView specificationsListView;
+    RecyclerView suggestedRecyclerView;
     ListView specificationsListView;
     Context mContext;
     private Menu menu;
     AsyncHttpClient client;
     public static ArrayList<ListingLite> listingLites;
+    public static ArrayList<ListingLite> suggestList;
     public static ListingLite lite;
     String name, value, fieldType, helpText, unit, jsonData;
     JSONArray jsonArray = new JSONArray();
     Toast toast;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +93,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         BackendServer backend = new BackendServer(mContext);
         client = backend.getHTTPClient();
         listingLites = new ArrayList<>();
+        suggestList = new ArrayList<>();
 
         //Getting image uri from previous screen
         if (getIntent() != null) {
@@ -98,8 +115,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                progressBar.setVisibility(View.GONE);
+                if (listingLites.size()<=0){
+                    return;
+                }
                 itemDetails.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
                 lite = listingLites.get(0);
                 Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
                 setSupportActionBar(toolbar);
@@ -121,18 +141,29 @@ public class ItemDetailsActivity extends AppCompatActivity {
             }
         });
 
-
                 init();
+                getSuggestedItem();
 //                specificationsListView.setLayoutManager(new LinearLayoutManager(mContext));
                 SpecificationsListAdapter list = new SpecificationsListAdapter();
                 specificationsListView.setAdapter(list);
                 list.notifyDataSetChanged();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                        suggestedRecyclerView.setLayoutManager(layoutManager);
+                        SuggestedRecyclerViewAdapter viewAdapter = new SuggestedRecyclerViewAdapter(suggestList);
+                        suggestedRecyclerView.setAdapter(viewAdapter);
+                    }
+                    },500);
+
             }
         },1500);
     }
 
     public void init() {
-        mImageView = findViewById(R.id.item_image);
+        String filesAttachment1;
+//        mImageView = findViewById(R.id.item_image);
         textViewItemName = findViewById(R.id.item_name);
         textViewItemPrice = findViewById(R.id.item_price);
         textViewItemDiscountPrice = findViewById(R.id.actual_price);
@@ -141,23 +172,42 @@ public class ItemDetailsActivity extends AppCompatActivity {
         textViewBuyNow = findViewById(R.id.text_action_bottom2);
         specificationsListView = findViewById(R.id.specifications_list);
         textViewDescriptions = findViewById(R.id.description_txt);
+        suggestedRecyclerView = findViewById(R.id.suggested_recyclerview);
+        extensiblePageIndicator = (ExtensiblePageIndicator) findViewById(R.id.flexible_indicator);
+        mViewPager = (ViewPager) findViewById(R.id.item_view_pager);
         lite = listingLites.get(0);
+        mSliderImageFragmentAdapter = new SliderImageFragmentAdapter(getSupportFragmentManager());
+        for (int j=0; j<lite.getFilesArray().length(); j++) {
+            try {
+                JSONObject filesObject = lite.getFilesArray().getJSONObject(j);
+                String filesAttachment = null;
+                filesAttachment = filesObject.getString("attachment");
+                if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment == null) {
+                    filesAttachment1 = BackendServer.url+"/media/ecommerce/pictureUploads/1532690173_89_admin_ecommerce.jpg";
+                } else filesAttachment1 = filesAttachment;
+                mSliderImageFragmentAdapter.addFragment(SliderImageFragment.newInstance(android.R.color.transparent, filesAttachment1));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
+        mViewPager.setAdapter(mSliderImageFragmentAdapter);
+        extensiblePageIndicator.initViewPager(mViewPager);
 //        Uri uri = Uri.parse(lite.getFilesAttachment());
 //        mImageView.setImageURI(uri);
-        Glide.with(mContext)
-                .load(lite.getFilesAttachment())
-                .into(mImageView);
+//        Glide.with(mContext)
+//                .load(lite.getFilesAttachment())
+//                .into(mImageView);
 
 
-        mImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ItemDetailsActivity.this, ViewPagerActivity.class);
-                intent.putExtra("position", imagePosition);
-                startActivity(intent);
-            }
-        });
+//        mImageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(ItemDetailsActivity.this, ViewPagerActivity.class);
+//                intent.putExtra("position", imagePosition);
+//                startActivity(intent);
+//            }
+//        });
 
 
         textViewItemName.setText(lite.getProductName());
@@ -193,7 +243,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     params.put("product", lite.getPk());
                     params.put("qty", "1");
                     params.put("type", "card");
-                    params.put("user", lite.getUser());
+                    params.put("user", MainActivity.userPK);
                     client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -204,7 +254,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                             toast.show();
                             MainActivity.notificationCountCart++;
                             NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
-
                         }
 
                         @Override
@@ -226,7 +275,6 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
                 }
             });
-
         }
 
         textViewBuyNow.setOnClickListener(new View.OnClickListener() {
@@ -236,7 +284,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 params.put("product", lite.getPk());
                 params.put("qty", "1");
                 params.put("typ", "cart");
-                params.put("user", lite.getUser());
+                params.put("user", MainActivity.userPK);
                 client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -295,6 +343,32 @@ public class ItemDetailsActivity extends AppCompatActivity {
         });
     }
 
+    public void getSuggestedItem(){
+        client.get(BackendServer.url+"/api/ecommerce/listingLite/?parentValue="+lite.getParentTypePk()+"&detailValue="+lite.getPk(),
+                new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                        super.onSuccess(statusCode, headers, response);
+                        for (int i=0; i<response.length(); i++){
+                            try {
+                                JSONObject object = response.getJSONObject(i);
+                                ListingLite parent = new ListingLite(object);
+                                suggestList.add(parent);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+                });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -350,7 +424,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
             params.put("product", lite.getPk());
             params.put("qty", "1");
             params.put("type", "favourite");
-            params.put("user", "1");
+            params.put("user", MainActivity.userPK);
             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -411,6 +485,232 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             return v;
+        }
+    }
+
+    private class SuggestedRecyclerViewAdapter extends RecyclerView.Adapter<MyHolder>{
+        ArrayList<ListingLite> suggestedList;
+        BackendServer backendServer = new BackendServer(mContext);
+        AsyncHttpClient client = backendServer.getHTTPClient();
+        Toast toast;
+
+        public SuggestedRecyclerViewAdapter(ArrayList<ListingLite> suggestLists){
+            this.suggestedList = suggestLists;
+        }
+
+
+        @NonNull
+        @Override
+        public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
+            return new MyHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+            final ListingLite parent = suggestedList.get(position);
+            String link;
+            String qunt = parent.getAddedCart();
+            int qntAdd = Integer.parseInt(qunt);
+            if (qntAdd==0){
+                holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                holder.itemsQuantity.setVisibility(View.GONE);
+
+                holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (MainActivity.username.equals("")) {
+                            mContext.startActivity(new Intent(mContext, LoginPageActivity.class));
+                        } else {
+                            RequestParams params = new RequestParams();
+                            params.put("product", parent.getPk());
+                            params.put("qty", "1");
+                            params.put("typ", "cart");
+                            params.put("user", MainActivity.userPK);
+                            client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                    holder.mLayoutItemCart2.setVisibility(View.GONE);
+                                    holder.itemsQuantity.setVisibility(View.VISIBLE);
+                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                    holder.res = true;
+                                    if (toast != null) {
+                                        toast.cancel();
+                                    }
+                                    toast = Toast.makeText(mContext, "Item added to cart.", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                    MainActivity.notificationCountCart++;
+                                    NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                    if (toast != null) {
+                                        toast.cancel();
+                                    }
+                                    toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                }
+                            });
+                        }
+                    }
+                });
+            } else {
+                holder.itemsQuantity.setVisibility(View.VISIBLE);
+                holder.mLayoutItemCart2.setVisibility(View.GONE);
+            }
+
+            if (parent.getFilesAttachment().equals("null")){
+                link = BackendServer.url+"/static/images/ecommerce.jpg";
+            } else
+                link = parent.getFilesAttachment();
+            Glide.with(mContext)
+                    .load(link)
+                    .into(holder.mImageView);
+
+            Double d = Double.parseDouble(parent.getProductPrice());
+            final int price = (int) Math.round(d);
+            Double d1 = Double.parseDouble(parent.getProductDiscountedPrice());
+            final int price1 = (int) Math.round(d1);
+
+            holder.itemName.setText(parent.getProductName());
+            if (parent.getProductDiscount().equals("0")){
+                holder.itemPrice.setText("\u20B9"+ price);
+                holder.itemDiscountPrice.setVisibility(View.GONE);
+                holder.itemDiscount.setVisibility(View.GONE);
+            } else {
+                holder.itemPrice.setText("\u20B9"+price1);
+                holder.itemDiscountPrice.setVisibility(View.VISIBLE);
+                holder.itemDiscountPrice.setText("\u20B9"+price);
+                holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.itemDiscount.setVisibility(View.VISIBLE);
+                holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
+            }
+
+            holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (MainActivity.username.equals("")) {
+                        mContext.startActivity(new Intent(mContext, LoginPageActivity.class));
+                    } else {
+                        Intent intent = new Intent(mContext, ItemDetailsActivity.class);
+                        intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
+                        intent.putExtra(STRING_IMAGE_POSITION, position);
+                        intent.putExtra("listingLitePk", parent.getPk());
+                        mContext.startActivity(intent);
+                    }
+                }
+            });
+
+            //Set click action for wishlist
+            String quntWish = parent.getAddedWish();
+            int qntWishAdd = Integer.parseInt(quntWish);
+            if (qntWishAdd==0) {
+                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                holder.res = true;
+            }else {
+                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
+                holder.res = false;
+            }
+
+            holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (MainActivity.username.equals("")) {
+                        mContext.startActivity(new Intent(mContext, LoginPageActivity.class));
+                    } else {
+                        if (holder.res) {
+                            RequestParams params = new RequestParams();
+                            params.put("product", parent.getPk());
+                            params.put("qty", 1);
+                            params.put("typ", "favourite");
+                            params.put("user", MainActivity.userPK);
+                            client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
+                                    holder.itemsQuantity.setVisibility(View.GONE);
+                                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                                    MainActivity.notificationCountCart--;
+                                    NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+                                    holder.res = false;
+                                    if (toast != null) {
+                                        toast.cancel();
+                                    }
+                                    toast = Toast.makeText(mContext, "Item added to wishlist.", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                    Toast toast = null;
+                                    if (toast != null) {
+                                        toast.cancel();
+                                    }
+                                    toast = Toast.makeText(mContext, "This Product is already in wishlist.", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                }
+                            });
+                        } else {
+                            RequestParams params = new RequestParams();
+                            params.put("product", parent.getPk());
+                            params.put("qty", 0);
+                            params.put("typ", "favourite");
+                            params.put("user", MainActivity.userPK);
+                            client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                                    holder.itemsQuantity.setVisibility(View.GONE);
+                                    holder.res = true;
+                                    if (toast != null) {
+                                        toast.cancel();
+                                    }
+                                    toast = Toast.makeText(mContext, "Item removed from wishlist.", Toast.LENGTH_SHORT);
+                                    toast.show();
+
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                    if (toast != null) {
+                                        toast.cancel();
+                                    }
+                                    toast = Toast.makeText(mContext, "Removing failure", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return suggestedList.size()>4 ? 4: suggestedList.size();
+        }
+    }
+
+    private class MyHolder extends RecyclerView.ViewHolder{
+        public final ImageView mImageView;
+        boolean res = true;
+        public final LinearLayout mLayoutItem, mLayoutItemCart2;
+        public final ImageView mImageViewWishlist, mCartImageBtn;
+        TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity;
+        public MyHolder(@NonNull View view) {
+            super(view);
+            mImageView = view.findViewById(R.id.image1);
+            mLayoutItem = view.findViewById(R.id.layout_item);
+            mLayoutItemCart2 = view.findViewById(R.id.layout_action2_cart);
+            mImageViewWishlist = view.findViewById(R.id.ic_wishlist);
+            itemName =  view.findViewById(R.id.item_name);
+            itemPrice =  view.findViewById(R.id.item_price);
+            itemDiscountPrice =  view.findViewById(R.id.actual_price);
+            itemDiscount =  view.findViewById(R.id.discount_percentage);
+            itemsQuantity =  view.findViewById(R.id.item_added);
+            mCartImageBtn =  view.findViewById(R.id.card_item_quantity_add);
         }
     }
 }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.cioc.monomerce.R;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -44,6 +45,9 @@ public class SliderImageFragment extends Fragment {
         SimpleDraweeView image =  rootView.findViewById(R.id.iv_icon);
         Uri uri = Uri.parse(getArguments().getString(ARG_SECTION_NUMBER));
         image.setImageURI(uri);
+//        Glide.with(getActivity())
+//                .load(getArguments().getString(ARG_SECTION_NUMBER))
+//                .into(image);
         return rootView;
 
     }

@@ -11,7 +11,7 @@ import java.util.List;
  * Created by admin on 10/07/18.
  */
 
-class SliderImageFragmentAdapter extends FragmentPagerAdapter {
+public class SliderImageFragmentAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> fragmentList;
 

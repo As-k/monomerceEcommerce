@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private ExtensiblePageIndicator extensiblePageIndicator;
 //    public static ArrayList<HashMap> hashMapList;
+    public static ArrayList<ListingParent> listingParents;
 
     private AsyncHttpClient client;
 
@@ -106,7 +107,8 @@ public class MainActivity extends AppCompatActivity
         client = backend.getHTTPClient();
         genericProducts = new ArrayList<GenericProduct>();
         offerBannersList = new ArrayList<OfferBanners>();
-        cartList = new ArrayList<>();
+        cartList = new ArrayList<Cart>();
+        listingParents = new ArrayList<ListingParent>();
         getUserDetails();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -161,15 +163,16 @@ public class MainActivity extends AppCompatActivity
                         //                while (genericProducts.size()>0) {
                         notificationCountCart = cartList.size();
                         if (viewPager != null) {
+                            getItems();
                             getViewpagerFragment();
                             setupViewPager(viewPager);
                             tabLayout.setupWithViewPager(viewPager);
                     }
                     }
-                }, 2000);
+                }, 1500);
                 getGenericProduct();
             }
-        },500);
+        },1000);
 
 
         navHeadLayout.setOnClickListener(new View.OnClickListener() {
@@ -369,30 +372,33 @@ public class MainActivity extends AppCompatActivity
         viewPager.setAdapter(adapter);
     }
 
-//    public void getItems(String pk) {
-//        client.get(BackendServer.url+"/api/ecommerce/listing/?parent="+pk+"&recursive=1", new JsonHttpResponseHandler() {
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-//                super.onSuccess(statusCode, headers, response);
-//                for (int i=0; i<response.length(); i++){
-//                    try {
-//                        JSONObject object = response.getJSONObject(i);
-//                        ListingParent parent = new ListingParent(object);
-//                        HashMap<Integer, ListingParent> hmap = new HashMap<Integer, ListingParent>();
-//                        hashMapList.add(hmap);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-//                super.onFailure(statusCode, headers, throwable, errorResponse);
-//                Toast.makeText(context, "onFailure", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+    public void getItems() {
+        for (int i=0; i<genericProducts.size(); i++) {
+            GenericProduct product = genericProducts.get(i);
+            client.get(BackendServer.url + "/api/ecommerce/listing/?parent=" + product.getPk() + "&recursive=1", new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                    super.onSuccess(statusCode, headers, response);
+                    for (int i = 0; i < response.length(); i++) {
+                        try {
+                            JSONObject object = response.getJSONObject(i);
+                            ListingParent parent = new ListingParent(object);
+                            listingParents.add(parent);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                    Toast.makeText(context, "onFailure", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

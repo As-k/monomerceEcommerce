@@ -1,267 +1,319 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/app_bar_item_details"
-    android:weightSum="10"
-    android:layout_height="match_parent">
-
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:id="@+id/progressBar"
-        />
+    tools:context="com.cioc.monomerce.product.ItemDetailsActivity"
+    tools:showIn="@layout/app_bar_item_details">
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingTop="@dimen/slide_title"
-        android:id="@+id/layout_linear_item_details"
+        android:weightSum="10"
         >
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="9.5"
-            android:scrollbars="none"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:id="@+id/progressBar"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/margin_small"
+            />
+        <LinearLayout android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/layout_linear_item_details"
             >
-            <LinearLayout android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="9.5"
+                android:scrollbars="none"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
                 >
                 <LinearLayout android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:orientation="vertical">
-                    <ImageView
-                        xmlns:fresco="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/item_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:padding="4dp"/>
-                        <!--fresco:placeholderImage="@color/stay_color" />-->
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:orientation="vertical">
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/item_name"
-                        android:text="Denim Shirt"
-                        android:textSize="16dp"
-                        android:textColor="@color/gen_black"/>
-                    <!--<TextView android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginTop="8dp"-->
-                    <!--android:text="Rs. 1,979"-->
-                    <!--android:textSize="20dp"-->
-                    <!--android:textColor="@color/gen_black"-->
-                    <!--/>-->
-                    <LinearLayout android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp"
-                        >
-                        <TextView android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/item_price"
-                            android:text="\u20B90"
-                            android:textSize="@dimen/text_size_xmedium"
-                            android:textColor="@color/gen_black"
-                            android:layout_marginTop="@dimen/margin_small"/>
-
-                        <TextView android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="\u20B90"
-                            android:textSize="@dimen/text_size_medium"
-                            android:layout_marginTop="@dimen/margin_small"
-                            android:layout_marginLeft="10dp"
-                            android:id="@+id/actual_price" />
-
-                        <TextView android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="(10% OFF)"
-                            android:textSize="@dimen/text_size_medium"
-                            android:textColor="@color/text_red"
-                            android:layout_marginTop="@dimen/margin_small"
-                            android:layout_marginLeft="5dp"
-                            android:id="@+id/discount_percentage" />
-                    </LinearLayout>
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="FREE Delivery"
-                        android:textSize="12dp"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
-                    <TextView android:id="@+id/text_ratings"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/green_light"
-                        android:paddingTop="2dp"
-                        android:paddingBottom="2dp"
-                        android:paddingLeft="6dp"
-                        android:paddingRight="6dp"
-                        android:text="4.3 *"
-                        android:textSize="12dp"
-                        android:textColor="@color/gen_white"
-                        android:textStyle="bold"/>
-
-                    <TextView android:id="@+id/text_ratings_reviews"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="12dp"
-                        android:text="50 ratings \u0026 15 reviews"
-                        android:textSize="12dp"/>
-                </LinearLayout>
-                <View android:layout_width="match_parent"
-                    android:layout_height="@dimen/view_width_small"
-                    android:background="@color/grey_light"
-                    android:layout_marginTop="8dp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:orientation="vertical"
                     >
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Specifications :"
-                        android:textSize="@dimen/text_size_xmedium"
-                        android:textColor="@color/gen_black"/>
+                    <!--<LinearLayout android:layout_width="match_parent"-->
+                        <!--android:layout_height="300dp"-->
+                        <!--android:orientation="vertical">-->
+                        <!--<ImageView-->
+                            <!--xmlns:fresco="http://schemas.android.com/apk/res-auto"-->
+                            <!--android:id="@+id/item_image"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="0dp"-->
+                            <!--android:layout_weight="1"-->
+                            <!--style="?android:animateOnClick"-->
+                            <!--android:background="?android:attr/selectableItemBackground"-->
+                            <!--android:padding="4dp"/>-->
+                            <!--&lt;!&ndash;fresco:placeholderImage="@color/stay_color" />&ndash;&gt;-->
+                    <!--</LinearLayout>-->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="220dp"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:paddingTop="@dimen/activity_vertical_margin"
+                        android:background="@android:color/transparent">
 
-                    <View android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_width_small"
-                        android:background="@color/grey_light"
-                        android:layout_marginTop="8dp"/>
+                        <android.support.v4.view.ViewPager
+                            android:id="@+id/item_view_pager"
+                            android:layout_width="match_parent"
+                            android:layout_height="220dp"
+                            android:background="@android:color/transparent"
+                            />
+
+                        <com.merhold.extensiblepageindicator.ExtensiblePageIndicator
+                            android:id="@+id/flexible_indicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:indicatorRadius="5dp"
+                            app:indicatorPadding="32dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_alignBottom="@id/item_view_pager" />
+
+                    </RelativeLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/item_name"
+                            android:text="Denim Shirt"
+                            android:textSize="16dp"
+                            android:textColor="@color/gen_black"/>
+                        <!--<TextView android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="8dp"-->
+                        <!--android:text="Rs. 1,979"-->
+                        <!--android:textSize="20dp"-->
+                        <!--android:textColor="@color/gen_black"-->
+                        <!--/>-->
+                        <LinearLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="8dp"
+                            >
+                            <TextView android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/item_price"
+                                android:text="\u20B90"
+                                android:textSize="@dimen/text_size_xmedium"
+                                android:textColor="@color/gen_black"
+                                android:layout_marginTop="@dimen/margin_small"/>
+
+                            <TextView android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="\u20B90"
+                                android:textSize="@dimen/text_size_medium"
+                                android:layout_marginTop="@dimen/margin_small"
+                                android:layout_marginLeft="10dp"
+                                android:id="@+id/actual_price" />
+
+                            <TextView android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="(10% OFF)"
+                                android:textSize="@dimen/text_size_medium"
+                                android:textColor="@color/text_red"
+                                android:layout_marginTop="@dimen/margin_small"
+                                android:layout_marginLeft="5dp"
+                                android:id="@+id/discount_percentage" />
+                        </LinearLayout>
+                        <TextView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="FREE Delivery"
+                            android:textSize="12dp"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginTop="8dp">
-
-                        <TextView
+                        <TextView android:id="@+id/text_ratings"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Property"
+                            android:background="@color/green_light"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            android:paddingLeft="6dp"
+                            android:paddingRight="6dp"
+                            android:text="4.3 *"
                             android:textSize="12dp"
+                            android:textColor="@color/gen_white"
                             android:textStyle="bold"/>
 
-                        <TextView
+                        <TextView android:id="@+id/text_ratings_reviews"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Value"
-                            android:textSize="12dp"
-                            android:textStyle="bold"/>
-
+                            android:layout_marginLeft="12dp"
+                            android:text="50 ratings \u0026 15 reviews"
+                            android:textSize="12dp"/>
                     </LinearLayout>
-
-
-                </LinearLayout>
-
-                <ListView
-                    android:id="@+id/specifications_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="4dp"
-                    android:scrollbars="none" />
-                <LinearLayout android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingBottom="@dimen/activity_vertical_margin"
-                    android:orientation="vertical"
-                    >
-                    <TextView android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Description :"
-                        android:textSize="@dimen/text_size_xmedium"
-                        android:textColor="@color/gen_black"
-                        android:layout_marginTop="8dp"/>
-
                     <View android:layout_width="match_parent"
                         android:layout_height="@dimen/view_width_small"
                         android:background="@color/grey_light"
                         android:layout_marginTop="8dp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:orientation="vertical"
+                        >
+                        <TextView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Specifications :"
+                            android:textSize="@dimen/text_size_xmedium"
+                            android:textColor="@color/gen_black"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <View android:layout_width="match_parent"
+                            android:layout_height="@dimen/view_width_small"
+                            android:background="@color/grey_light"
+                            android:layout_marginTop="8dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Property"
+                                android:textSize="12dp"
+                                android:textStyle="bold"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="Value"
+                                android:textSize="12dp"
+                                android:textStyle="bold"/>
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <ListView
+                        android:id="@+id/specifications_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="4dp"
+                        android:scrollbars="none" />
+                    <LinearLayout android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingBottom="@dimen/activity_vertical_margin"
+                        android:orientation="vertical"
+                        >
+                        <TextView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Description :"
+                            android:textSize="@dimen/text_size_xmedium"
+                            android:textColor="@color/gen_black"
+                            android:layout_marginTop="8dp"/>
+
+                        <View android:layout_width="match_parent"
+                            android:layout_height="@dimen/view_width_small"
+                            android:background="@color/grey_light"
+                            android:layout_marginTop="8dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/description_txt"
+                            android:layout_marginTop="8dp"
+                            android:text="\u2022 Regular fit, full sleeve"
+                            android:textSize="12dp"
+                            android:textColor="@color/gen_black"/>
+                        <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="8dp"-->
+                        <!--android:text="\u2022 Fabric: Cotton"-->
+                        <!--android:textSize="12dp"-->
+                        <!--android:textColor="@color/gen_black"/>-->
+                        <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="8dp"-->
+                        <!--android:text="\u2022 Pattern: printed"-->
+                        <!--android:textSize="12dp"-->
+                        <!--android:textColor="@color/gen_black"/>-->
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/description_txt"
-                        android:layout_marginTop="8dp"
-                        android:text="\u2022 Regular fit, full sleeve"
-                        android:textSize="12dp"
-                        android:textColor="@color/gen_black"/>
-                    <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginTop="8dp"-->
-                    <!--android:text="\u2022 Fabric: Cotton"-->
-                    <!--android:textSize="12dp"-->
-                    <!--android:textColor="@color/gen_black"/>-->
-                    <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_marginTop="8dp"-->
-                    <!--android:text="\u2022 Pattern: printed"-->
-                    <!--android:textSize="12dp"-->
-                    <!--android:textColor="@color/gen_black"/>-->
-                </LinearLayout>
-            </LinearLayout>
-        </ScrollView>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:orientation="horizontal"
-            android:elevation="30dp"
-            android:background="@color/gen_white">
-            <Button android:id="@+id/text_action_bottom1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="ADD TO CART"
-                android:textSize="14dp"
-                android:textColor="@color/grey_dark1"
-                android:textStyle="bold"
-                style="?android:animateOnClick"
-                android:background="?android:attr/selectableItemBackground"
-                android:fontFamily="sans-serif"
-                android:gravity="center"/>
-            <View
-                android:layout_width="@dimen/view_width_small"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
-                android:background="@color/grey_light" />
+                        android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Suggested Products :"
+                            android:textSize="16dp"
+                            android:padding="2dp"
+                            android:textColor="@color/gen_black"/>
 
-            <Button android:id="@+id/text_action_bottom2"
-                android:layout_width="0dp"
+                        <android.support.v7.widget.RecyclerView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/suggested_recyclerview"
+                            >
+
+                        </android.support.v7.widget.RecyclerView>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="?android:attr/selectableItemBackground"
-                style="?android:animateOnClick"
-                android:text="BUY NOW"
-                android:textSize="14dp"
-                android:fontFamily="sans-serif"
-                android:textColor="@color/colorAccent"
-                android:textStyle="bold"
-                android:gravity="center"/>
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:elevation="30dp"
+                android:background="@color/gen_white">
+                <Button android:id="@+id/text_action_bottom1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="ADD TO CART"
+                    android:textSize="14dp"
+                    android:textColor="@color/grey_dark1"
+                    android:textStyle="bold"
+                    style="?android:animateOnClick"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"/>
+                <View
+                    android:layout_width="@dimen/view_width_small"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:background="@color/grey_light" />
+
+                <Button android:id="@+id/text_action_bottom2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    style="?android:animateOnClick"
+                    android:text="BUY NOW"
+                    android:textSize="14dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

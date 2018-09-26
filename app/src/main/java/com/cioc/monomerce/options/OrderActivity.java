@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Order;
+import com.cioc.monomerce.startup.MainActivity;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -157,7 +158,7 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     public void getOrderHistory(){
-        client.get(this,BackendServer.url+"/api/ecommerce/order/?&Name__contains=&offset=0", new JsonHttpResponseHandler() {
+        client.get(this,BackendServer.url+"/api/ecommerce/order/?&Name__contains=&offset=0&user="+ MainActivity.userPK, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);

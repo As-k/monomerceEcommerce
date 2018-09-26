@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class ListingLite {
     public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, specifications;
     int productIntPrice, productIntDiscountedPrice;
-    boolean approved;
+    boolean approved, inStock;
     public String addedCart, addedWish;
     public String parentPk, parentName;
     public String parentTypePk, parentTypeName, parentTypeMinCost, parentTypeVisual;
@@ -40,6 +40,7 @@ public class ListingLite {
             this.source = jsonObject.getString("source");
             this.addedCart = jsonObject.getString("added_cart");
             this.addedWish = jsonObject.getString("added_saved");
+            this.inStock = jsonObject.getBoolean("in_stock");
             String str = jsonObject.getString("specifications");
             this.specifications = str;
 
@@ -146,6 +147,14 @@ public class ListingLite {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public boolean isInStock() {
+        return inStock;
+    }
+
+    public void setInStock(boolean inStock) {
+        this.inStock = inStock;
     }
 
     public String getProductPk() {

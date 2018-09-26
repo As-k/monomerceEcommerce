@@ -14,6 +14,8 @@
     <LinearLayout android:id="@+id/layout_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="?android:animateOnClick"
+        android:background="?android:attr/selectableItemBackground"
         android:orientation="vertical">
         <ImageView xmlns:fresco="http://schemas.android.com/apk/res-auto"
             android:id="@+id/image1"

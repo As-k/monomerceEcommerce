@@ -40,9 +40,10 @@
             android:layout_height="50dp"
             android:layout_below="@+id/profile_name"
             android:id="@+id/card_view_cart"
+            style="?android:animateOnClick"
+            android:background="?android:attr/selectableItemBackground"
             app:cardElevation="1dp"
             android:layout_marginTop="20dp"
-            android:background="@null"
             >
 
             <RelativeLayout
@@ -76,7 +77,8 @@
             android:id="@+id/card_view_order"
             app:cardElevation="1dp"
             android:layout_marginTop="1dp"
-            android:background="@null"
+            style="?android:animateOnClick"
+            android:background="?android:attr/selectableItemBackground"
             >
 
             <RelativeLayout
@@ -86,7 +88,7 @@
                 android:padding="16dp">
 
                 <ImageView
-                    android:id="@+id/item_image"
+                    android:id="@+id/order_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_shopping_basket_black_24dp" />
@@ -95,7 +97,7 @@
                     android:id="@+id/item_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/item_image"
+                    android:layout_toRightOf="@+id/order_image"
                     android:layout_marginLeft="@dimen/margin_small"
                     android:text="Order" />
 
@@ -109,7 +111,8 @@
             android:id="@+id/card_view_setting"
             app:cardElevation="1dp"
             android:layout_marginTop="1dp"
-            android:background="@null"
+            style="?android:animateOnClick"
+            android:background="?android:attr/selectableItemBackground"
             >
 
             <RelativeLayout
@@ -147,7 +150,8 @@
             android:id="@+id/card_view_support"
             app:cardElevation="1dp"
             android:layout_marginTop="1dp"
-            android:background="@null"
+            style="?android:animateOnClick"
+            android:background="?android:attr/selectableItemBackground"
             >
 
             <RelativeLayout
@@ -181,7 +185,8 @@
             android:id="@+id/card_view_wishlist"
             app:cardElevation="1dp"
             android:layout_marginTop="1dp"
-            android:background="@null"
+            style="?android:animateOnClick"
+            android:background="?android:attr/selectableItemBackground"
             >
 
             <RelativeLayout
@@ -213,6 +218,7 @@
             android:id="@+id/logout_button"
             android:text="Logout"
             android:layout_width="match_parent"
+            style="?android:animateOnClick"
             android:background="@color/gen_white"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

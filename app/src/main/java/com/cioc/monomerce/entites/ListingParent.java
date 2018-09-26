@@ -13,7 +13,7 @@ import org.json.JSONObject;
 public class ListingParent {
     public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, specifications;
     int productIntPrice, productIntDiscountedPrice;
-    boolean approved;
+    boolean approved, inStock;
     public String filesPk, filesLink, filesAttachment, filesMediaType;
     String addedCart, addedWish;
     JSONObject jsonObject;
@@ -33,6 +33,7 @@ public class ListingParent {
             this.source = jsonObject.getString("source");
             this.addedCart = jsonObject.getString("added_cart");
             this.addedWish = jsonObject.getString("added_saved");
+            this.inStock = jsonObject.getBoolean("in_stock");
 
             JSONObject productObj = jsonObject.getJSONObject("product");
             this.productPk = productObj.getString("pk");

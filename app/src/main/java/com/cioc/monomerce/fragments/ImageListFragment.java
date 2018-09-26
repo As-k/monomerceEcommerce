@@ -163,17 +163,15 @@ public class ImageListFragment extends Fragment {
         Toast toast;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
-            public final View mView;
+//            public final View mView;
             public final ImageView mImageView;
-            public final LinearLayout mLayoutItem, mLayoutItemCart2;//, mLayoutItemCart2;
-            public final ImageView mImageViewWishlist, mCartImageBtn;//itemsQuantityAdd, itemsQuantityRemove,
+            public final LinearLayout mLayoutItem, mLayoutItemCart2;
+            public final ImageView mImageViewWishlist, mCartImageBtn;
             TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity;
             boolean res = true;
-
-
             public ViewHolder(View view) {
                 super(view);
-                mView = view;
+//                mView = view;
                 mImageView =  view.findViewById(R.id.image1);
                 mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item);
 //                mLayoutItemCart1 = (LinearLayout) view.findViewById(R.id.layout_action1_cart);
@@ -225,14 +223,13 @@ public class ImageListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             final ListingParent parent = mValues.get(position);
-            final Uri uri;
+//            final Uri uri;
             String link;
             String qunt = parent.getAddedCart();
             int qntAdd = Integer.parseInt(qunt);
             if (qntAdd==0){
                 holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
                 holder.itemsQuantity.setVisibility(View.GONE);
-
                 holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
