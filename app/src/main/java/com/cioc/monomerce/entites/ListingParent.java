@@ -179,6 +179,14 @@ public class ListingParent {
         this.approved = approved;
     }
 
+    public boolean isInStock() {
+        return inStock;
+    }
+
+    public void setInStock(boolean inStock) {
+        this.inStock = inStock;
+    }
+
     public String getSpecifications() {
         return specifications;
     }

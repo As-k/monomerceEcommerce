@@ -2,16 +2,12 @@ package com.cioc.monomerce.startup;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.*;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,20 +15,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +49,6 @@ import com.cioc.monomerce.options.SearchResultActivity;
 import com.cioc.monomerce.options.WishlistActivity;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.merhold.extensiblepageindicator.ExtensiblePageIndicator;
 
@@ -64,10 +56,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -186,6 +175,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -256,8 +246,8 @@ public class MainActivity extends AppCompatActivity
            /* notificationCount=0;//clear notification count
             invalidateOptionsMenu();*/
                 return true;
-            } else {
-                startActivity(new Intent(MainActivity.this, EmptyActivity.class));
+//            } else {
+//                startActivity(new Intent(MainActivity.this, EmptyActivity.class));
 
             }
         }
@@ -584,7 +574,7 @@ public class MainActivity extends AppCompatActivity
         mSliderImageFragmentAdapter = new SliderImageFragmentAdapter(getSupportFragmentManager());
         for (int i=0; i<offerBannersList.size(); i++) {
             OfferBanners banners = offerBannersList.get(i);
-            mSliderImageFragmentAdapter.addFragment(SliderImageFragment.newInstance(android.R.color.transparent, banners.getImage()));
+            mSliderImageFragmentAdapter.addFragment(OfferBannerFragment.newInstance(android.R.color.transparent, banners.getImage()));
         }
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSliderImageFragmentAdapter);

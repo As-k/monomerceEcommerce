@@ -131,6 +131,17 @@
             android:textSize="@dimen/text_size_large"
             />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/out_of_stock"
+            android:text="Out Of Stock"
+            android:padding="7dp"
+            android:textAlignment="center"
+            android:textColor="@color/red_light"
+            android:textSize="@dimen/text_size_large"
+            />
+
         <LinearLayout
             android:id="@+id/layout_action2_cart"
             android:layout_width="match_parent"

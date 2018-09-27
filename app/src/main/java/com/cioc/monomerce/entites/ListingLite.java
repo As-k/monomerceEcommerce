@@ -81,9 +81,10 @@ public class ListingLite {
             this.parentTypeVisual = parentType.getString("visual");
 
             JSONObject parent = parentType.getJSONObject("parent");
-            this.parentPk = parent.getString("pk");
-            this.parentName = parent.getString("name");
-
+            if (parent!=null) {
+                this.parentPk = parent.getString("pk");
+                this.parentName = parent.getString("name");
+            }
             JSONArray fields = parentType.getJSONArray("fields");
             for (int i=0; i<fields.length(); i++) {
                 JSONObject fieldsObject = fields.getJSONObject(i);

@@ -167,7 +167,7 @@ public class ImageListFragment extends Fragment {
             public final ImageView mImageView;
             public final LinearLayout mLayoutItem, mLayoutItemCart2;
             public final ImageView mImageViewWishlist, mCartImageBtn;
-            TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity;
+            TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOutOfStock;
             boolean res = true;
             public ViewHolder(View view) {
                 super(view);
@@ -182,6 +182,7 @@ public class ImageListFragment extends Fragment {
                 itemDiscountPrice =  view.findViewById(R.id.actual_price);
                 itemDiscount =  view.findViewById(R.id.discount_percentage);
                 itemsQuantity =  view.findViewById(R.id.item_added);
+                itemsOutOfStock =  view.findViewById(R.id.out_of_stock);
 //                itemsQuantityAdd =  view.findViewById(R.id.items_quantity_add);
 //                itemsQuantityRemove =  view.findViewById(R.id.items_quantity_remove);
                 mCartImageBtn =  view.findViewById(R.id.card_item_quantity_add);
@@ -223,64 +224,67 @@ public class ImageListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             final ListingParent parent = mValues.get(position);
-//            final Uri uri;
             String link;
-            String qunt = parent.getAddedCart();
-            int qntAdd = Integer.parseInt(qunt);
-            if (qntAdd==0){
-                holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
-                holder.itemsQuantity.setVisibility(View.GONE);
-                holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (MainActivity.username.equals("")) {
-                            mActivity.startActivity(new Intent(mActivity, LoginPageActivity.class));
-                        } else {
-                            RequestParams params = new RequestParams();
-                            params.put("product", parent.getPk());
-                            params.put("qty", "1");
-                            params.put("typ", "cart");
-                            params.put("user", MainActivity.userPK);
-                            client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
-                                @Override
-                                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                    holder.mLayoutItemCart2.setVisibility(View.GONE);
-                                    holder.itemsQuantity.setVisibility(View.VISIBLE);
-                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
-                                    holder.res = true;
-                                    if (toast != null) {
-                                        toast.cancel();
+            if (parent.isInStock()) {
+                holder.itemsOutOfStock.setVisibility(View.GONE);
+                String qunt = parent.getAddedCart();
+                int qntAdd = Integer.parseInt(qunt);
+                if (qntAdd == 0) {
+                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                    holder.itemsQuantity.setVisibility(View.GONE);
+                    holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (MainActivity.username.equals("")) {
+                                mActivity.startActivity(new Intent(mActivity, LoginPageActivity.class));
+                            } else {
+                                RequestParams params = new RequestParams();
+                                params.put("product", parent.getPk());
+                                params.put("qty", "1");
+                                params.put("typ", "cart");
+                                params.put("user", MainActivity.userPK);
+                                client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                        holder.mLayoutItemCart2.setVisibility(View.GONE);
+                                        holder.itemsQuantity.setVisibility(View.VISIBLE);
+                                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                        holder.res = true;
+                                        if (toast != null) {
+                                            toast.cancel();
+                                        }
+                                        toast = Toast.makeText(mActivity, "Item added to cart.", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                        MainActivity.notificationCountCart++;
+                                        NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
                                     }
-                                    toast = Toast.makeText(mActivity, "Item added to cart.", Toast.LENGTH_SHORT);
-                                    toast.show();
-                                    MainActivity.notificationCountCart++;
-                                    NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
-                                }
 
-                                @Override
-                                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                    if (toast != null) {
-                                        toast.cancel();
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                        if (toast != null) {
+                                            toast.cancel();
+                                        }
+                                        toast = Toast.makeText(mActivity, "This Product is already in card.", Toast.LENGTH_SHORT);
+                                        toast.show();
                                     }
-                                    toast = Toast.makeText(mActivity, "This Product is already in card.", Toast.LENGTH_SHORT);
-                                    toast.show();
-                                }
-                            });
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    holder.itemsQuantity.setVisibility(View.VISIBLE);
+                    holder.mLayoutItemCart2.setVisibility(View.GONE);
+                }
             } else {
-                holder.itemsQuantity.setVisibility(View.VISIBLE);
+                holder.itemsOutOfStock.setVisibility(View.VISIBLE);
+                holder.itemsQuantity.setVisibility(View.GONE);
                 holder.mLayoutItemCart2.setVisibility(View.GONE);
             }
 
             if (parent.getFilesAttachment().equals("null")){
-//                uri = Uri.parse(BackendServer.url+"/static/images/ecommerce.jpg");
                 link = BackendServer.url+"/static/images/ecommerce.jpg";
             } else
                 link = parent.getFilesAttachment();
-//                uri = Uri.parse(parent.getFilesAttachment());
-//            holder.mImageView.setImageURI(uri);
             Glide.with(mActivity)
                     .load(link)
                     .into(holder.mImageView);
@@ -311,9 +315,9 @@ public class ImageListFragment extends Fragment {
                         mActivity.startActivity(new Intent(mActivity, LoginPageActivity.class));
                     } else {
                         Intent intent = new Intent(mActivity, ItemDetailsActivity.class);
-                        intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
-                        intent.putExtra(STRING_IMAGE_POSITION, position);
                         intent.putExtra("listingLitePk", parent.getPk());
+//                        intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
+//                        intent.putExtra(STRING_IMAGE_POSITION, position);
                         mActivity.startActivity(intent);
                     }
                 }
@@ -386,7 +390,6 @@ public class ImageListFragment extends Fragment {
                                     }
                                     toast = Toast.makeText(mActivity, "Item removed from wishlist.", Toast.LENGTH_SHORT);
                                     toast.show();
-
                                 }
 
                                 @Override

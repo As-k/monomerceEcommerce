@@ -304,7 +304,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
             public final ImageView mImageView;
             public final LinearLayout mLayoutItem, mLayoutItemCart2;//, mLayoutItemCart2;
             public final ImageView mImageViewWishlist, mCartImageBtn;// itemsQuantityAdd, itemsQuantityRemove;
-            TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity;
+            TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOutOfStock;
             boolean res;
 
             public ViewHolder(View view) {
@@ -320,6 +320,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
                 itemDiscountPrice =  view.findViewById(R.id.actual_price);
                 itemDiscount =  view.findViewById(R.id.discount_percentage);
                 itemsQuantity =  view.findViewById(R.id.item_added);
+                itemsOutOfStock =  view.findViewById(R.id.out_of_stock);
 //                itemsQuantityAdd =  view.findViewById(R.id.items_quantity_add);
 //                itemsQuantityRemove =  view.findViewById(R.id.items_quantity_remove);
                 mCartImageBtn =  view.findViewById(R.id.card_item_quantity_add);
@@ -352,55 +353,60 @@ public class AllItemsShowActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final AllItemsShowActivity.AllItemsRecyclerViewAdapter.ViewHolder holder, final int position) {
-
             final ListingParent parent = mValues.get(position);
-            final Uri uri;
             String link;
-            String qunt = parent.getAddedCart();
-            int qntAdd = Integer.parseInt(qunt);
-            if (qntAdd<=0){
-                holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
-                holder.itemsQuantity.setVisibility(View.GONE);
-                holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        RequestParams params = new RequestParams();
-                        params.put("product", parent.getPk());
-                        params.put("qty", "1");
-                        params.put("typ", "cart");
-                        params.put("user", parent.getUser());
-                        client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
-                            @Override
-                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                holder.mLayoutItemCart2.setVisibility(View.GONE);
-                                holder.itemsQuantity.setVisibility(View.VISIBLE);
-                                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
-                                holder.res = true;
-                                Toast toast = null;
-                                if (toast!= null) {
-                                    toast.cancel();
-                                }
-                                toast = Toast.makeText(mContext, "Item added to cart.", Toast.LENGTH_SHORT);
-                                toast.show();
-                                MainActivity.notificationCountCart++;
+            if (parent.isInStock()) {
+                holder.itemsOutOfStock.setVisibility(View.GONE);
+                String qunt = parent.getAddedCart();
+                int qntAdd = Integer.parseInt(qunt);
+                if (qntAdd <= 0) {
+                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                    holder.itemsQuantity.setVisibility(View.GONE);
+                    holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            RequestParams params = new RequestParams();
+                            params.put("product", parent.getPk());
+                            params.put("qty", "1");
+                            params.put("typ", "cart");
+                            params.put("user", parent.getUser());
+                            client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                    holder.mLayoutItemCart2.setVisibility(View.GONE);
+                                    holder.itemsQuantity.setVisibility(View.VISIBLE);
+                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                    holder.res = true;
+                                    Toast toast = null;
+                                    if (toast != null) {
+                                        toast.cancel();
+                                    }
+                                    toast = Toast.makeText(mContext, "Item added to cart.", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                    MainActivity.notificationCountCart++;
 //                                NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
-                            }
-
-                            @Override
-                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                Toast toast = null;
-                                if (toast!= null) {
-                                    toast.cancel();
                                 }
-                                toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
-                                toast.show();
-                            }
-                        });
-                    }
-                });
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                    Toast toast = null;
+                                    if (toast != null) {
+                                        toast.cancel();
+                                    }
+                                    toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
+                                    toast.show();
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    holder.mLayoutItemCart2.setVisibility(View.GONE);
+                    holder.itemsQuantity.setVisibility(View.VISIBLE);
+                }
             } else {
+                holder.itemsOutOfStock.setVisibility(View.VISIBLE);
+                holder.itemsQuantity.setVisibility(View.GONE);
                 holder.mLayoutItemCart2.setVisibility(View.GONE);
-                holder.itemsQuantity.setVisibility(View.VISIBLE);
             }
             if (parent.getFilesAttachment().equals("null")){
 //                uri = Uri.parse(BackendServer.url+"/static/images/ecommerce.jpg");

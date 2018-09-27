@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -37,16 +36,12 @@ import com.bumptech.glide.Glide;
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.ListingLite;
-import com.cioc.monomerce.entites.ListingParent;
-import com.cioc.monomerce.fragments.ImageListFragment;
-import com.cioc.monomerce.fragments.ViewPagerActivity;
 import com.cioc.monomerce.notification.NotificationCountSetClass;
 import com.cioc.monomerce.options.CartListActivity;
 import com.cioc.monomerce.startup.LoginPageActivity;
 import com.cioc.monomerce.startup.MainActivity;
-import com.cioc.monomerce.startup.SliderImageFragment;
+import com.cioc.monomerce.startup.OfferBannerFragment;
 import com.cioc.monomerce.startup.SliderImageFragmentAdapter;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -185,7 +180,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment == null) {
                     filesAttachment1 = BackendServer.url+"/media/ecommerce/pictureUploads/1532690173_89_admin_ecommerce.jpg";
                 } else filesAttachment1 = filesAttachment;
-                mSliderImageFragmentAdapter.addFragment(SliderImageFragment.newInstance(android.R.color.transparent, filesAttachment1));
+                mSliderImageFragmentAdapter.addFragment(ProductImageFragment.newInstance(android.R.color.transparent, filesAttachment1));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -510,53 +505,60 @@ public class ItemDetailsActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull MyHolder holder, int position) {
             final ListingLite parent = suggestedList.get(position);
             String link;
-            String qunt = parent.getAddedCart();
-            int qntAdd = Integer.parseInt(qunt);
-            if (qntAdd==0){
-                holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
-                holder.itemsQuantity.setVisibility(View.GONE);
+            if (parent.isInStock()) {
+                holder.itemsOutOfStock.setVisibility(View.GONE);
+                String qunt = parent.getAddedCart();
+                int qntAdd = Integer.parseInt(qunt);
+                if (qntAdd == 0) {
+                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                    holder.itemsQuantity.setVisibility(View.GONE);
 
-                holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (MainActivity.username.equals("")) {
-                            mContext.startActivity(new Intent(mContext, LoginPageActivity.class));
-                        } else {
-                            RequestParams params = new RequestParams();
-                            params.put("product", parent.getPk());
-                            params.put("qty", "1");
-                            params.put("typ", "cart");
-                            params.put("user", MainActivity.userPK);
-                            client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
-                                @Override
-                                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                    holder.mLayoutItemCart2.setVisibility(View.GONE);
-                                    holder.itemsQuantity.setVisibility(View.VISIBLE);
-                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
-                                    holder.res = true;
-                                    if (toast != null) {
-                                        toast.cancel();
+                    holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (MainActivity.username.equals("")) {
+                                mContext.startActivity(new Intent(mContext, LoginPageActivity.class));
+                            } else {
+                                RequestParams params = new RequestParams();
+                                params.put("product", parent.getPk());
+                                params.put("qty", "1");
+                                params.put("typ", "cart");
+                                params.put("user", MainActivity.userPK);
+                                client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                        holder.mLayoutItemCart2.setVisibility(View.GONE);
+                                        holder.itemsQuantity.setVisibility(View.VISIBLE);
+                                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                        holder.res = true;
+                                        if (toast != null) {
+                                            toast.cancel();
+                                        }
+                                        toast = Toast.makeText(mContext, "Item added to cart.", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                        MainActivity.notificationCountCart++;
+                                        NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
                                     }
-                                    toast = Toast.makeText(mContext, "Item added to cart.", Toast.LENGTH_SHORT);
-                                    toast.show();
-                                    MainActivity.notificationCountCart++;
-                                    NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
-                                }
 
-                                @Override
-                                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                    if (toast != null) {
-                                        toast.cancel();
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                        if (toast != null) {
+                                            toast.cancel();
+                                        }
+                                        toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
+                                        toast.show();
                                     }
-                                    toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
-                                    toast.show();
-                                }
-                            });
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    holder.itemsQuantity.setVisibility(View.VISIBLE);
+                    holder.mLayoutItemCart2.setVisibility(View.GONE);
+                }
             } else {
-                holder.itemsQuantity.setVisibility(View.VISIBLE);
+                holder.itemsOutOfStock.setVisibility(View.VISIBLE);
+                holder.itemsQuantity.setVisibility(View.GONE);
                 holder.mLayoutItemCart2.setVisibility(View.GONE);
             }
 
@@ -698,7 +700,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         boolean res = true;
         public final LinearLayout mLayoutItem, mLayoutItemCart2;
         public final ImageView mImageViewWishlist, mCartImageBtn;
-        TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity;
+        TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOutOfStock;
         public MyHolder(@NonNull View view) {
             super(view);
             mImageView = view.findViewById(R.id.image1);
@@ -710,6 +712,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
             itemDiscountPrice =  view.findViewById(R.id.actual_price);
             itemDiscount =  view.findViewById(R.id.discount_percentage);
             itemsQuantity =  view.findViewById(R.id.item_added);
+            itemsOutOfStock =  view.findViewById(R.id.out_of_stock);
             mCartImageBtn =  view.findViewById(R.id.card_item_quantity_add);
         }
     }
