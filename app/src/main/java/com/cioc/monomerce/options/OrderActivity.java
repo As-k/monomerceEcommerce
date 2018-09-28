@@ -75,9 +75,10 @@ public class OrderActivity extends AppCompatActivity {
     AsyncHttpClient client;
     public static ArrayList<Order> orderList;
     private LinearLayoutManager manager;
-    private Boolean isScrolling = false;
-    private int currentItems, totalItems, scrollOutItems;
-    private String token = "";
+//    private Boolean isScrolling = false;
+//    private int currentItems, totalItems, scrollOutItems;
+//    private String token = "";
+    private TextView noHistory;
     private OrderRecyclerViewAdapter adapter;
     private ProgressBar orderProgressBar;
     private RecyclerView orderRecyclerView;
@@ -90,6 +91,7 @@ public class OrderActivity extends AppCompatActivity {
         BackendServer backend = new BackendServer(context);
         client = backend.getHTTPClient();
         orderList = new ArrayList<>();
+        noHistory = findViewById(R.id.no_history);
         orderRecyclerView = findViewById(R.id.order_list);
         orderProgressBar = findViewById(R.id.progressBar_order);
         getOrderHistory();
@@ -116,9 +118,7 @@ public class OrderActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                orderProgressBar.setVisibility(View.GONE);
-                adapter = new OrderRecyclerViewAdapter(orderList);
-                orderRecyclerView.setAdapter(adapter);
+
             }
         },2000);
 
@@ -169,6 +169,17 @@ public class OrderActivity extends AppCompatActivity {
                         Order order = new Order(object);
                         orderList.add(order);
 //                        orderProgressBar.setVisibility(View.GONE);
+                    }
+                    if (orderList.size()<=0){
+                        noHistory.setVisibility(View.VISIBLE);
+                        orderProgressBar.setVisibility(View.GONE);
+                        orderRecyclerView.setVisibility(View.GONE);
+                    } else {
+                        noHistory.setVisibility(View.GONE);
+                        orderProgressBar.setVisibility(View.GONE);
+                        orderRecyclerView.setVisibility(View.VISIBLE);
+                        adapter = new OrderRecyclerViewAdapter(orderList);
+                        orderRecyclerView.setAdapter(adapter);
                     }
                 } catch (JSONException e) {
                         e.printStackTrace();

@@ -97,29 +97,6 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
 
         recyclerView = findViewById(R.id.recyclerview);
         textTotalPrice = findViewById(R.id.text_action_bottom1);
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setCartListRecyclerView();
-            }
-        }, 1000);
-    }
-
-    void setCartListRecyclerView() {
-        progressBar.setVisibility(View.GONE);
-        RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
-        recyclerView.setLayoutManager(recyclerViewLayoutManager);
-        adapter = new CartListRecyclerViewAdapter(cartList, totalPrice, this, this, this);
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                totalPrice = CartListRecyclerViewAdapter.mPrice;
-                textTotalPrice.setText("\u20B9" + totalPrice);
-            }
-        }, 500);
     }
 
 
@@ -138,6 +115,20 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
                                 e.printStackTrace();
                             }
                         }
+                        progressBar.setVisibility(View.GONE);
+                        RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
+                        recyclerView.setLayoutManager(recyclerViewLayoutManager);
+                        adapter = new CartListRecyclerViewAdapter(cartList, totalPrice,
+                                CartListActivity.this, CartListActivity.this, CartListActivity.this);
+                        recyclerView.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                totalPrice = CartListRecyclerViewAdapter.mPrice;
+                                textTotalPrice.setText("\u20B9" + totalPrice);
+                            }
+                        }, 500);
                     }
 
                     @Override

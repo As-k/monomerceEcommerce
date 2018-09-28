@@ -18,19 +18,29 @@
             android:layout_gravity="center"
             android:id="@+id/progressBar_order"
             android:padding="@dimen/margin_small"
+            android:visibility="visible"
             />
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/order_list">
+            android:id="@+id/order_list"
+            android:visibility="visible"
+            >
 
         </android.support.v7.widget.RecyclerView>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text=""/>
+            android:id="@+id/no_history"
+            android:layout_weight="2"
+            android:padding="@dimen/margin_medium"
+            android:text="No History"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:visibility="visible"
+            />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -143,27 +143,6 @@ public class MainActivity extends AppCompatActivity
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         initCollapsingToolbar();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //                while (genericProducts.size()>0) {
-                        notificationCountCart = cartList.size();
-                        if (viewPager != null) {
-                            getItems();
-                            getViewpagerFragment();
-                            setupViewPager(viewPager);
-                            tabLayout.setupWithViewPager(viewPager);
-                    }
-                    }
-                }, 1500);
-                getGenericProduct();
-            }
-        },1000);
-
-
         navHeadLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -179,8 +158,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-//        offerBannersList.clear();
-//        getGenericProduct();
         invalidateOptionsMenu();
     }
 
@@ -211,19 +188,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // Get the notifications MenuItem and
-        // its LayerDrawable (layer-list)
         MenuItem item = menu.findItem(R.id.action_cart);
         NotificationCountSetClass.setAddToCart(MainActivity.this, item, notificationCountCart);
-        // force the ActionBar to relayout its MenuItems.
-        // onCreateOptionsMenu(Menu) will be called again.
         invalidateOptionsMenu();
         return super.onPrepareOptionsMenu(menu);
     }
@@ -234,17 +206,11 @@ public class MainActivity extends AppCompatActivity
         if (username.equals("")) {
             startActivity(new Intent(context, LoginPageActivity.class));
         } else {
-            //noinspection SimplifiableIfStatement
             if (id == R.id.action_search) {
                 startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
                 return true;
             } else if (id == R.id.action_cart) {
-           /* NotificationCountSetClass.setAddToCart(MainActivity.this, item, notificationCount);
-            invalidateOptionsMenu();*/
                 startActivity(new Intent(MainActivity.this, CartListActivity.class));
-
-           /* notificationCount=0;//clear notification count
-            invalidateOptionsMenu();*/
                 return true;
 //            } else {
 //                startActivity(new Intent(MainActivity.this, EmptyActivity.class));
@@ -268,6 +234,7 @@ public class MainActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                 }
+
             }
 
             @Override
@@ -310,6 +277,13 @@ public class MainActivity extends AppCompatActivity
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                        }
+                        notificationCountCart = cartList.size();
+                        if (viewPager != null) {
+                            getItems();
+                            getViewpagerFragment();
+                            setupViewPager(viewPager);
+                            tabLayout.setupWithViewPager(viewPager);
                         }
                     }
 
@@ -477,7 +451,6 @@ public class MainActivity extends AppCompatActivity
                 Log.e("MainActivity","onSuccess");
                 super.onSuccess(statusCode, headers, response);
                 try {
-
                     JSONObject usrObj = response.getJSONObject(0);
                     userPK = usrObj.getString("pk");
                     username = usrObj.getString("username");
@@ -497,6 +470,7 @@ public class MainActivity extends AppCompatActivity
                 } catch (JSONException e){
                     e.printStackTrace();
                 }
+                getGenericProduct();
             }
 
             @Override

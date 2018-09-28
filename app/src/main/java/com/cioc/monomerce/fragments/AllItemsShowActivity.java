@@ -60,7 +60,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
     Button sortBtn, filterBtn;
     AsyncHttpClient client;
     ArrayList<ListingParent> parents;
-    String pk;
+    String pk, name;
 
 
     @Override
@@ -72,15 +72,13 @@ public class AllItemsShowActivity extends AppCompatActivity {
         client = backend.getHTTPClient();
         parents = new ArrayList<>();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-//        ArrayList<Parcelable> stringArray = getIntent().getExtras().getParcelableArrayList("items");
-        final String name = getIntent().getExtras().getString("fragmentName");
+        name = getIntent().getExtras().getString("fragmentName");
         pk = getIntent().getExtras().getString("pk");
 
 
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_all_items);
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout_all_items);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -100,16 +98,6 @@ public class AllItemsShowActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         recyclerViewList.setVisibility(View.GONE);
         getItems(pk);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                getSupportActionBar().setTitle(name);
-                progressBar.setVisibility(View.GONE);
-                recyclerViewList.setVisibility(View.VISIBLE);
-                clickBtn(parents);
-            }
-        },1500);
-
     }
 
     public void init(){
@@ -133,6 +121,10 @@ public class AllItemsShowActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                getSupportActionBar().setTitle(name);
+                progressBar.setVisibility(View.GONE);
+                recyclerViewList.setVisibility(View.VISIBLE);
+                clickBtn(parents);
             }
 
             @Override
@@ -242,7 +234,6 @@ public class AllItemsShowActivity extends AppCompatActivity {
                     }
                 });
                 ad.show();
-//                startActivity(new Intent(context, FilterItemsActivity.class));
             }
         });
     }
@@ -253,7 +244,6 @@ public class AllItemsShowActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                         super.onSuccess(statusCode, headers, response);
-//                        Toast.makeText(context, min + " : " + max, Toast.LENGTH_SHORT).show();
                         recyclerViewList.setVisibility(View.GONE);
                         parents.clear();
                         for (int i=0; i<response.length(); i++){
@@ -272,7 +262,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
                                 setupRecyclerView(recyclerViewList, parents);
                                 ad.dismiss();
                             }
-                        },500);
+                        },200);
 
 
                     }
@@ -302,8 +292,8 @@ public class AllItemsShowActivity extends AppCompatActivity {
         public static class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
             public final ImageView mImageView;
-            public final LinearLayout mLayoutItem, mLayoutItemCart2;//, mLayoutItemCart2;
-            public final ImageView mImageViewWishlist, mCartImageBtn;// itemsQuantityAdd, itemsQuantityRemove;
+            public final LinearLayout mLayoutItem, mLayoutItemCart2;
+            public final ImageView mImageViewWishlist, mCartImageBtn;
             TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOutOfStock;
             boolean res;
 
@@ -311,18 +301,15 @@ public class AllItemsShowActivity extends AppCompatActivity {
                 super(view);
                 mView = view;
                 mImageView = view.findViewById(R.id.image1);
-                mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item);
-//                mLayoutItemCart1 = (LinearLayout) view.findViewById(R.id.layout_action1_cart);
-                mLayoutItemCart2 = (LinearLayout) view.findViewById(R.id.layout_action2_cart);
-                mImageViewWishlist = (ImageView) view.findViewById(R.id.ic_wishlist);
+                mLayoutItem = view.findViewById(R.id.layout_item);
+                mLayoutItemCart2 = view.findViewById(R.id.layout_action2_cart);
+                mImageViewWishlist = view.findViewById(R.id.ic_wishlist);
                 itemName =  view.findViewById(R.id.item_name);
                 itemPrice =  view.findViewById(R.id.item_price);
                 itemDiscountPrice =  view.findViewById(R.id.actual_price);
                 itemDiscount =  view.findViewById(R.id.discount_percentage);
                 itemsQuantity =  view.findViewById(R.id.item_added);
                 itemsOutOfStock =  view.findViewById(R.id.out_of_stock);
-//                itemsQuantityAdd =  view.findViewById(R.id.items_quantity_add);
-//                itemsQuantityRemove =  view.findViewById(R.id.items_quantity_remove);
                 mCartImageBtn =  view.findViewById(R.id.card_item_quantity_add);
             }
         }
@@ -384,7 +371,6 @@ public class AllItemsShowActivity extends AppCompatActivity {
                                     toast = Toast.makeText(mContext, "Item added to cart.", Toast.LENGTH_SHORT);
                                     toast.show();
                                     MainActivity.notificationCountCart++;
-//                                NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
                                 }
 
                                 @Override
@@ -409,12 +395,9 @@ public class AllItemsShowActivity extends AppCompatActivity {
                 holder.mLayoutItemCart2.setVisibility(View.GONE);
             }
             if (parent.getFilesAttachment().equals("null")){
-//                uri = Uri.parse(BackendServer.url+"/static/images/ecommerce.jpg");
                 link = BackendServer.url+"/static/images/ecommerce.jpg";
             } else
                 link = parent.getFilesAttachment();
-//                uri = Uri.parse(parent.getFilesAttachment());
-//            holder.mImageView.setImageURI(uri);
             Glide.with(mContext)
                     .load(link)
                     .into(holder.mImageView);
@@ -537,7 +520,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
             params.put("product", parent.getPk());
             params.put("qty", qty);
             params.put("typ", "cart");
-            params.put("user", parent.getUser());
+            params.put("user", MainActivity.userPK);
             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {

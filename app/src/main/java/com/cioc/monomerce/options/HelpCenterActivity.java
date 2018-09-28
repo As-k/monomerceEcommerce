@@ -45,14 +45,6 @@ public class HelpCenterActivity extends AppCompatActivity {
         getFrequentlyQuestions();
         queriesList = findViewById(R.id.queries_list);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                QueriesAdapter adapter = new QueriesAdapter();
-                queriesList.setAdapter(adapter);
-            }
-        },500);
-
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -82,6 +74,8 @@ public class HelpCenterActivity extends AppCompatActivity {
                         Log.e("JSONObject", "Json parsing error: " + e.getMessage());
                     }
                 }
+                QueriesAdapter adapter = new QueriesAdapter();
+                queriesList.setAdapter(adapter);
 
             }
 

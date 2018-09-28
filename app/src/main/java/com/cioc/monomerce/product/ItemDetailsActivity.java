@@ -15,8 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +24,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +37,6 @@ import com.cioc.monomerce.notification.NotificationCountSetClass;
 import com.cioc.monomerce.options.CartListActivity;
 import com.cioc.monomerce.startup.LoginPageActivity;
 import com.cioc.monomerce.startup.MainActivity;
-import com.cioc.monomerce.startup.OfferBannerFragment;
 import com.cioc.monomerce.startup.SliderImageFragmentAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -60,16 +56,15 @@ import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITI
 import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 
 public class ItemDetailsActivity extends AppCompatActivity {
-//    ImageView mImageView;
+    LinearLayout layoutActionBuy, layoutOutOFStock;
     private SliderImageFragmentAdapter mSliderImageFragmentAdapter;
     private ViewPager mViewPager;
     private ExtensiblePageIndicator extensiblePageIndicator;
-    TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount, textViewDescriptions;
+    TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount;//, textViewDescriptions;
     Button textViewAddToCart, textViewBuyNow;
-    int imagePosition;
     String itemPk, stringImageUri;
     RecyclerView suggestedRecyclerView;
-    ListView specificationsListView;
+//    ListView specificationsListView;
     Context mContext;
     private Menu menu;
     AsyncHttpClient client;
@@ -79,6 +74,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
     String name, value, fieldType, helpText, unit, jsonData;
     JSONArray jsonArray = new JSONArray();
     Toast toast;
+    ProgressBar progressBar;
+    LinearLayout itemDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,95 +87,57 @@ public class ItemDetailsActivity extends AppCompatActivity {
         listingLites = new ArrayList<>();
         suggestList = new ArrayList<>();
 
-        //Getting image uri from previous screen
         if (getIntent() != null) {
             itemPk = getIntent().getStringExtra("listingLitePk");
-//            itemName = getIntent().getStringExtra("itemName");
-//            itemPrice = getIntent().getStringExtra("itemPrice");
-//            itemDiscountPrice = getIntent().getStringExtra("itemDiscountPrice");
-//            itemDiscount = getIntent().getStringExtra("itemDiscount");
-//            stringImageUri = getIntent().getStringExtra(ImageListFragment.STRING_IMAGE_URI);
-//            imagePosition = getIntent().getIntExtra(ImageListFragment.STRING_IMAGE_URI,0);
         }
         getParentType();
 
-        final ProgressBar progressBar = findViewById(R.id.progressBar);
-        final LinearLayout itemDetails = findViewById(R.id.layout_linear_item_details);
+        progressBar = findViewById(R.id.progressBar);
+        itemDetails = findViewById(R.id.layout_linear_item_details);
         progressBar.setVisibility(View.VISIBLE);
         itemDetails.setVisibility(View.GONE);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (listingLites.size()<=0){
-                    return;
-                }
-                itemDetails.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-                lite = listingLites.get(0);
-                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-                setSupportActionBar(toolbar);
-//                String name = getIntent().getExtras().getString(lite.getParentTypeName().toUpperCase());
-                getSupportActionBar().setTitle(lite.getParentTypeName().toUpperCase());
-                final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_items_detail);
-                ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                        ItemDetailsActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-                drawer.setDrawerListener(toggle);
-                toggle.syncState();
-
-                toggle.setDrawerIndicatorEnabled(false);
-                Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_arrow_back_white_24dp, getApplicationContext().getTheme());
-                toggle.setHomeAsUpIndicator(drawable);
-                toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-                init();
-                getSuggestedItem();
 //                specificationsListView.setLayoutManager(new LinearLayoutManager(mContext));
-                SpecificationsListAdapter list = new SpecificationsListAdapter();
-                specificationsListView.setAdapter(list);
-                list.notifyDataSetChanged();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                        suggestedRecyclerView.setLayoutManager(layoutManager);
-                        SuggestedRecyclerViewAdapter viewAdapter = new SuggestedRecyclerViewAdapter(suggestList);
-                        suggestedRecyclerView.setAdapter(viewAdapter);
-                    }
-                    },500);
+//                SpecificationsListAdapter list = new SpecificationsListAdapter();
+//                specificationsListView.setAdapter(list);
+//                list.notifyDataSetChanged();
 
-            }
-        },1500);
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+//                        suggestedRecyclerView.setLayoutManager(layoutManager);
+//                        SuggestedRecyclerViewAdapter viewAdapter = new SuggestedRecyclerViewAdapter(suggestList);
+//                        suggestedRecyclerView.setAdapter(viewAdapter);
+//                    }
+//                    },500);
+
     }
 
     public void init() {
         String filesAttachment1;
-//        mImageView = findViewById(R.id.item_image);
         textViewItemName = findViewById(R.id.item_name);
         textViewItemPrice = findViewById(R.id.item_price);
         textViewItemDiscountPrice = findViewById(R.id.actual_price);
         textViewItemDiscount = findViewById(R.id.discount_percentage);
-        textViewAddToCart = findViewById(R.id.text_action_bottom1);
-        textViewBuyNow = findViewById(R.id.text_action_bottom2);
-        specificationsListView = findViewById(R.id.specifications_list);
-        textViewDescriptions = findViewById(R.id.description_txt);
+        textViewAddToCart = findViewById(R.id.text_action_add_cart);
+        textViewBuyNow = findViewById(R.id.text_action_buy);
+        layoutActionBuy = findViewById(R.id.layout_action_buy);
+        layoutOutOFStock = findViewById(R.id.out_of_stock_action);
+//        specificationsListView = findViewById(R.id.specifications_list);
+//        textViewDescriptions = findViewById(R.id.description_txt);
         suggestedRecyclerView = findViewById(R.id.suggested_recyclerview);
         extensiblePageIndicator = (ExtensiblePageIndicator) findViewById(R.id.flexible_indicator);
         mViewPager = (ViewPager) findViewById(R.id.item_view_pager);
         lite = listingLites.get(0);
         mSliderImageFragmentAdapter = new SliderImageFragmentAdapter(getSupportFragmentManager());
-        for (int j=0; j<lite.getFilesArray().length(); j++) {
+        for (int j = 0; j < lite.getFilesArray().length(); j++) {
             try {
                 JSONObject filesObject = lite.getFilesArray().getJSONObject(j);
                 String filesAttachment = null;
                 filesAttachment = filesObject.getString("attachment");
                 if (filesAttachment.equals("null") || filesAttachment.equals("") || filesAttachment == null) {
-                    filesAttachment1 = BackendServer.url+"/media/ecommerce/pictureUploads/1532690173_89_admin_ecommerce.jpg";
+                    filesAttachment1 = BackendServer.url + "/media/ecommerce/pictureUploads/1532690173_89_admin_ecommerce.jpg";
                 } else filesAttachment1 = filesAttachment;
                 mSliderImageFragmentAdapter.addFragment(ProductImageFragment.newInstance(android.R.color.transparent, filesAttachment1));
             } catch (JSONException e) {
@@ -188,56 +147,83 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
         mViewPager.setAdapter(mSliderImageFragmentAdapter);
         extensiblePageIndicator.initViewPager(mViewPager);
-//        Uri uri = Uri.parse(lite.getFilesAttachment());
-//        mImageView.setImageURI(uri);
-//        Glide.with(mContext)
-//                .load(lite.getFilesAttachment())
-//                .into(mImageView);
-
-
-//        mImageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(ItemDetailsActivity.this, ViewPagerActivity.class);
-//                intent.putExtra("position", imagePosition);
-//                startActivity(intent);
-//            }
-//        });
-
 
         textViewItemName.setText(lite.getProductName());
-        if (lite.getProductDiscount().equals("0")){
-            textViewItemPrice.setText("\u20B9"+lite.getProductPrice());
+        if (lite.getProductDiscount().equals("0")) {
+            textViewItemPrice.setText("\u20B9" + lite.getProductPrice());
             textViewItemDiscount.setVisibility(View.GONE);
             textViewItemDiscountPrice.setVisibility(View.GONE);
         } else {
-            textViewItemPrice.setText("\u20B9"+lite.getProductDiscountedPrice());
+            textViewItemPrice.setText("\u20B9" + lite.getProductDiscountedPrice());
             textViewItemDiscount.setVisibility(View.VISIBLE);
-            textViewItemDiscount.setText("("+lite.getProductDiscount()+"% OFF)");
+            textViewItemDiscount.setText("(" + lite.getProductDiscount() + "% OFF)");
             textViewItemDiscountPrice.setVisibility(View.VISIBLE);
-            textViewItemDiscountPrice.setText("\u20B9"+lite.getProductPrice());
-            textViewItemDiscountPrice.setPaintFlags(textViewItemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+            textViewItemDiscountPrice.setText("\u20B9" + lite.getProductPrice());
+            textViewItemDiscountPrice.setPaintFlags(textViewItemDiscountPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
 
+//        Spanned htmlAsSpanned = Html.fromHtml(lite.getSource());
+//        if (htmlAsSpanned.toString().equals("null")|| htmlAsSpanned.toString().equals("")|| htmlAsSpanned.toString() == null) {
+//            textViewDescriptions.setText("");
+//        } else {
+//            textViewDescriptions.setText("\u2022 " +htmlAsSpanned);
+//        }
 
-        Spanned htmlAsSpanned = Html.fromHtml(lite.getSource());
-        if (htmlAsSpanned.toString().equals("null")|| htmlAsSpanned.toString().equals("")|| htmlAsSpanned.toString() == null) {
-            textViewDescriptions.setText("");
-        } else {
-            textViewDescriptions.setText("\u2022 " +htmlAsSpanned);
-        }
+        if (lite.isInStock()) {
+            layoutActionBuy.setVisibility(View.VISIBLE);
+            layoutOutOFStock.setVisibility(View.GONE);
+            String qunt = lite.getAddedCart();
+            int qntAdd = Integer.parseInt(qunt);
+            if (qntAdd <= 0) {
+                textViewAddToCart.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        RequestParams params = new RequestParams();
+                        params.put("product", lite.getPk());
+                        params.put("qty", "1");
+                        params.put("type", "card");
+                        params.put("user", MainActivity.userPK);
+                        client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                if (toast != null) {
+                                    toast.cancel();
+                                }
+                                toast = Toast.makeText(ItemDetailsActivity.this, "Item added to cart.", Toast.LENGTH_SHORT);
+                                toast.show();
+                                MainActivity.notificationCountCart++;
+                                NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+                            }
 
-        String qunt = lite.getAddedCart();
-        int qntAdd = Integer.parseInt(qunt);
-        if (qntAdd<=0) {
-            textViewAddToCart.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                if (toast != null) {
+                                    toast.cancel();
+                                }
+                                toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                    }
+                });
+            } else {
+                textViewAddToCart.setText("GO TO CART");
+                textViewAddToCart.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
+                    }
+                });
+            }
+
+            textViewBuyNow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     RequestParams params = new RequestParams();
                     params.put("product", lite.getPk());
                     params.put("qty", "1");
-                    params.put("type", "card");
+                    params.put("typ", "cart");
                     params.put("user", MainActivity.userPK);
                     client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                         @Override
@@ -245,10 +231,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
                             if (toast != null) {
                                 toast.cancel();
                             }
-                            toast = Toast.makeText(ItemDetailsActivity.this, "Item added to cart.", Toast.LENGTH_SHORT);
+                            toast = Toast.makeText(mContext, "Item added to cart.", Toast.LENGTH_SHORT);
                             toast.show();
                             MainActivity.notificationCountCart++;
                             NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+                            startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
                         }
 
                         @Override
@@ -262,48 +249,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     });
                 }
             });
+
         } else {
-            textViewAddToCart.setText("GO TO CART");
-            textViewAddToCart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
-                }
-            });
+            layoutActionBuy.setVisibility(View.GONE);
+            layoutOutOFStock.setVisibility(View.VISIBLE);
         }
-
-        textViewBuyNow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RequestParams params = new RequestParams();
-                params.put("product", lite.getPk());
-                params.put("qty", "1");
-                params.put("typ", "cart");
-                params.put("user", MainActivity.userPK);
-                client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        if (toast!= null) {
-                            toast.cancel();
-                        }
-                        toast = Toast.makeText(mContext, "Item added to cart.", Toast.LENGTH_SHORT);
-                        toast.show();
-                        MainActivity.notificationCountCart++;
-                        NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
-                        startActivity(new Intent(ItemDetailsActivity.this, CartListActivity.class));
-                    }
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        if (toast!= null) {
-                            toast.cancel();
-                        }
-                        toast = Toast.makeText(mContext, "This Product is already in card.", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                });
-            }
-        });
-
     }
 
     public void getParentType(){
@@ -329,6 +279,34 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                if (listingLites.size()<=0){
+                    return;
+                }
+                itemDetails.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+                lite = listingLites.get(0);
+                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                setSupportActionBar(toolbar);
+//                String name = getIntent().getExtras().getString(lite.getParentTypeName().toUpperCase());
+                getSupportActionBar().setTitle(lite.getParentTypeName().toUpperCase());
+                final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_items_detail);
+                ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                        ItemDetailsActivity.this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                drawer.setDrawerListener(toggle);
+                toggle.syncState();
+
+                toggle.setDrawerIndicatorEnabled(false);
+                Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_arrow_back_white_24dp, getApplicationContext().getTheme());
+                toggle.setHomeAsUpIndicator(drawable);
+                toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
+
+                init();
+                getSuggestedItem();
             }
 
             @Override
@@ -354,6 +332,10 @@ public class ItemDetailsActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                        suggestedRecyclerView.setLayoutManager(layoutManager);
+                        SuggestedRecyclerViewAdapter viewAdapter = new SuggestedRecyclerViewAdapter(suggestList);
+                        suggestedRecyclerView.setAdapter(viewAdapter);
 
                     }
 
@@ -368,6 +350,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
+
     }
 
     @Override

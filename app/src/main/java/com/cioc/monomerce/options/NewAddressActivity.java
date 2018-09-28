@@ -63,17 +63,6 @@ public class NewAddressActivity extends AppCompatActivity {
             continuePayment.setVisibility(View.GONE);
             recyclerViewAddress.setVisibility(View.VISIBLE);
             recyclerViewAddress.setVisibility(View.VISIBLE);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (addressList.size()<=0) {
-                        savedAdd.setVisibility(View.GONE);
-                    }
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-                    recyclerViewAddress.setLayoutManager(linearLayoutManager);
-                    recyclerViewAddress.setAdapter(new AddressAdapter(addressList));
-                }
-            }, 1000);
         }
 
         continuePayment.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +122,12 @@ public class NewAddressActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+                if (addressList.size()<=0) {
+                    savedAdd.setVisibility(View.GONE);
+                }
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+                recyclerViewAddress.setLayoutManager(linearLayoutManager);
+                recyclerViewAddress.setAdapter(new AddressAdapter(addressList));
             }
 
             @Override

@@ -62,7 +62,6 @@ public class PaymentActivity extends AppCompatActivity {
     AsyncHttpClient client;
     RadioGroup radioGroup;
     RadioButton radioButtonCOD, radioButtonCard;
-//    ArrayList<Address> addresses;
     ArrayList<Cart> cardlist = CartListActivity.cartList;
     String addressPk;
     JSONObject jsonObj;
@@ -78,17 +77,13 @@ public class PaymentActivity extends AppCompatActivity {
         client = server.getHTTPClient();
         String address = getIntent().getExtras().getString("address");
         addressPk = getIntent().getExtras().getString("pk");
-//        addresses = CheckOutActivity.addresses;
         getAddress();
         mContext = PaymentActivity.this;
         BackendServer backend = new BackendServer(this);
         client = backend.getHTTPClient();
         mView = new CatLoadingView();
         init();
-//        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//        ArrayList<String> cartlistImageUri = imageUrlUtils.getCartListImageUri();
         //Show cart layout based on items
-//        setCartLayout();
         StepView mStepView = (StepView) findViewById(R.id.step_view);
         List<String> steps = Arrays.asList(new String[]{"Selected Items", "Shipping Address", "Review Your Order"});
         mStepView.setSteps(steps);
@@ -148,7 +143,6 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     public void payment(boolean res) {
-//        Address address = addresses.get(CheckOutActivity.pos);
         JSONObject object = new JSONObject();
         try {
             object.put("city", jsonObj.getString("city"));

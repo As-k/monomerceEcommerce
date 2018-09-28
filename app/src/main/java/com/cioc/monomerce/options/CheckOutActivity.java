@@ -58,25 +58,6 @@ public class CheckOutActivity extends AppCompatActivity {
         mStepView.setSteps(steps);
         mStepView.selectedStep(2);
         init();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                textAmount.setText("\u20B9" + getIntent().getExtras().getInt("totalPrice"));
-                newAddressBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startActivity(new Intent(mContext, NewAddressActivity.class)
-                                    .putExtra("totalPrice", textAmount.getText().toString()));
-                        }
-                    });
-                if (checkAddress()) {
-                    recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-                    recyclerView.setAdapter(new CheckOutActivity.AddressRecyclerViewAdapter(addresses));
-                }
-
-            }
-        },1000);
     }
 
     public void init(){
@@ -111,6 +92,18 @@ public class CheckOutActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                }
+                textAmount.setText("\u20B9" + getIntent().getExtras().getInt("totalPrice"));
+                newAddressBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(mContext, NewAddressActivity.class)
+                                .putExtra("totalPrice", textAmount.getText().toString()));
+                    }
+                });
+                if (checkAddress()) {
+                    recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                    recyclerView.setAdapter(new CheckOutActivity.AddressRecyclerViewAdapter(addresses));
                 }
             }
 

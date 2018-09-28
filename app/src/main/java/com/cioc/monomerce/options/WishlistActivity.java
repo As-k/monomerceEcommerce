@@ -62,26 +62,12 @@ public class WishlistActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         BackendServer backend = new BackendServer(mContext);
         client = backend.getHTTPClient();
+
         wishList = new ArrayList<>();
-
         getWishListItem();
-
-
-//        ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
-//        ArrayList<String> wishlistImageUri = imageUrlUtils.getWishlistImageUri();
-
         recyclerView = findViewById(R.id.recyclerview);
         progressBar =  findViewById(R.id.progressBar);
-        final RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setCartLayout();
-                progressBar.setVisibility(View.GONE);
-                recyclerView.setLayoutManager(recyclerViewLayoutManager);
-                recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(wishList));
-            }
-        },1000);
+
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -125,15 +111,20 @@ public class WishlistActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                         super.onSuccess(statusCode, headers, response);
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
                                 JSONObject object = response.getJSONObject(i);
                                 Cart cart = new Cart(object);
                                 wishList.add(cart);
-                            }
-                        } catch (JSONException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
+                            }
                         }
+                        setCartLayout();
+                        progressBar.setVisibility(View.GONE);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(wishList));
+
                     }
 
                     @Override

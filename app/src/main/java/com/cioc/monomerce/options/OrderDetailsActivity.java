@@ -49,6 +49,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     ArrayList<Integer> position = new ArrayList<>();
     LinearLayout orderDetailsLL;
     ProgressBar progressBar;
+    String address;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         BackendServer backend = new BackendServer(mContext);
         client = backend.getHTTPClient();
         orders = new ArrayList<>();
-        final String address = getIntent().getExtras().getString("address");
+        address = getIntent().getExtras().getString("address");
         int pos = getIntent().getExtras().getInt("pos");
         final String pk = getIntent().getExtras().getString("pk");
         getOrderDetails(pk);
@@ -67,19 +68,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
         init();
         progressBar.setVisibility(View.VISIBLE);
         orderDetailsLL.setVisibility(View.GONE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Order order = orders.get(0);
-                qtyMaps = order.getOrderQtyMaps();
-                progressBar.setVisibility(View.GONE);
-                orderDetailsLL.setVisibility(View.VISIBLE);
-                RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
-                recyclerViewOrder.setLayoutManager(recyclerViewLayoutManager);
-                recyclerViewOrder.setAdapter(new OrderRecyclerViewAdapter(qtyMaps));
-                orderShipping.setText(address);
-            }
-        },1000);
     }
 
     @Override
@@ -105,6 +93,14 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Order order = orders.get(0);
+                qtyMaps = order.getOrderQtyMaps();
+                progressBar.setVisibility(View.GONE);
+                orderDetailsLL.setVisibility(View.VISIBLE);
+                RecyclerView.LayoutManager recyclerViewLayoutManager = new LinearLayoutManager(mContext);
+                recyclerViewOrder.setLayoutManager(recyclerViewLayoutManager);
+                recyclerViewOrder.setAdapter(new OrderRecyclerViewAdapter(qtyMaps));
+                orderShipping.setText(address);
 
             }
 

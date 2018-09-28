@@ -38,15 +38,19 @@
                     android:visibility="gone"
                     android:layout_marginBottom="@dimen/margin_medium"
                     />
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_address"
-                    android:scrollbars="none"
+                <android.support.v4.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:fillViewport="true"
-                    android:paddingBottom="@dimen/activity_horizontal_margin"
-                    android:visibility="gone"
-                    />
+                    android:layout_height="match_parent">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view_address"
+                        android:scrollbars="none"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fillViewport="true"
+                        android:paddingBottom="@dimen/activity_horizontal_margin"
+                        android:visibility="visible"
+                        />
+                </android.support.v4.widget.NestedScrollView>
 
                 <LinearLayout android:layout_width="match_parent"
                     android:layout_height="wrap_content"

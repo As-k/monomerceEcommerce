@@ -50,6 +50,7 @@ public class ImageListFragment extends Fragment {
     private static MainActivity mActivity;
     TextView moreItems;
     ProgressBar progressBar;
+    RecyclerView recyclerViewList;
     public static ArrayList<ListingParent> listingParents;
     AsyncHttpClient client;
     String pk;
@@ -71,13 +72,12 @@ public class ImageListFragment extends Fragment {
     }
 
     public void clickBtn(View view){
-        RecyclerView recyclerViewList = view.findViewById(R.id.recyclerview_list);
+        recyclerViewList = view.findViewById(R.id.recyclerview_list);
         moreItems = view.findViewById(R.id.more_items);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        progressBar = view.findViewById(R.id.progressBar);
         setupRecyclerView(recyclerViewList);
     }
 
-//    public ArrayList<ListingParent> items = null;
     String fragmentName = "";
     private void setupRecyclerView(final RecyclerView recyclerView) {
         for (int i=0; i<MainActivity.genericProducts.size(); i++) {
@@ -91,39 +91,7 @@ public class ImageListFragment extends Fragment {
                 if (ImageListFragment.this.getArguments().getString("pk").equals(pk)) {
                     Log.e("pk", "" + pk);
                     getItems(pk);
-//                    items = listingParents;
                     fragmentName = product.getName();
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (listingParents.size() == 0) {
-                                progressBar.setVisibility(View.VISIBLE);
-                                moreItems.setVisibility(View.GONE);
-                            } else if (listingParents.size() > 0) {
-                                recyclerView.setVisibility(View.VISIBLE);
-                                progressBar.setVisibility(View.GONE);
-                                StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-                                recyclerView.setLayoutManager(layoutManager);
-                                CategoriesRecyclerViewAdapter viewAdapter = new CategoriesRecyclerViewAdapter(listingParents, fragmentName);
-                                recyclerView.setAdapter(viewAdapter);
-                                viewAdapter.notifyDataSetChanged();
-                            }
-                            if (listingParents.size() > 10) {
-                                moreItems.setVisibility(View.VISIBLE);
-                                recyclerView.setVisibility(View.VISIBLE);
-                                moreItems.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        getContext().startActivity(new Intent(getContext(), AllItemsShowActivity.class)
-                                                .putExtra("pk", pk)
-                                                .putExtra("fragmentName", fragmentName.toUpperCase()));
-                                    }
-                                });
-                            } else
-                                moreItems.setVisibility(View.GONE);
-                        }
-                    }, 3 * 1000);
                 }
             }
         }
@@ -140,15 +108,42 @@ public class ImageListFragment extends Fragment {
                         ListingParent parent = new ListingParent(object);
                         listingParents.add(parent);
 
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+                if (listingParents.size() <= 0) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    moreItems.setVisibility(View.GONE);
+                } else if (listingParents.size() > 0) {
+                    recyclerViewList.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                    recyclerViewList.setLayoutManager(layoutManager);
+                    CategoriesRecyclerViewAdapter viewAdapter = new CategoriesRecyclerViewAdapter(listingParents, fragmentName);
+                    recyclerViewList.setAdapter(viewAdapter);
+                    viewAdapter.notifyDataSetChanged();
+                }
+                if (listingParents.size() > 10) {
+                    moreItems.setVisibility(View.VISIBLE);
+                    recyclerViewList.setVisibility(View.VISIBLE);
+                    moreItems.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getContext().startActivity(new Intent(getContext(), AllItemsShowActivity.class)
+                                    .putExtra("pk", pk)
+                                    .putExtra("fragmentName", fragmentName.toUpperCase()));
+                        }
+                    });
+                } else
+                    moreItems.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(mActivity, "onFailure", Toast.LENGTH_SHORT).show();
             }
         });
@@ -205,16 +200,6 @@ public class ImageListFragment extends Fragment {
             return mValues.size()>10 ? 10 : mValues.size();
         }
 
-//        @Override
-//        public void onViewRecycled(ViewHolder holder) {
-//            if (holder.mImageView.getController() != null) {
-//                holder.mImageView.getController().onDetach();
-//            }
-//            if (holder.mImageView.getTopLevelDrawable() != null) {
-//                holder.mImageView.getTopLevelDrawable().setCallback(null);
-////                ((BitmapDrawable) holder.mImageView.getTopLevelDrawable()).getBitmap().recycle();
-//            }
-//        }
 
         @Override
         public int getItemViewType(int position) {
