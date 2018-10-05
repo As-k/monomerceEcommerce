@@ -49,6 +49,23 @@
                 android:layout_weight="0.3"
                 android:src="@drawable/ic_favorite_border_green_24dp" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="4dp"
+            android:paddingBottom="4dp"
+            >
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/item_variants_spinner"
+                >
+
+            </Spinner>
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -83,6 +100,7 @@
                 android:id="@+id/discount_percentage" />
 
         </LinearLayout>
+
         <!--<LinearLayout-->
             <!--android:id="@+id/layout_action1_cart"-->
             <!--android:layout_width="match_parent"-->

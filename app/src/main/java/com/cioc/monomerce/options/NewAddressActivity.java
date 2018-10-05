@@ -81,7 +81,7 @@ public class NewAddressActivity extends AppCompatActivity {
 
     }
 
-    public void init(){
+    public void init() {
         savedAdd = findViewById(R.id.saved_addresses);
         street = findViewById(R.id.address_street);
         city = findViewById(R.id.address_city);

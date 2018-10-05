@@ -22,14 +22,12 @@ public class ListingLite {
     public String fieldsPk, fieldsName, fieldsValue, fieldsType, fieldsHelpText, fieldsUnit, fieldsData;
     public String filesPk, filesLink, filesAttachment, filesMediaType;
     JSONObject jsonObject;
+
     JSONArray filesArray;
     ArrayList<String> imageUrl = new ArrayList<>();
 
     public String name, value, fieldType, helpText, unit, data;
     ArrayList<Integer> size= new ArrayList<Integer>();
-
-    public ListingLite() {
-    }
 
     public ListingLite(JSONObject jsonObject) {
         this.jsonObject = jsonObject;

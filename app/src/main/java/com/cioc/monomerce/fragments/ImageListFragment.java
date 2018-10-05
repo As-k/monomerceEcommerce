@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -108,7 +110,6 @@ public class ImageListFragment extends Fragment {
                         ListingParent parent = new ListingParent(object);
                         listingParents.add(parent);
 
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -154,33 +155,33 @@ public class ImageListFragment extends Fragment {
         BackendServer backendServer = new BackendServer(mActivity);
         AsyncHttpClient client = backendServer.getHTTPClient();
         private ArrayList<ListingParent> mValues;
+        ArrayList spinnerlist = new ArrayList();
+        String keys[] = {"weight", "price"};
+
         String fname;
         Toast toast;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
-//            public final View mView;
+            public final Spinner mItem;
             public final ImageView mImageView;
-            public final LinearLayout mLayoutItem, mLayoutItemCart2;
-            public final ImageView mImageViewWishlist, mCartImageBtn;
-            TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOutOfStock;
+            public final LinearLayout mLayoutItem, mCart2;
+            public final ImageView mWishlist, mCartBtn;
+            TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOut;
             boolean res = true;
             public ViewHolder(View view) {
                 super(view);
-//                mView = view;
                 mImageView =  view.findViewById(R.id.image1);
-                mLayoutItem = (LinearLayout) view.findViewById(R.id.layout_item);
-//                mLayoutItemCart1 = (LinearLayout) view.findViewById(R.id.layout_action1_cart);
-                mLayoutItemCart2 = (LinearLayout) view.findViewById(R.id.layout_action2_cart);
-                mImageViewWishlist = (ImageView) view.findViewById(R.id.ic_wishlist);
+                mLayoutItem = view.findViewById(R.id.layout_item);
+                mCart2 = view.findViewById(R.id.layout_action2_cart);
+                mWishlist = view.findViewById(R.id.ic_wishlist);
                 itemName =  view.findViewById(R.id.item_name);
+                mItem =  view.findViewById(R.id.item_variants_spinner);
                 itemPrice =  view.findViewById(R.id.item_price);
                 itemDiscountPrice =  view.findViewById(R.id.actual_price);
                 itemDiscount =  view.findViewById(R.id.discount_percentage);
                 itemsQuantity =  view.findViewById(R.id.item_added);
-                itemsOutOfStock =  view.findViewById(R.id.out_of_stock);
-//                itemsQuantityAdd =  view.findViewById(R.id.items_quantity_add);
-//                itemsQuantityRemove =  view.findViewById(R.id.items_quantity_remove);
-                mCartImageBtn =  view.findViewById(R.id.card_item_quantity_add);
+                itemsOut =  view.findViewById(R.id.out_of_stock);
+                mCartBtn =  view.findViewById(R.id.card_item_quantity_add);
             }
         }
 
@@ -211,13 +212,13 @@ public class ImageListFragment extends Fragment {
             final ListingParent parent = mValues.get(position);
             String link;
             if (parent.isInStock()) {
-                holder.itemsOutOfStock.setVisibility(View.GONE);
+                holder.itemsOut.setVisibility(View.GONE);
                 String qunt = parent.getAddedCart();
                 int qntAdd = Integer.parseInt(qunt);
                 if (qntAdd == 0) {
-                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                    holder.mCart2.setVisibility(View.VISIBLE);
                     holder.itemsQuantity.setVisibility(View.GONE);
-                    holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
+                    holder.mCartBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             if (MainActivity.username.equals("")) {
@@ -231,9 +232,9 @@ public class ImageListFragment extends Fragment {
                                 client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                                     @Override
                                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                        holder.mLayoutItemCart2.setVisibility(View.GONE);
+                                        holder.mCart2.setVisibility(View.GONE);
                                         holder.itemsQuantity.setVisibility(View.VISIBLE);
-                                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                        holder.mWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                                         holder.res = true;
                                         if (toast != null) {
                                             toast.cancel();
@@ -258,12 +259,12 @@ public class ImageListFragment extends Fragment {
                     });
                 } else {
                     holder.itemsQuantity.setVisibility(View.VISIBLE);
-                    holder.mLayoutItemCart2.setVisibility(View.GONE);
+                    holder.mCart2.setVisibility(View.GONE);
                 }
             } else {
-                holder.itemsOutOfStock.setVisibility(View.VISIBLE);
+                holder.itemsOut.setVisibility(View.VISIBLE);
                 holder.itemsQuantity.setVisibility(View.GONE);
-                holder.mLayoutItemCart2.setVisibility(View.GONE);
+                holder.mCart2.setVisibility(View.GONE);
             }
 
             if (parent.getFilesAttachment().equals("null")){
@@ -293,6 +294,29 @@ public class ImageListFragment extends Fragment {
                 holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
             }
 
+            HashMap hashMap = new HashMap();
+            hashMap.put(keys[0], parent.getHowMuch()+" "+parent.getUnit());
+            hashMap.put(keys[0], parent.getHowMuch());
+            spinnerlist.add()
+            JSONArray array = parent.getItemArray();
+            if (array.length()>0) {
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject jsonObj = null;
+                    try {
+                        jsonObj = array.getJSONObject(i);
+                        String sku = jsonObj.getString("sku");
+                        String updated = jsonObj.getString("updated");
+                        String unitPerpack = jsonObj.getString("unitPerpack");
+                        String created = jsonObj.getString("created");
+                        String pricearray = jsonObj.getString("price");
+                        String parent_id = jsonObj.getString("parent_id");
+                        String id = jsonObj.getString("id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -312,14 +336,14 @@ public class ImageListFragment extends Fragment {
             String quntWish = parent.getAddedWish();
             int qntWishAdd = Integer.parseInt(quntWish);
             if (qntWishAdd==0) {
-                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                holder.mWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                 holder.res = true;
             }else {
-                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
+                holder.mWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
                 holder.res = false;
             }
 
-            holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
+            holder.mWishlist.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (MainActivity.username.equals("")) {
@@ -334,9 +358,9 @@ public class ImageListFragment extends Fragment {
                             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
+                                    holder.mWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
                                     holder.itemsQuantity.setVisibility(View.GONE);
-                                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                                    holder.mCart2.setVisibility(View.VISIBLE);
                                     MainActivity.notificationCountCart--;
                                     NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
                                     holder.res = false;
@@ -366,8 +390,8 @@ public class ImageListFragment extends Fragment {
                             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
-                                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                                    holder.mWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                    holder.mCart2.setVisibility(View.VISIBLE);
                                     holder.itemsQuantity.setVisibility(View.GONE);
                                     holder.res = true;
                                     if (toast != null) {

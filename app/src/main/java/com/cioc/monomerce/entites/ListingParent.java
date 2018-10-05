@@ -11,16 +11,15 @@ import org.json.JSONObject;
  */
 
 public class ListingParent {
-    public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, specifications;
-    int productIntPrice, productIntDiscountedPrice;
-    boolean approved, inStock;
+    public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, serialNo, howMuch, unit,  specifications;
+    public String sku, updated, unitPerpack, created, price, parent_id, id;
+    public int productIntPrice, productIntDiscountedPrice;
+    public boolean approved, inStock;
     public String filesPk, filesLink, filesAttachment, filesMediaType;
-    String addedCart, addedWish;
+    public String addedCart, addedWish;
+    public JSONArray itemArray;
     JSONObject jsonObject;
     JSONArray array;
-
-    public ListingParent() {
-    }
 
     public ListingParent(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
@@ -38,6 +37,9 @@ public class ListingParent {
             JSONObject productObj = jsonObject.getJSONObject("product");
             this.productPk = productObj.getString("pk");
             this.productName = productObj.getString("name");
+            this.howMuch = productObj.getString("howMuch");
+            this.serialNo = productObj.getString("serialNo");
+            this.unit = productObj.getString("unit");
             this.user = jsonObject.getString("user");
 //            this.productPrice = productObj.getString("price");
             Double d = Double.parseDouble(productObj.getString("price"));
@@ -50,6 +52,19 @@ public class ListingParent {
             this.productDiscountedPrice = String.valueOf(this.productIntDiscountedPrice);
             String str = jsonObject.getString("specifications");
             this.specifications = str;
+
+            this.itemArray = jsonObject.getJSONArray("product_variants");
+            for (int i = 0; i < itemArray.length(); i++) {
+                JSONObject jsonObj = itemArray.getJSONObject(i);
+                this.sku = jsonObj.getString("sku");
+                this.updated = jsonObj.getString("updated");
+                this.unitPerpack = jsonObj.getString("unitPerpack");
+                this.created = jsonObj.getString("created");
+                this.price = jsonObj.getString("price");
+                this.parent_id = jsonObj.getString("parent_id");
+                this.id = jsonObj.getString("id");
+            }
+
 
             JSONArray filesArray = jsonObject.getJSONArray("files");
             if (filesArray==null|| filesArray.equals("null")|| filesArray.equals("[]")){
@@ -169,6 +184,94 @@ public class ListingParent {
 
     public void setProductIntDiscountedPrice(int productIntDiscountedPrice) {
         this.productIntDiscountedPrice = productIntDiscountedPrice;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(String updated) {
+        this.updated = updated;
+    }
+
+    public String getUnitPerpack() {
+        return unitPerpack;
+    }
+
+    public void setUnitPerpack(String unitPerpack) {
+        this.unitPerpack = unitPerpack;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public String getHowMuch() {
+        return howMuch;
+    }
+
+    public void setHowMuch(String howMuch) {
+        this.howMuch = howMuch;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getParent_id() {
+        return parent_id;
+    }
+
+    public void setParent_id(String parent_id) {
+        this.parent_id = parent_id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public JSONArray getItemArray() {
+        return itemArray;
+    }
+
+    public void setItemArray(JSONArray itemArray) {
+        this.itemArray = itemArray;
     }
 
     public boolean isApproved() {

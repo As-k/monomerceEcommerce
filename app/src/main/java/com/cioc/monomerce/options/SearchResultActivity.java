@@ -48,7 +48,7 @@ public class SearchResultActivity extends AppCompatActivity {
     TextView searchResult;
     Menu menu;
     ProductList productList;
-    private String TAG = "SearchResultActivity";
+    private String TAG = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,20 +79,13 @@ public class SearchResultActivity extends AppCompatActivity {
 
         searchResult = findViewById(R.id.search_result);
         searchList = findViewById(R.id.search_list);
-//        handleIntent(getIntent());
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-                if(productMetas.size() != 0) {
-                    searchResult.setVisibility(View.GONE);
-                } else {
-                    searchResult.setVisibility(View.VISIBLE);
-                }
-                productList = new ProductList();
-                searchList.setAdapter(productList);
-//            }
-//        },1000);
+        if(productMetas.size() != 0) {
+            searchResult.setVisibility(View.GONE);
+        } else {
+            searchResult.setVisibility(View.VISIBLE);
+        }
+        productList = new ProductList();
+        searchList.setAdapter(productList);
 
     }
     @Override
@@ -151,6 +144,33 @@ public class SearchResultActivity extends AppCompatActivity {
                     searchResult.setVisibility(View.VISIBLE);
                     productMetas.clear();
                     productList.clearData();
+                } else {
+                    s = s.toLowerCase();
+                    productMetas.clear();
+                    productList.clearData();
+                    client.get(BackendServer.url + "/api/ecommerce/searchProduct/?limit=10&search="+s, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                            super.onSuccess(statusCode, headers, response);
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    JSONObject object = response.getJSONObject(i);
+                                    ProductMeta userMeta = new ProductMeta(object);
+                                    productMetas.add(userMeta);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    Log.e("JSONObject", "Json parsing error: " + e.getMessage());
+                                }
+                            }
+                            productList.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                            Toast.makeText(SearchResultActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
                 return false;
             }

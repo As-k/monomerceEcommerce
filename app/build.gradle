@@ -17,8 +17,8 @@ android {
         }
     }
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -44,4 +44,9 @@ dependencies {
     implementation 'com.crystal:crystalrangeseekbar:1.1.3'
     implementation 'com.itextpdf:itextg:5.5.10'
     implementation 'com.roger.catloadinglibrary:catloadinglibrary:1.0.4'
+}
+android {
+    defaultConfig {
+        multiDexEnabled true
+    }
 }
