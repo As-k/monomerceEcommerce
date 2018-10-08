@@ -52,7 +52,7 @@ public class CheckOutActivity extends AppCompatActivity {
         BackendServer backend = new BackendServer(this);
         client = backend.getHTTPClient();
         addresses = new ArrayList<>();
-        getAddress();
+        getitem();
         StepView mStepView = (StepView) findViewById(R.id.step_view);
         List<String> steps = Arrays.asList(new String[]{"Selected Items", "Shipping Address", "Review Your Order"});
         mStepView.setSteps(steps);
@@ -68,17 +68,17 @@ public class CheckOutActivity extends AppCompatActivity {
     }
 
     public boolean checkAddress() {
-        if(addresses.size()==0) {
+        if(addresses.size()<=0) {
             recyclerView.setVisibility(View.GONE);
             textAddNewAddress.setVisibility(View.VISIBLE);
             return false;
         } else {
-            recyclerView.setVisibility(View.GONE);
-            textAddNewAddress.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
+            textAddNewAddress.setVisibility(View.GONE);
             return true;
         }
     }
-    public void getAddress() {
+    public void getitem() {
         client.get(BackendServer.url+"/api/ecommerce/address/?user="+ MainActivity.userPK, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {

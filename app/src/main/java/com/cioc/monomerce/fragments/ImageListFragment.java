@@ -13,9 +13,12 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,11 +80,11 @@ public class ImageListFragment extends Fragment {
         recyclerViewList = view.findViewById(R.id.recyclerview_list);
         moreItems = view.findViewById(R.id.more_items);
         progressBar = view.findViewById(R.id.progressBar);
-        setupRecyclerView(recyclerViewList);
+        setRecycler(recyclerViewList);
     }
 
     String fragmentName = "";
-    private void setupRecyclerView(final RecyclerView recyclerView) {
+    private void setRecycler(final RecyclerView recyclerView) {
         for (int i=0; i<MainActivity.genericProducts.size(); i++) {
             if (ImageListFragment.this.getArguments().getInt("type") == i + 1) {
                 GenericProduct product = MainActivity.genericProducts.get(i);
@@ -150,13 +153,12 @@ public class ImageListFragment extends Fragment {
         });
     }
 
+
     public static class CategoriesRecyclerViewAdapter
             extends RecyclerView.Adapter<CategoriesRecyclerViewAdapter.ViewHolder> {
         BackendServer backendServer = new BackendServer(mActivity);
         AsyncHttpClient client = backendServer.getHTTPClient();
         private ArrayList<ListingParent> mValues;
-        ArrayList spinnerlist = new ArrayList();
-        String keys[] = {"weight", "price"};
 
         String fname;
         Toast toast;
@@ -168,8 +170,11 @@ public class ImageListFragment extends Fragment {
             public final ImageView mWishlist, mCartBtn;
             TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOut;
             boolean res = true;
+            ArrayList<String> spinnerlist = new ArrayList<String>();
+
             public ViewHolder(View view) {
                 super(view);
+                spinnerlist.clear();
                 mImageView =  view.findViewById(R.id.image1);
                 mLayoutItem = view.findViewById(R.id.layout_item);
                 mCart2 = view.findViewById(R.id.layout_action2_cart);
@@ -281,23 +286,23 @@ public class ImageListFragment extends Fragment {
             final int price1 = (int) Math.round(d1);
 
             holder.itemName.setText(parent.getProductName());
+            String spinnerstr = parent.getHowMuch()+" "+parent.getUnit();
+
             if (parent.getProductDiscount().equals("0")){
                 holder.itemPrice.setText("\u20B9"+ price);
+                spinnerstr += " - \u20B9"+ price;
                 holder.itemDiscountPrice.setVisibility(View.GONE);
                 holder.itemDiscount.setVisibility(View.GONE);
             } else {
                 holder.itemPrice.setText("\u20B9"+price1);
                 holder.itemDiscountPrice.setVisibility(View.VISIBLE);
                 holder.itemDiscountPrice.setText("\u20B9"+price);
+                spinnerstr += " - \u20B9"+ price1;
                 holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.itemDiscount.setVisibility(View.VISIBLE);
                 holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
             }
-
-            HashMap hashMap = new HashMap();
-            hashMap.put(keys[0], parent.getHowMuch()+" "+parent.getUnit());
-            hashMap.put(keys[0], parent.getHowMuch());
-            spinnerlist.add()
+            holder.spinnerlist.add(spinnerstr);
             JSONArray array = parent.getItemArray();
             if (array.length()>0) {
                 for (int i = 0; i < array.length(); i++) {
@@ -311,6 +316,11 @@ public class ImageListFragment extends Fragment {
                         String pricearray = jsonObj.getString("price");
                         String parent_id = jsonObj.getString("parent_id");
                         String id = jsonObj.getString("id");
+                        Double rspoint = Double.parseDouble(pricearray);
+                        final int rs = (int) Math.round(rspoint);
+                        String  strvalue = (Double.parseDouble(parent.getHowMuch())*Integer.parseInt(unitPerpack))+" "+ parent.getUnit()+" - \u20B9"+ rs;
+                        holder.spinnerlist.add(strvalue);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -323,6 +333,7 @@ public class ImageListFragment extends Fragment {
                     if (MainActivity.username.equals("")) {
                         mActivity.startActivity(new Intent(mActivity, LoginPageActivity.class));
                     } else {
+                        String itemPrice = holder.itemPrice.getText().toString();
                         Intent intent = new Intent(mActivity, ItemDetailsActivity.class);
                         intent.putExtra("listingLitePk", parent.getPk());
 //                        intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
@@ -331,6 +342,39 @@ public class ImageListFragment extends Fragment {
                     }
                 }
             });
+
+            ArrayAdapter adapter = new ArrayAdapter(mActivity, R.layout.layout_spinner_list, holder.spinnerlist);
+            holder.mItem.setAdapter(adapter);
+
+            holder.mItem.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String spinnerValue = holder.spinnerlist.get(position);
+                    Log.e("onItemClick"," "+spinnerValue);
+
+                    String arrSplit[] = spinnerValue.split("-");
+
+//                    if (parent.getProductDiscount().equals("0")){
+                        holder.itemPrice.setText(arrSplit[1]);
+//                        holder.itemDiscountPrice.setVisibility(View.GONE);
+//                        holder.itemDiscount.setVisibility(View.GONE);
+//                    } else {
+//                        holder.itemPrice.setText("\u20B9"+price1);
+//                        holder.itemDiscountPrice.setVisibility(View.VISIBLE);
+//                        holder.itemDiscountPrice.setText("\u20B9"+price);
+//                        holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+//                        holder.itemDiscount.setVisibility(View.VISIBLE);
+//                        holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
+//                    }
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
 
             //Set click action for wishlist
             String quntWish = parent.getAddedWish();

@@ -13,7 +13,8 @@ import java.util.ArrayList;
  */
 
 public class ListingLite {
-    public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, specifications;
+    public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, serialNo, howMuch, unit, specifications;
+    public String sku, updated, unitPerpack, created, price, parent_id, id;
     int productIntPrice, productIntDiscountedPrice;
     boolean approved, inStock;
     public String addedCart, addedWish;
@@ -22,11 +23,12 @@ public class ListingLite {
     public String fieldsPk, fieldsName, fieldsValue, fieldsType, fieldsHelpText, fieldsUnit, fieldsData;
     public String filesPk, filesLink, filesAttachment, filesMediaType;
     JSONObject jsonObject;
+    public JSONArray itemArray;
 
     JSONArray filesArray;
     ArrayList<String> imageUrl = new ArrayList<>();
 
-    public String name, value, fieldType, helpText, unit, data;
+//    public String name, value, fieldType, helpText, unit, data;
     ArrayList<Integer> size= new ArrayList<Integer>();
 
     public ListingLite(JSONObject jsonObject) {
@@ -45,6 +47,9 @@ public class ListingLite {
             JSONObject productObj = jsonObject.getJSONObject("product");
             this.productPk = productObj.getString("pk");
             this.user = productObj.getString("user");
+            this.howMuch = productObj.getString("howMuch");
+            this.serialNo = productObj.getString("serialNo");
+            this.unit = productObj.getString("unit");
             this.productName = productObj.getString("name");
             Double d = Double.parseDouble(productObj.getString("price"));
             this.productIntPrice = (int) Math.round(d);
@@ -54,6 +59,18 @@ public class ListingLite {
             Double d1 = Double.parseDouble(productObj.getString("discountedPrice"));
             this.productIntDiscountedPrice = (int) Math.round(d1);
             this.productDiscountedPrice = String.valueOf(this.productIntDiscountedPrice);
+
+            this.itemArray = jsonObject.getJSONArray("product_variants");
+            for (int i = 0; i < itemArray.length(); i++) {
+                JSONObject jsonObj = itemArray.getJSONObject(i);
+                this.sku = jsonObj.getString("sku");
+                this.updated = jsonObj.getString("updated");
+                this.unitPerpack = jsonObj.getString("unitPerpack");
+                this.created = jsonObj.getString("created");
+                this.price = jsonObj.getString("price");
+                this.parent_id = jsonObj.getString("parent_id");
+                this.id = jsonObj.getString("id");
+            }
 
             this.filesArray = jsonObject.getJSONArray("files");
             if (filesArray==null||filesArray.equals("null")){
@@ -364,54 +381,6 @@ public class ListingLite {
         this.filesMediaType = filesMediaType;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public String getFieldType() {
-        return fieldType;
-    }
-
-    public void setFieldType(String fieldType) {
-        this.fieldType = fieldType;
-    }
-
-    public String getHelpText() {
-        return helpText;
-    }
-
-    public void setHelpText(String helpText) {
-        this.helpText = helpText;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
     public ArrayList<Integer> getSize() {
         return size;
     }
@@ -430,6 +399,94 @@ public class ListingLite {
 
     public JSONArray getFilesArray() {
         return filesArray;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public String getHowMuch() {
+        return howMuch;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public void setHowMuch(String howMuch) {
+        this.howMuch = howMuch;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(String updated) {
+        this.updated = updated;
+    }
+
+    public String getUnitPerpack() {
+        return unitPerpack;
+    }
+
+    public void setUnitPerpack(String unitPerpack) {
+        this.unitPerpack = unitPerpack;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getParent_id() {
+        return parent_id;
+    }
+
+    public void setParent_id(String parent_id) {
+        this.parent_id = parent_id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public JSONArray getItemArray() {
+        return itemArray;
+    }
+
+    public void setItemArray(JSONArray itemArray) {
+        this.itemArray = itemArray;
     }
 
     public void setFilesArray(JSONArray filesArray) {

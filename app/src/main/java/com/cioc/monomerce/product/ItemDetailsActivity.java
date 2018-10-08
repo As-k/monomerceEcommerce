@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
@@ -15,16 +14,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -489,14 +492,14 @@ public class ItemDetailsActivity extends AppCompatActivity {
             final ListingLite parent = suggestedList.get(position);
             String link;
             if (parent.isInStock()) {
-                holder.itemsOutOfStock.setVisibility(View.GONE);
+                holder.itemsOut.setVisibility(View.GONE);
                 String qunt = parent.getAddedCart();
                 int qntAdd = Integer.parseInt(qunt);
                 if (qntAdd == 0) {
-                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                    holder.mCart2.setVisibility(View.VISIBLE);
                     holder.itemsQuantity.setVisibility(View.GONE);
 
-                    holder.mCartImageBtn.setOnClickListener(new View.OnClickListener() {
+                    holder.mCartBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             if (MainActivity.username.equals("")) {
@@ -510,9 +513,9 @@ public class ItemDetailsActivity extends AppCompatActivity {
                                 client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                                     @Override
                                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                        holder.mLayoutItemCart2.setVisibility(View.GONE);
+                                        holder.mCart2.setVisibility(View.GONE);
                                         holder.itemsQuantity.setVisibility(View.VISIBLE);
-                                        holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                        holder.mWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                                         holder.res = true;
                                         if (toast != null) {
                                             toast.cancel();
@@ -537,12 +540,12 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     });
                 } else {
                     holder.itemsQuantity.setVisibility(View.VISIBLE);
-                    holder.mLayoutItemCart2.setVisibility(View.GONE);
+                    holder.mCart2.setVisibility(View.GONE);
                 }
             } else {
-                holder.itemsOutOfStock.setVisibility(View.VISIBLE);
+                holder.itemsOut.setVisibility(View.VISIBLE);
                 holder.itemsQuantity.setVisibility(View.GONE);
-                holder.mLayoutItemCart2.setVisibility(View.GONE);
+                holder.mCart2.setVisibility(View.GONE);
             }
 
             if (parent.getFilesAttachment().equals("null")){
@@ -559,17 +562,46 @@ public class ItemDetailsActivity extends AppCompatActivity {
             final int price1 = (int) Math.round(d1);
 
             holder.itemName.setText(parent.getProductName());
+
+            String spinnerstr = parent.getHowMuch()+" "+parent.getUnit();
+
             if (parent.getProductDiscount().equals("0")){
                 holder.itemPrice.setText("\u20B9"+ price);
+                spinnerstr += " - \u20B9"+ price;
                 holder.itemDiscountPrice.setVisibility(View.GONE);
                 holder.itemDiscount.setVisibility(View.GONE);
             } else {
                 holder.itemPrice.setText("\u20B9"+price1);
                 holder.itemDiscountPrice.setVisibility(View.VISIBLE);
                 holder.itemDiscountPrice.setText("\u20B9"+price);
+                spinnerstr += " - \u20B9"+ price1;
                 holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                 holder.itemDiscount.setVisibility(View.VISIBLE);
                 holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
+            }
+            holder.spinnerlist.add(spinnerstr);
+            JSONArray array = parent.getItemArray();
+            if (array.length()>0) {
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject jsonObj = null;
+                    try {
+                        jsonObj = array.getJSONObject(i);
+                        String sku = jsonObj.getString("sku");
+                        String updated = jsonObj.getString("updated");
+                        String unitPerpack = jsonObj.getString("unitPerpack");
+                        String created = jsonObj.getString("created");
+                        String pricearray = jsonObj.getString("price");
+                        String parent_id = jsonObj.getString("parent_id");
+                        String id = jsonObj.getString("id");
+                        Double rspoint = Double.parseDouble(pricearray);
+                        final int rs = (int) Math.round(rspoint);
+                        String  strvalue = (Double.parseDouble(parent.getHowMuch())*Integer.parseInt(unitPerpack))+" "+ parent.getUnit()+" - \u20B9"+ rs;
+                        holder.spinnerlist.add(strvalue);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
@@ -587,18 +619,49 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 }
             });
 
+            ArrayAdapter adapter = new ArrayAdapter(mContext, R.layout.layout_spinner_list, holder.spinnerlist);
+            holder.mItem.setAdapter(adapter);
+
+            holder.mItem.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String spinnerValue = holder.spinnerlist.get(position);
+                    Log.e("onItemClick"," "+spinnerValue);
+                    String arrSplit[] = spinnerValue.split("-");
+
+//                    if (parent.getProductDiscount().equals("0")){
+                    holder.itemPrice.setText(arrSplit[1]);
+                    holder.itemDiscountPrice.setVisibility(View.GONE);
+                    holder.itemDiscount.setVisibility(View.GONE);
+//                    } else {
+//                        holder.itemPrice.setText("\u20B9"+price1);
+//                        holder.itemDiscountPrice.setVisibility(View.VISIBLE);
+//                        holder.itemDiscountPrice.setText("\u20B9"+price);
+//                        holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+//                        holder.itemDiscount.setVisibility(View.VISIBLE);
+//                        holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
+//                    }
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
             //Set click action for wishlist
             String quntWish = parent.getAddedWish();
             int qntWishAdd = Integer.parseInt(quntWish);
             if (qntWishAdd==0) {
-                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                holder.mWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                 holder.res = true;
             }else {
-                holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
+                holder.mWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
                 holder.res = false;
             }
 
-            holder.mImageViewWishlist.setOnClickListener(new View.OnClickListener() {
+            holder.mWishlist.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (MainActivity.username.equals("")) {
@@ -613,9 +676,9 @@ public class ItemDetailsActivity extends AppCompatActivity {
                             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
+                                    holder.mWishlist.setImageResource(R.drawable.ic_favorite_red_24dp);
                                     holder.itemsQuantity.setVisibility(View.GONE);
-                                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                                    holder.mCart2.setVisibility(View.VISIBLE);
                                     MainActivity.notificationCountCart--;
                                     NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
                                     holder.res = false;
@@ -645,8 +708,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
                             client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                    holder.mImageViewWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
-                                    holder.mLayoutItemCart2.setVisibility(View.VISIBLE);
+                                    holder.mWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+                                    holder.mCart2.setVisibility(View.VISIBLE);
                                     holder.itemsQuantity.setVisibility(View.GONE);
                                     holder.res = true;
                                     if (toast != null) {
@@ -679,24 +742,29 @@ public class ItemDetailsActivity extends AppCompatActivity {
     }
 
     private class MyHolder extends RecyclerView.ViewHolder{
+        public final Spinner mItem;
         public final ImageView mImageView;
+        public final LinearLayout mLayoutItem, mCart2;
+        public final ImageView mWishlist, mCartBtn;
+        TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOut;
         boolean res = true;
-        public final LinearLayout mLayoutItem, mLayoutItemCart2;
-        public final ImageView mImageViewWishlist, mCartImageBtn;
-        TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOutOfStock;
-        public MyHolder(@NonNull View view) {
+        ArrayList<String> spinnerlist = new ArrayList<String>();
+
+        public MyHolder(View view) {
             super(view);
-            mImageView = view.findViewById(R.id.image1);
+            spinnerlist.clear();
+            mImageView =  view.findViewById(R.id.image1);
             mLayoutItem = view.findViewById(R.id.layout_item);
-            mLayoutItemCart2 = view.findViewById(R.id.layout_action2_cart);
-            mImageViewWishlist = view.findViewById(R.id.ic_wishlist);
+            mCart2 = view.findViewById(R.id.layout_action2_cart);
+            mWishlist = view.findViewById(R.id.ic_wishlist);
             itemName =  view.findViewById(R.id.item_name);
+            mItem =  view.findViewById(R.id.item_variants_spinner);
             itemPrice =  view.findViewById(R.id.item_price);
             itemDiscountPrice =  view.findViewById(R.id.actual_price);
             itemDiscount =  view.findViewById(R.id.discount_percentage);
             itemsQuantity =  view.findViewById(R.id.item_added);
-            itemsOutOfStock =  view.findViewById(R.id.out_of_stock);
-            mCartImageBtn =  view.findViewById(R.id.card_item_quantity_add);
+            itemsOut =  view.findViewById(R.id.out_of_stock);
+            mCartBtn =  view.findViewById(R.id.card_item_quantity_add);
         }
     }
 }

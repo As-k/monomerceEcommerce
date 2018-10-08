@@ -84,11 +84,11 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
         client = backend.getHTTPClient();
         cartList = new ArrayList<>();
 
-        getCardItem();
+        getItem();
         ImageUrlUtils imageUrlUtils = new ImageUrlUtils();
         final ArrayList<String> cartlistImageUri = imageUrlUtils.getCartListImageUri();
         //Show cart layout based on items
-        setCartLayout();
+        setLayout();
         totalPrice = 0;
 
         List<String> steps = Arrays.asList(new String[]{"Selected Items", "Shipping Address", "Review Your Order"});
@@ -100,7 +100,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
     }
 
 
-    public void getCardItem() {
+    public void getItem() {
         client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&typ=cart&user="+MainActivity.userPK,
                 new JsonHttpResponseHandler() {
                     @Override
@@ -266,7 +266,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
             holder.cardWishList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    moveWishList(cart);
+                    moveList(cart);
                     holder.cardWishList.setImageResource(R.drawable.ic_favorite_red_24dp);
 //                    Toast.makeText(mContext,"Item added to wishlist.", Toast.LENGTH_SHORT).show();
                 }
@@ -371,7 +371,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
             });
         }
 
-        public void moveWishList(Cart cart) {
+        public void moveList(Cart cart) {
             RequestParams params = new RequestParams();
             params.put("typ", "favourite");
             client.patch(BackendServer.url+"/api/ecommerce/cart/"+ cart.getPk()+"/", params, new AsyncHttpResponseHandler() {
@@ -391,7 +391,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
 
     }
 
-    protected void setCartLayout(){
+    protected void setLayout(){
         layoutCartItems = findViewById(R.id.layout_items);
         layoutCartPayments = findViewById(R.id.layout_payment);
         layoutCartNoItems = findViewById(R.id.layout_cart_empty);

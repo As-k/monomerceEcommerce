@@ -64,7 +64,7 @@ public class WishlistActivity extends AppCompatActivity {
         client = backend.getHTTPClient();
 
         wishList = new ArrayList<>();
-        getWishListItem();
+        getListItem();
         recyclerView = findViewById(R.id.recyclerview);
         progressBar =  findViewById(R.id.progressBar);
 
@@ -80,7 +80,7 @@ public class WishlistActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    protected void setCartLayout(){
+    protected void setLayout(){
         layoutCartItems = findViewById(R.id.layout_items);
         layoutCartNoItems = findViewById(R.id.layout_cart_empty);
         bStartShopping =  findViewById(R.id.bAddNew);
@@ -105,7 +105,7 @@ public class WishlistActivity extends AppCompatActivity {
         }
     }
 
-    public void getWishListItem() {
+    public void getListItem() {
         client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&typ=favourite&user="+MainActivity.userPK,
                 new JsonHttpResponseHandler() {
                     @Override
@@ -120,7 +120,7 @@ public class WishlistActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
-                        setCartLayout();
+                        setLayout();
                         progressBar.setVisibility(View.GONE);
                         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                         recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(wishList));
@@ -149,7 +149,7 @@ public class WishlistActivity extends AppCompatActivity {
             public final SimpleDraweeView mImageView;
             public final LinearLayout mLayoutItem, mLayoutRemove;
             TextView productName, itemPrice, actualPrice, discountPercentage;
-            Button moveToCart;
+            Button move;
 //            AsyncHttpClient client = new AsyncHttpClient();
 
             public ViewHolder(View view) {
@@ -164,7 +164,7 @@ public class WishlistActivity extends AppCompatActivity {
                 actualPrice =  view.findViewById(R.id.actual_price);
                 actualPrice.setPaintFlags(actualPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
                 discountPercentage =  view.findViewById(R.id.discount_percentage);
-                moveToCart =  view.findViewById(R.id.move_cart_button);
+                move =  view.findViewById(R.id.move_cart_button);
             }
         }
 
@@ -234,7 +234,7 @@ public class WishlistActivity extends AppCompatActivity {
             });
 
             //Set click action for wishlist
-            holder.moveToCart.setOnClickListener(new View.OnClickListener() {
+            holder.move.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     moveCart(cart);
