@@ -47,11 +47,10 @@ import org.json.JSONObject;
 import org.michaelbel.bottomsheet.BottomSheet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 
 public class AllItemsShowActivity extends AppCompatActivity {
     public Context context;
@@ -287,6 +286,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
         BackendServer backendServer;
         AsyncHttpClient client;
         private ArrayList<ListingParent> mValues;
+        String sku;
         Toast toast;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -296,7 +296,9 @@ public class AllItemsShowActivity extends AppCompatActivity {
             public final ImageView mWishlist, mCartBtn;
             TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOut;
             boolean res = true;
-            ArrayList<String> spinnerlist = new ArrayList<String>();
+            ArrayList spinnerlist = new ArrayList();
+            String keys[] = {"str"};
+            int ids[] = {R.id.weight_text};
 
             public ViewHolder(View view) {
                 super(view);
@@ -355,6 +357,7 @@ public class AllItemsShowActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                                 RequestParams params = new RequestParams();
+                                params.put("prodSku", sku);
                                 params.put("product", parent.getPk());
                                 params.put("qty", "1");
                                 params.put("typ", "cart");
@@ -427,7 +430,10 @@ public class AllItemsShowActivity extends AppCompatActivity {
                 holder.itemDiscount.setVisibility(View.VISIBLE);
                 holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
             }
-            holder.spinnerlist.add(spinnerstr);
+            HashMap map = new HashMap();
+            map.put(holder.keys[0], spinnerstr);
+            map.put("sku", parent.getSerialNo());
+            holder.spinnerlist.add(map);
             JSONArray array = parent.getItemArray();
             if (array.length()>0) {
                 for (int i = 0; i < array.length(); i++) {
@@ -444,8 +450,10 @@ public class AllItemsShowActivity extends AppCompatActivity {
                         Double rspoint = Double.parseDouble(pricearray);
                         final int rs = (int) Math.round(rspoint);
                         String  strvalue = (Double.parseDouble(parent.getHowMuch())*Integer.parseInt(unitPerpack))+" "+ parent.getUnit()+" - \u20B9"+ rs;
-                        holder.spinnerlist.add(strvalue);
-
+                        HashMap map1 = new HashMap();
+                        map1.put(holder.keys[0], strvalue);
+                        map1.put("sku", sku);
+                        holder.spinnerlist.add(map1);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -456,23 +464,24 @@ public class AllItemsShowActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-                    intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
-                    intent.putExtra(STRING_IMAGE_POSITION, position);
+//                    intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
+//                    intent.putExtra(STRING_IMAGE_POSITION, position);
                     intent.putExtra("listingLitePk", parent.getPk());
                     mContext.startActivity(intent);
                 }
             });
 
-            ArrayAdapter adapter = new ArrayAdapter(mContext, R.layout.layout_spinner_list, holder.spinnerlist);
+            SimpleAdapter adapter = new SimpleAdapter(mContext, holder.spinnerlist, R.layout.layout_spinner_list, holder.keys,holder.ids);
             holder.mItem.setAdapter(adapter);
 
             holder.mItem.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String spinnerValue = holder.spinnerlist.get(position);
-                    Log.e("onItemClick"," "+spinnerValue);
+                    HashMap map = (HashMap) holder.spinnerlist.get(position);
+                    String spinnerValue = (String) map.get(holder.keys[0]);
+                    sku = (String) map.get("sku");
+                    Log.e("onItemClick",(String) map.get("sku")+" "+spinnerValue);
                     String arrSplit[] = spinnerValue.split("-");
-
 //                    if (parent.getProductDiscount().equals("0")){
                     holder.itemPrice.setText(arrSplit[1]);
                     holder.itemDiscountPrice.setVisibility(View.GONE);

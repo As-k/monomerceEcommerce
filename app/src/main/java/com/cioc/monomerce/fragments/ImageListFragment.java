@@ -50,8 +50,8 @@ import cz.msebera.android.httpclient.Header;
 
 
 public class ImageListFragment extends Fragment {
-    public static final String STRING_IMAGE_URI = "ImageUri";
-    public static final String STRING_IMAGE_POSITION = "ImagePosition";
+//    public static final String STRING_IMAGE_URI = "ImageUri";
+//    public static final String STRING_IMAGE_POSITION = "ImagePosition";
     private static MainActivity mActivity;
     TextView moreItems;
     ProgressBar progressBar;
@@ -159,8 +159,7 @@ public class ImageListFragment extends Fragment {
         BackendServer backendServer = new BackendServer(mActivity);
         AsyncHttpClient client = backendServer.getHTTPClient();
         private ArrayList<ListingParent> mValues;
-
-        String fname;
+        String fname, sku;
         Toast toast;
 
         public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -170,7 +169,9 @@ public class ImageListFragment extends Fragment {
             public final ImageView mWishlist, mCartBtn;
             TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOut;
             boolean res = true;
-            ArrayList<String> spinnerlist = new ArrayList<String>();
+            ArrayList spinnerlist = new ArrayList();
+            String keys[] = {"str"};
+            int ids[] = {R.id.weight_text};
 
             public ViewHolder(View view) {
                 super(view);
@@ -230,6 +231,7 @@ public class ImageListFragment extends Fragment {
                                 mActivity.startActivity(new Intent(mActivity, LoginPageActivity.class));
                             } else {
                                 RequestParams params = new RequestParams();
+                                params.put("prodSku", sku);
                                 params.put("product", parent.getPk());
                                 params.put("qty", "1");
                                 params.put("typ", "cart");
@@ -302,7 +304,10 @@ public class ImageListFragment extends Fragment {
                 holder.itemDiscount.setVisibility(View.VISIBLE);
                 holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
             }
-            holder.spinnerlist.add(spinnerstr);
+            HashMap map = new HashMap();
+            map.put(holder.keys[0], spinnerstr);
+            map.put("sku", parent.getSerialNo());
+            holder.spinnerlist.add(map);
             JSONArray array = parent.getItemArray();
             if (array.length()>0) {
                 for (int i = 0; i < array.length(); i++) {
@@ -319,7 +324,10 @@ public class ImageListFragment extends Fragment {
                         Double rspoint = Double.parseDouble(pricearray);
                         final int rs = (int) Math.round(rspoint);
                         String  strvalue = (Double.parseDouble(parent.getHowMuch())*Integer.parseInt(unitPerpack))+" "+ parent.getUnit()+" - \u20B9"+ rs;
-                        holder.spinnerlist.add(strvalue);
+                        HashMap map1 = new HashMap();
+                        map1.put(holder.keys[0], strvalue);
+                        map1.put("sku", sku);
+                        holder.spinnerlist.add(map1);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -343,17 +351,17 @@ public class ImageListFragment extends Fragment {
                 }
             });
 
-            ArrayAdapter adapter = new ArrayAdapter(mActivity, R.layout.layout_spinner_list, holder.spinnerlist);
+            SimpleAdapter adapter = new SimpleAdapter(mActivity, holder.spinnerlist, R.layout.layout_spinner_list, holder.keys,holder.ids);
             holder.mItem.setAdapter(adapter);
 
             holder.mItem.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String spinnerValue = holder.spinnerlist.get(position);
-                    Log.e("onItemClick"," "+spinnerValue);
-
+                    HashMap map = (HashMap) holder.spinnerlist.get(position);
+                    String spinnerValue = (String) map.get(holder.keys[0]);
+                    sku = (String) map.get("sku");
+                    Log.e("onItemClick",(String) map.get("sku")+" "+spinnerValue);
                     String arrSplit[] = spinnerValue.split("-");
-
 //                    if (parent.getProductDiscount().equals("0")){
                         holder.itemPrice.setText(arrSplit[1]);
 //                        holder.itemDiscountPrice.setVisibility(View.GONE);

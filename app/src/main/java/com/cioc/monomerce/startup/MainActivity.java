@@ -129,7 +129,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationBottom = findViewById(R.id.bottom_navigation);
         navigation();
-//        View v =  navigationView.inflateHeaderView(R.layout.nav_header_main);
         View v =  navigationView.getHeaderView(0);
         navHeadLayout = v.findViewById(R.id.nav_head_ll);
         prflName = v.findViewById(R.id.user_name);
@@ -212,9 +211,6 @@ public class MainActivity extends AppCompatActivity
             } else if (id == R.id.action_cart) {
                 startActivity(new Intent(MainActivity.this, CartListActivity.class));
                 return true;
-//            } else {
-//                startActivity(new Intent(MainActivity.this, EmptyActivity.class));
-
             }
         }
         return super.onOptionsItemSelected(item);
@@ -304,43 +300,16 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         ListFragmentAdapter adapter = new ListFragmentAdapter(getSupportFragmentManager());
-//        hashMapList = new ArrayList<>();
         for (int i=0; i<genericProducts.size(); i++) {
             ImageListFragment fragment = new ImageListFragment();
             Bundle bundle = new Bundle();
             GenericProduct product = genericProducts.get(i);
             bundle.putInt("type", i+1);
             bundle.putString("pk", product.getPk());
-//            getItems(product.getPk());
             fragment.setArguments(bundle);
             adapter.addFragment(fragment, product.getName());
 
         }
-//        fragment = new ImageListFragment();
-//        bundle = new Bundle();
-//        bundle.putInt("type", 2);
-//        fragment.setArguments(bundle);
-//        adapter.addFragment(fragment, getString(R.string.item_2));
-//        fragment = new ImageListFragment();
-//        bundle = new Bundle();
-//        bundle.putInt("type", 3);
-//        fragment.setArguments(bundle);
-//        adapter.addFragment(fragment, getString(R.string.item_3));
-//        fragment = new ImageListFragment();
-//        bundle = new Bundle();
-//        bundle.putInt("type", 4);
-//        fragment.setArguments(bundle);
-//        adapter.addFragment(fragment, getString(R.string.item_4));
-//        fragment = new ImageListFragment();
-//        bundle = new Bundle();
-//        bundle.putInt("type", 5);
-//        fragment.setArguments(bundle);
-//        adapter.addFragment(fragment, getString(R.string.item_5));
-//        fragment = new ImageListFragment();
-//        bundle = new Bundle();
-//        bundle.putInt("type", 6);
-//        fragment.setArguments(bundle);
-//        adapter.addFragment(fragment, getString(R.string.item_6));
         viewPager.setAdapter(adapter);
     }
 

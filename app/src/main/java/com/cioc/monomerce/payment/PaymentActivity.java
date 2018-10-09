@@ -50,8 +50,6 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.StringEntity;
 
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 
 
 public class PaymentActivity extends AppCompatActivity {
@@ -173,6 +171,7 @@ public class PaymentActivity extends AppCompatActivity {
                 Cart cart = cardlist.get(i);
                 JSONObject product = new JSONObject();
                 product.put("pk", Integer.parseInt(cart.getListingParent().getPk()));
+                product.put("prodSku", cart.getProdSku());
                 product.put("qty", Integer.parseInt(cart.getQuantity()));
                 array.put(product);
             }

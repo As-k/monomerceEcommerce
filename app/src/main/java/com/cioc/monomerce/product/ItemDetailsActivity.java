@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,31 +53,33 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
-
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
 
 public class ItemDetailsActivity extends AppCompatActivity {
     LinearLayout layoutActionBuy, layoutOutOFStock;
     private SliderImageFragmentAdapter mSliderImageFragmentAdapter;
     private ViewPager mViewPager;
     private ExtensiblePageIndicator extensiblePageIndicator;
-    TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount;//, textViewDescriptions;
+    TextView textViewItemName, textViewItemPrice, textViewItemDiscountPrice, textViewItemDiscount;
     Button textViewAddToCart, textViewBuyNow;
-    String itemPk, stringImageUri;
+    String itemPk;
+    Spinner dropdownSpinner;
     RecyclerView suggestedRecyclerView;
-//    ListView specificationsListView;
     Context mContext;
     private Menu menu;
     AsyncHttpClient client;
     public static ArrayList<ListingLite> listingLites;
     public static ArrayList<ListingLite> suggestList;
+    ArrayList spinnerlist = new ArrayList();
+    String keys[] = {"str"};
+    int ids[] = {android.R.id.text1};
     public static ListingLite lite;
     String name, value, fieldType, helpText, unit, jsonData;
     JSONArray jsonArray = new JSONArray();
     Toast toast;
+    String sku;
     ProgressBar progressBar;
     LinearLayout itemDetails;
 
@@ -120,6 +123,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
     public void init() {
         String filesAttachment1;
         textViewItemName = findViewById(R.id.item_name);
+        dropdownSpinner = findViewById(R.id.item_variants_spinner);
         textViewItemPrice = findViewById(R.id.item_price);
         textViewItemDiscountPrice = findViewById(R.id.actual_price);
         textViewItemDiscount = findViewById(R.id.discount_percentage);
@@ -130,7 +134,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
 //        specificationsListView = findViewById(R.id.specifications_list);
 //        textViewDescriptions = findViewById(R.id.description_txt);
         suggestedRecyclerView = findViewById(R.id.suggested_recyclerview);
-        extensiblePageIndicator = (ExtensiblePageIndicator) findViewById(R.id.flexible_indicator);
+        extensiblePageIndicator = findViewById(R.id.flexible_indicator);
         mViewPager = (ViewPager) findViewById(R.id.item_view_pager);
         lite = listingLites.get(0);
         mSliderImageFragmentAdapter = new SliderImageFragmentAdapter(getSupportFragmentManager());
@@ -150,14 +154,16 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
         mViewPager.setAdapter(mSliderImageFragmentAdapter);
         extensiblePageIndicator.initViewPager(mViewPager);
-
-        textViewItemName.setText(lite.getProductName());
+        String spinnerstr = lite.getHowMuch()+" "+lite.getUnit();
+        textViewItemName.setText(lite.getProductName()+" "+spinnerstr);
         if (lite.getProductDiscount().equals("0")) {
             textViewItemPrice.setText("\u20B9" + lite.getProductPrice());
+            spinnerstr += " - \u20B9"+ lite.getProductPrice();
             textViewItemDiscount.setVisibility(View.GONE);
             textViewItemDiscountPrice.setVisibility(View.GONE);
         } else {
             textViewItemPrice.setText("\u20B9" + lite.getProductDiscountedPrice());
+            spinnerstr += " - \u20B9"+ lite.getProductDiscountedPrice();
             textViewItemDiscount.setVisibility(View.VISIBLE);
             textViewItemDiscount.setText("(" + lite.getProductDiscount() + "% OFF)");
             textViewItemDiscountPrice.setVisibility(View.VISIBLE);
@@ -165,6 +171,56 @@ public class ItemDetailsActivity extends AppCompatActivity {
             textViewItemDiscountPrice.setPaintFlags(textViewItemDiscountPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
+        HashMap map = new HashMap();
+        map.put(keys[0], spinnerstr);
+        map.put("sku", lite.getSerialNo());
+        spinnerlist.add(map);
+        JSONArray array = lite.getItemArray();
+        if (array.length()>0) {
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObj = null;
+                try {
+                    jsonObj = array.getJSONObject(i);
+                    String sku = jsonObj.getString("sku");
+                    String updated = jsonObj.getString("updated");
+                    String unitPerpack = jsonObj.getString("unitPerpack");
+                    String created = jsonObj.getString("created");
+                    String pricearray = jsonObj.getString("price");
+                    String parent_id = jsonObj.getString("parent_id");
+                    String id = jsonObj.getString("id");
+                    Double rspoint = Double.parseDouble(pricearray);
+                    final int rs = (int) Math.round(rspoint);
+                    String  strvalue = (Double.parseDouble(lite.getHowMuch())*Integer.parseInt(unitPerpack))+" "+ lite.getUnit()+" - \u20B9"+ rs;
+                    HashMap map1 = new HashMap();
+                    map1.put(keys[0], strvalue);
+                    map1.put("sku", sku);
+                    spinnerlist.add(map1);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        SimpleAdapter adapter = new SimpleAdapter(mContext, spinnerlist, android.R.layout.simple_spinner_dropdown_item, keys, ids);
+        dropdownSpinner.setAdapter(adapter);
+
+        dropdownSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                HashMap map = (HashMap) spinnerlist.get(position);
+                String spinnerValue = (String) map.get(keys[0]);
+                sku = (String) map.get("sku");
+                Log.e("onItemClick",(String) map.get("sku")+" "+spinnerValue);
+                String arrSplit[] = spinnerValue.split("-");
+                textViewItemName.setText(lite.getProductName()+" "+arrSplit[0]);
+                textViewItemPrice.setText(arrSplit[1]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 //        Spanned htmlAsSpanned = Html.fromHtml(lite.getSource());
 //        if (htmlAsSpanned.toString().equals("null")|| htmlAsSpanned.toString().equals("")|| htmlAsSpanned.toString() == null) {
@@ -183,6 +239,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         RequestParams params = new RequestParams();
+                        params.put("prodSku", sku);
                         params.put("product", lite.getPk());
                         params.put("qty", "1");
                         params.put("type", "card");
@@ -474,6 +531,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         BackendServer backendServer = new BackendServer(mContext);
         AsyncHttpClient client = backendServer.getHTTPClient();
         Toast toast;
+        String sku;
 
         public SuggestedRecyclerViewAdapter(ArrayList<ListingLite> suggestLists){
             this.suggestedList = suggestLists;
@@ -506,6 +564,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                                 mContext.startActivity(new Intent(mContext, LoginPageActivity.class));
                             } else {
                                 RequestParams params = new RequestParams();
+                                params.put("prodSku", sku);
                                 params.put("product", parent.getPk());
                                 params.put("qty", "1");
                                 params.put("typ", "cart");
@@ -579,7 +638,10 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 holder.itemDiscount.setVisibility(View.VISIBLE);
                 holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
             }
-            holder.spinnerlist.add(spinnerstr);
+            HashMap map = new HashMap();
+            map.put(holder.keys[0], spinnerstr);
+            map.put("sku", parent.getSerialNo());
+            holder.spinnerlist.add(map);
             JSONArray array = parent.getItemArray();
             if (array.length()>0) {
                 for (int i = 0; i < array.length(); i++) {
@@ -596,14 +658,15 @@ public class ItemDetailsActivity extends AppCompatActivity {
                         Double rspoint = Double.parseDouble(pricearray);
                         final int rs = (int) Math.round(rspoint);
                         String  strvalue = (Double.parseDouble(parent.getHowMuch())*Integer.parseInt(unitPerpack))+" "+ parent.getUnit()+" - \u20B9"+ rs;
-                        holder.spinnerlist.add(strvalue);
-
+                        HashMap map1 = new HashMap();
+                        map1.put(holder.keys[0], strvalue);
+                        map1.put("sku", sku);
+                        holder.spinnerlist.add(map1);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }
-
             holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -611,24 +674,25 @@ public class ItemDetailsActivity extends AppCompatActivity {
                         mContext.startActivity(new Intent(mContext, LoginPageActivity.class));
                     } else {
                         Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-                        intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
-                        intent.putExtra(STRING_IMAGE_POSITION, position);
+//                        intent.putExtra(STRING_IMAGE_URI, parent.getFilesAttachment());
+//                        intent.putExtra(STRING_IMAGE_POSITION, position);
                         intent.putExtra("listingLitePk", parent.getPk());
                         mContext.startActivity(intent);
                     }
                 }
             });
 
-            ArrayAdapter adapter = new ArrayAdapter(mContext, R.layout.layout_spinner_list, holder.spinnerlist);
+            SimpleAdapter adapter = new SimpleAdapter(mContext, holder.spinnerlist, R.layout.layout_spinner_list, holder.keys,holder.ids);
             holder.mItem.setAdapter(adapter);
 
             holder.mItem.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String spinnerValue = holder.spinnerlist.get(position);
-                    Log.e("onItemClick"," "+spinnerValue);
+                    HashMap map = (HashMap) holder.spinnerlist.get(position);
+                    String spinnerValue = (String) map.get(holder.keys[0]);
+                    sku = (String) map.get("sku");
+                    Log.e("onItemClick",(String) map.get("sku")+" "+spinnerValue);
                     String arrSplit[] = spinnerValue.split("-");
-
 //                    if (parent.getProductDiscount().equals("0")){
                     holder.itemPrice.setText(arrSplit[1]);
                     holder.itemDiscountPrice.setVisibility(View.GONE);
@@ -669,6 +733,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     } else {
                         if (holder.res) {
                             RequestParams params = new RequestParams();
+                            params.put("prodSku", sku);
                             params.put("product", parent.getPk());
                             params.put("qty", 1);
                             params.put("typ", "favourite");
@@ -748,7 +813,9 @@ public class ItemDetailsActivity extends AppCompatActivity {
         public final ImageView mWishlist, mCartBtn;
         TextView itemName, itemPrice, itemDiscount, itemDiscountPrice, itemsQuantity, itemsOut;
         boolean res = true;
-        ArrayList<String> spinnerlist = new ArrayList<String>();
+        ArrayList spinnerlist = new ArrayList();
+        String keys[] = {"str"};
+        int ids[] = {R.id.weight_text};
 
         public MyHolder(View view) {
             super(view);

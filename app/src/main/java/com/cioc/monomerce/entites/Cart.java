@@ -11,16 +11,13 @@ import java.util.ArrayList;
  */
 
 public class Cart {
-    public String pk, user, quantity, type;
+    public String pk, user, quantity, type, prodSku;
 //            parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, specifications;
 //    boolean approved;
 //    public String filesPk, filesLink, filesAttachment, filesMediaType;
     JSONObject jsonObject;
     ListingParent listingParent;
     ArrayList<ListingParent> parents = new ArrayList<>();
-
-    public Cart() {
-    }
 
     public Cart(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
@@ -30,6 +27,7 @@ public class Cart {
             this.user = jsonObject.getString("user");
             this.quantity = jsonObject.getString("qty");
             this.type = jsonObject.getString("typ");
+            this.prodSku = jsonObject.getString("prodSku");
             JSONObject product = jsonObject.getJSONObject("product");
             this.listingParent = new ListingParent(product);
             this.parents.add(listingParent);
@@ -98,6 +96,14 @@ public class Cart {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getProdSku() {
+        return prodSku;
+    }
+
+    public void setProdSku(String prodSku) {
+        this.prodSku = prodSku;
     }
 
     public ListingParent getListingParent() {

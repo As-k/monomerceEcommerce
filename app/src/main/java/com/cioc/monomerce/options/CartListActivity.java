@@ -55,9 +55,6 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
-
 
 public class CartListActivity extends AppCompatActivity implements DecreaseQuntItem, IncreaseQuntItem, NotifyDataChanged {
     private static Context mContext;
@@ -247,8 +244,8 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
-                    intent.putExtra(STRING_IMAGE_POSITION, position);
+//                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
+//                    intent.putExtra(STRING_IMAGE_POSITION, position);
                     intent.putExtra("listingLitePk", parent.getPk());
                     mContext.startActivity(intent);
                 }

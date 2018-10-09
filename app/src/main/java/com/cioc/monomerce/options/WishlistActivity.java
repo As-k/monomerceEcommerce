@@ -40,9 +40,6 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_POSITION;
-import static com.cioc.monomerce.fragments.ImageListFragment.STRING_IMAGE_URI;
-
 
 public class WishlistActivity extends AppCompatActivity {
     private static Context mContext;
@@ -218,8 +215,8 @@ public class WishlistActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
-                    intent.putExtra(STRING_IMAGE_POSITION, position);
+//                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
+//                    intent.putExtra(STRING_IMAGE_POSITION, position);
                     intent.putExtra("listingLitePk", parent.getPk());
                     mContext.startActivity(intent);
                 }
