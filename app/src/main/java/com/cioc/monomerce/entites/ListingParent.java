@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 public class ListingParent {
     public String pk, user, parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, serialNo, howMuch, unit,  specifications;
-    public String sku, updated, unitPerpack, created, price, parent_id, id;
+    public String sku, updated, unitPerpack, created, price, discountedPrice, parent_id, id;
     public int productIntPrice, productIntDiscountedPrice;
     public boolean approved, inStock;
     public String filesPk, filesLink, filesAttachment, filesMediaType;
@@ -61,6 +61,7 @@ public class ListingParent {
                 this.unitPerpack = jsonObj.getString("unitPerpack");
                 this.created = jsonObj.getString("created");
                 this.price = jsonObj.getString("price");
+                this.discountedPrice = jsonObj.getString("discountedPrice");
                 this.parent_id = jsonObj.getString("parent_id");
                 this.id = jsonObj.getString("id");
             }
@@ -248,6 +249,14 @@ public class ListingParent {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getDiscountedPrice() {
+        return discountedPrice;
+    }
+
+    public void setDiscountedPrice(String discountedPrice) {
+        this.discountedPrice = discountedPrice;
     }
 
     public String getParent_id() {

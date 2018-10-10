@@ -98,7 +98,7 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
 
 
     public void getItem() {
-        client.get(BackendServer.url+"/api/ecommerce/cart/?&Name__contains=&typ=cart&user="+MainActivity.userPK,
+        client.get(BackendServer.url+"/api/ecommerce/cart/?&typ=cart&user="+MainActivity.userPK,
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -222,21 +222,38 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
             final Uri uri = Uri.parse(parent.getFilesAttachment());
             holder.mImageView.setImageURI(uri);
 
-            holder.productName.setText(parent.getProductName());
+            holder.productName.setText(parent.getProductName()+" "+cart.getProd_howMuch()+" "+parent.getUnit());
             holder.itemsQuantity.setText(cart.getQuantity());
-            if (parent.getProductDiscount().equals("0")){
-                holder.itemPrice.setText("\u20B9"+parent.getProductPrice());
-                holder.actualPrice.setVisibility(View.GONE);
-                holder.discountPercentage.setVisibility(View.GONE);
-                mPrice = mPrice + (parent.getProductIntPrice()*Integer.parseInt(cart.getQuantity()));
+            if (cart.getProdVarPrice().equals("null")) {
+                if (parent.getProductDiscount().equals("0")) {
+                    holder.itemPrice.setText("\u20B9" + parent.getProductPrice());
+                    holder.actualPrice.setVisibility(View.GONE);
+                    holder.discountPercentage.setVisibility(View.GONE);
+                    mPrice = mPrice + (parent.getProductIntPrice() * Integer.parseInt(cart.getQuantity()));
+                } else {
+                    holder.itemPrice.setText("\u20B9" + parent.getProductDiscountedPrice());
+                    mPrice = mPrice + (parent.getProductIntDiscountedPrice() * Integer.parseInt(cart.getQuantity()));
+                    holder.discountPercentage.setVisibility(View.VISIBLE);
+                    holder.discountPercentage.setText("(" + parent.getProductDiscount() + "% OFF)");
+                    holder.actualPrice.setVisibility(View.VISIBLE);
+                    holder.actualPrice.setText("\u20B9" + parent.getProductPrice());
+                    holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                }
             } else {
-                holder.itemPrice.setText("\u20B9"+parent.getProductDiscountedPrice());
-                mPrice = mPrice + (parent.getProductIntDiscountedPrice()*Integer.parseInt(cart.getQuantity()));
-                holder.discountPercentage.setVisibility(View.VISIBLE);
-                holder.discountPercentage.setText("("+parent.getProductDiscount()+"% OFF)");
-                holder.actualPrice.setVisibility(View.VISIBLE);
-                holder.actualPrice.setText("\u20B9"+parent.getProductPrice());
-                holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                if (parent.getProductDiscount().equals("0")) {
+                    holder.itemPrice.setText("\u20B9" + cart.getProdVarPrice());
+                    holder.actualPrice.setVisibility(View.GONE);
+                    holder.discountPercentage.setVisibility(View.GONE);
+//                    mPrice = mPrice + (Integer.parseInt(cart.getProdVarPrice()) * Integer.parseInt(cart.getQuantity()));
+                } else {
+                    holder.itemPrice.setText("\u20B9" + cart.getProdVarPrice());
+//                    mPrice = mPrice + (Integer.parseInt(cart.getProdVarPrice()) * Integer.parseInt(cart.getQuantity()));
+                    holder.discountPercentage.setVisibility(View.VISIBLE);
+                    holder.discountPercentage.setText("(" + parent.getProductDiscount() + "% OFF)");
+                    holder.actualPrice.setVisibility(View.VISIBLE);
+                    holder.actualPrice.setText("\u20B9" + parent.getProductPrice());
+//                    holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                }
             }
 
 

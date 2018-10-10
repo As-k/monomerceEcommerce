@@ -682,7 +682,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 }
             });
 
-            SimpleAdapter adapter = new SimpleAdapter(mContext, holder.spinnerlist, R.layout.layout_spinner_list, holder.keys,holder.ids);
+            SimpleAdapter adapter = new SimpleAdapter(mContext, holder.spinnerlist, android.R.layout.simple_spinner_dropdown_item, holder.keys,holder.ids);
             holder.mItem.setAdapter(adapter);
 
             holder.mItem.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -815,7 +815,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         boolean res = true;
         ArrayList spinnerlist = new ArrayList();
         String keys[] = {"str"};
-        int ids[] = {R.id.weight_text};
+        int ids[] = {android.R.id.text1};
 
         public MyHolder(View view) {
             super(view);

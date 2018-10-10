@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 
 public class Cart {
-    public String pk, user, quantity, type, prodSku;
+    public String pk, user, quantity, type, prodSku, prodVarPrice, prod_howMuch;
 //            parentType, source, productPk, productName, productPrice, productDiscount, productDiscountedPrice, specifications;
 //    boolean approved;
 //    public String filesPk, filesLink, filesAttachment, filesMediaType;
@@ -28,6 +28,8 @@ public class Cart {
             this.quantity = jsonObject.getString("qty");
             this.type = jsonObject.getString("typ");
             this.prodSku = jsonObject.getString("prodSku");
+            this.prodVarPrice = jsonObject.getString("prodVarPrice");
+            this.prod_howMuch = jsonObject.getString("prod_howMuch");
             JSONObject product = jsonObject.getJSONObject("product");
             this.listingParent = new ListingParent(product);
             this.parents.add(listingParent);
@@ -104,6 +106,23 @@ public class Cart {
 
     public void setProdSku(String prodSku) {
         this.prodSku = prodSku;
+    }
+
+
+    public String getProdVarPrice() {
+        return prodVarPrice;
+    }
+
+    public void setProdVarPrice(String prodVarPrice) {
+        this.prodVarPrice = prodVarPrice;
+    }
+
+    public String getProd_howMuch() {
+        return prod_howMuch;
+    }
+
+    public void setProd_howMuch(String prod_howMuch) {
+        this.prod_howMuch = prod_howMuch;
     }
 
     public ListingParent getListingParent() {
