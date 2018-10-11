@@ -307,6 +307,8 @@ public class ImageListFragment extends Fragment {
             HashMap map = new HashMap();
             map.put(holder.keys[0], spinnerstr);
             map.put("sku", parent.getSerialNo());
+            map.put("disPer", parent.getProductDiscount());
+            map.put("discount", price1);
             holder.spinnerlist.add(map);
             JSONArray array = parent.getItemArray();
             if (array.length()>0) {
@@ -324,10 +326,14 @@ public class ImageListFragment extends Fragment {
                         String id = jsonObj.getString("id");
                         Double rspoint = Double.parseDouble(pricearray);
                         final int rs = (int) Math.round(rspoint);
+                        Double rsPointdis = Double.parseDouble(discountedPrice);
+                        final int rsdis = (int) Math.round(rsPointdis);
                         String  strvalue = (Double.parseDouble(parent.getHowMuch())*Integer.parseInt(unitPerpack))+" "+ parent.getUnit()+" - \u20B9"+ rs;
                         HashMap map1 = new HashMap();
                         map1.put(holder.keys[0], strvalue);
                         map1.put("sku", sku);
+                        map1.put("disPer", parent.getProductDiscount());
+                        map1.put("discount", rsdis);
                         holder.spinnerlist.add(map1);
 
                     } catch (JSONException e) {
@@ -357,25 +363,72 @@ public class ImageListFragment extends Fragment {
 
             holder.mItem.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                public void onItemSelected(AdapterView<?> parent1, View view, int position, long id) {
                     HashMap map = (HashMap) holder.spinnerlist.get(position);
                     String spinnerValue = (String) map.get(holder.keys[0]);
                     sku = (String) map.get("sku");
+                    String disPer = (String) map.get("disPer");
+                    int discount = (int) map.get("discount");
                     Log.e("onItemClick",(String) map.get("sku")+" "+spinnerValue);
                     String arrSplit[] = spinnerValue.split("-");
-//                    if (parent.getProductDiscount().equals("0")){
+                    if (disPer.equals("0")){
                         holder.itemPrice.setText(arrSplit[1]);
-//                        holder.itemDiscountPrice.setVisibility(View.GONE);
-//                        holder.itemDiscount.setVisibility(View.GONE);
+                        holder.itemDiscountPrice.setVisibility(View.GONE);
+                        holder.itemDiscount.setVisibility(View.GONE);
+                    } else {
+                        holder.itemPrice.setText("\u20B9"+discount);
+                        holder.itemDiscountPrice.setVisibility(View.VISIBLE);
+                        holder.itemDiscountPrice.setText(""+arrSplit[1]);
+                        holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                        holder.itemDiscount.setVisibility(View.VISIBLE);
+                        holder.itemDiscount.setText(disPer+"% OFF");
+                    }
+//                    String qunt = parent.getAddedCart();
+//                    int qntAdd = Integer.parseInt(qunt);
+//                    if (qntAdd == 0) {
+//                        holder.mCart2.setVisibility(View.VISIBLE);
+//                        holder.itemsQuantity.setVisibility(View.GONE);
+//                        holder.mCartBtn.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//                                RequestParams params = new RequestParams();
+//                                params.put("prodSku", sku);
+//                                params.put("product", parent.getPk());
+//                                params.put("qty", "1");
+//                                params.put("typ", "cart");
+//                                params.put("user", MainActivity.userPK);
+//                                client.post(BackendServer.url + "/api/ecommerce/cart/", params, new AsyncHttpResponseHandler() {
+//                                    @Override
+//                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                                        holder.mCart2.setVisibility(View.GONE);
+//                                        holder.itemsQuantity.setVisibility(View.VISIBLE);
+//                                        holder.mWishlist.setImageResource(R.drawable.ic_favorite_border_green_24dp);
+//                                        holder.res = true;
+//                                        if (toast != null) {
+//                                            toast.cancel();
+//                                        }
+//                                        toast = Toast.makeText(mActivity, "Item added to cart.", Toast.LENGTH_SHORT);
+//                                        toast.show();
+//                                        MainActivity.notificationCountCart++;
+//                                        NotificationCountSetClass.setNotifyCount(MainActivity.notificationCountCart);
+//                                    }
+//
+//                                    @Override
+//                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//                                        if (toast != null) {
+//                                            toast.cancel();
+//                                        }
+//                                        toast = Toast.makeText(mActivity, "This Product is already in card.", Toast.LENGTH_SHORT);
+//                                        toast.show();
+//                                    }
+//                                });
+//
+//                            }
+//                        });
 //                    } else {
-//                        holder.itemPrice.setText("\u20B9"+price1);
-//                        holder.itemDiscountPrice.setVisibility(View.VISIBLE);
-//                        holder.itemDiscountPrice.setText("\u20B9"+price);
-//                        holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
-//                        holder.itemDiscount.setVisibility(View.VISIBLE);
-//                        holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
+//                        holder.itemsQuantity.setVisibility(View.VISIBLE);
+//                        holder.mCart2.setVisibility(View.GONE);
 //                    }
-
                 }
 
                 @Override

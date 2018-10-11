@@ -244,15 +244,30 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
                     holder.itemPrice.setText("\u20B9" + cart.getProdVarPrice());
                     holder.actualPrice.setVisibility(View.GONE);
                     holder.discountPercentage.setVisibility(View.GONE);
-//                    mPrice = mPrice + (Integer.parseInt(cart.getProdVarPrice()) * Integer.parseInt(cart.getQuantity()));
+                    mPrice = mPrice + (Integer.parseInt(cart.getProdVarPrice()) * Integer.parseInt(cart.getQuantity()));
                 } else {
                     holder.itemPrice.setText("\u20B9" + cart.getProdVarPrice());
-//                    mPrice = mPrice + (Integer.parseInt(cart.getProdVarPrice()) * Integer.parseInt(cart.getQuantity()));
+                    mPrice = mPrice + (Integer.parseInt(cart.getProdVarPrice()) * Integer.parseInt(cart.getQuantity()));
                     holder.discountPercentage.setVisibility(View.VISIBLE);
                     holder.discountPercentage.setText("(" + parent.getProductDiscount() + "% OFF)");
                     holder.actualPrice.setVisibility(View.VISIBLE);
-                    holder.actualPrice.setText("\u20B9" + parent.getProductPrice());
-//                    holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    JSONArray array = parent.getItemArray();
+                    if (array.length()>0) {
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject jsonObj = null;
+                            try {
+                                jsonObj = array.getJSONObject(i);
+                                String pricearray = jsonObj.getString("price");
+                                String discountedPrice = jsonObj.getString("discountedPrice");
+                                if (cart.getProdVarPrice().equals(discountedPrice)) {
+                                    holder.actualPrice.setText("\u20B9" + pricearray);
+                                    holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                }
+                            }catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -298,10 +313,17 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
                     } else {
                         quantRemove--;
                         holder.itemsQuantity.setText(quantRemove + "");
-                        if (parent.getProductDiscount().equals("0"))
-//                            mPrice = mPrice - parent.getProductIntPrice();
-                            price = parent.getProductIntPrice();
-                        else price = parent.getProductIntDiscountedPrice();
+                        if (parent.getProductDiscount().equals("0")) {
+                            String priceStr = holder.itemPrice.getText().toString();
+                            String spliteStr[] = priceStr.split("\u20B9");
+                            price = Integer.parseInt(spliteStr[1]);
+//                        price = parent.getProductIntPrice();
+                        } else {
+                            String priceStr = holder.itemPrice.getText().toString();
+                            String spliteStr[] = priceStr.split("\u20B9");
+                            price = Integer.parseInt(spliteStr[1]);
+//                            price = parent.getProductIntDiscountedPrice();
+                        }
                         updateItem(String.valueOf(quantRemove), cart, price);
                         decreaseQuntItem.setRemovePrice(price);
                     }
@@ -316,8 +338,16 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
                     int quantAdd = Integer.parseInt(quan);
                     quantAdd++;
                     if (parent.getProductDiscount().equals("0")) {
-                        price = parent.getProductIntPrice();
-                    } else price = parent.getProductIntDiscountedPrice();
+                        String priceStr = holder.itemPrice.getText().toString();
+                        String spliteStr[] = priceStr.split("\u20B9");
+                        price = Integer.parseInt(spliteStr[1]);
+//                        price = parent.getProductIntPrice();
+                    } else {
+                        String priceStr = holder.itemPrice.getText().toString();
+                        String spliteStr[] = priceStr.split("\u20B9");
+                        price = Integer.parseInt(spliteStr[1]);
+//                        price = parent.getProductIntDiscountedPrice();
+                    }
                     holder.itemsQuantity.setText(quantAdd+"");
                     updateItem(String.valueOf(quantAdd), cart, price);
                     increaseQuntItem.setAddPrice(price);

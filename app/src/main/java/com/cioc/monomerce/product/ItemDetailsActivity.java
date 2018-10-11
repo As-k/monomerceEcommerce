@@ -174,6 +174,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
         HashMap map = new HashMap();
         map.put(keys[0], spinnerstr);
         map.put("sku", lite.getSerialNo());
+        map.put("disPer", lite.getProductDiscount());
+        map.put("discount", lite.getProductIntDiscountedPrice());
         spinnerlist.add(map);
         JSONArray array = lite.getItemArray();
         if (array.length()>0) {
@@ -186,14 +188,19 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     String unitPerpack = jsonObj.getString("unitPerpack");
                     String created = jsonObj.getString("created");
                     String pricearray = jsonObj.getString("price");
+                    String discountedPrice = jsonObj.getString("discountedPrice");
                     String parent_id = jsonObj.getString("parent_id");
                     String id = jsonObj.getString("id");
                     Double rspoint = Double.parseDouble(pricearray);
                     final int rs = (int) Math.round(rspoint);
+                    Double rsPointdis = Double.parseDouble(discountedPrice);
+                    final int rsdis = (int) Math.round(rsPointdis);
                     String  strvalue = (Double.parseDouble(lite.getHowMuch())*Integer.parseInt(unitPerpack))+" "+ lite.getUnit()+" - \u20B9"+ rs;
                     HashMap map1 = new HashMap();
                     map1.put(keys[0], strvalue);
                     map1.put("sku", sku);
+                    map1.put("disPer", lite.getProductDiscount());
+                    map1.put("discount", rsdis);
                     spinnerlist.add(map1);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -210,10 +217,24 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 HashMap map = (HashMap) spinnerlist.get(position);
                 String spinnerValue = (String) map.get(keys[0]);
                 sku = (String) map.get("sku");
+                String disPer = (String) map.get("disPer");
+                int discount = (int) map.get("discount");
                 Log.e("onItemClick",(String) map.get("sku")+" "+spinnerValue);
                 String arrSplit[] = spinnerValue.split("-");
-                textViewItemName.setText(lite.getProductName()+" "+arrSplit[0]);
-                textViewItemPrice.setText(arrSplit[1]);
+                if (disPer.equals("0")){
+                    textViewItemName.setText(lite.getProductName()+" "+arrSplit[0]);
+                    textViewItemPrice.setText(arrSplit[1]);
+                    textViewItemDiscount.setVisibility(View.GONE);
+                    textViewItemDiscountPrice.setVisibility(View.GONE);
+                } else {
+                    textViewItemName.setText(lite.getProductName()+" "+arrSplit[0]);
+                    textViewItemPrice.setText("\u20B9"+discount);
+                    textViewItemDiscountPrice.setVisibility(View.VISIBLE);
+                    textViewItemDiscountPrice.setText(""+arrSplit[1]);
+                    textViewItemDiscountPrice.setPaintFlags(textViewItemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                    textViewItemDiscount.setVisibility(View.VISIBLE);
+                    textViewItemDiscount.setText(disPer+"% OFF");
+                }
             }
 
             @Override
@@ -281,6 +302,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     RequestParams params = new RequestParams();
+                    params.put("prodSku", sku);
                     params.put("product", lite.getPk());
                     params.put("qty", "1");
                     params.put("typ", "cart");
@@ -641,6 +663,8 @@ public class ItemDetailsActivity extends AppCompatActivity {
             HashMap map = new HashMap();
             map.put(holder.keys[0], spinnerstr);
             map.put("sku", parent.getSerialNo());
+            map.put("disPer", parent.getProductDiscount());
+            map.put("discount", price1);
             holder.spinnerlist.add(map);
             JSONArray array = parent.getItemArray();
             if (array.length()>0) {
@@ -653,14 +677,19 @@ public class ItemDetailsActivity extends AppCompatActivity {
                         String unitPerpack = jsonObj.getString("unitPerpack");
                         String created = jsonObj.getString("created");
                         String pricearray = jsonObj.getString("price");
+                        String discountedPrice = jsonObj.getString("discountedPrice");
                         String parent_id = jsonObj.getString("parent_id");
                         String id = jsonObj.getString("id");
                         Double rspoint = Double.parseDouble(pricearray);
                         final int rs = (int) Math.round(rspoint);
+                        Double rsPointdis = Double.parseDouble(discountedPrice);
+                        final int rsdis = (int) Math.round(rsPointdis);
                         String  strvalue = (Double.parseDouble(parent.getHowMuch())*Integer.parseInt(unitPerpack))+" "+ parent.getUnit()+" - \u20B9"+ rs;
                         HashMap map1 = new HashMap();
                         map1.put(holder.keys[0], strvalue);
                         map1.put("sku", sku);
+                        map1.put("disPer", parent.getProductDiscount());
+                        map1.put("discount", rsdis);
                         holder.spinnerlist.add(map1);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -691,20 +720,22 @@ public class ItemDetailsActivity extends AppCompatActivity {
                     HashMap map = (HashMap) holder.spinnerlist.get(position);
                     String spinnerValue = (String) map.get(holder.keys[0]);
                     sku = (String) map.get("sku");
+                    String disPer = (String) map.get("disPer");
+                    int discount = (int) map.get("discount");
                     Log.e("onItemClick",(String) map.get("sku")+" "+spinnerValue);
                     String arrSplit[] = spinnerValue.split("-");
-//                    if (parent.getProductDiscount().equals("0")){
-                    holder.itemPrice.setText(arrSplit[1]);
-                    holder.itemDiscountPrice.setVisibility(View.GONE);
-                    holder.itemDiscount.setVisibility(View.GONE);
-//                    } else {
-//                        holder.itemPrice.setText("\u20B9"+price1);
-//                        holder.itemDiscountPrice.setVisibility(View.VISIBLE);
-//                        holder.itemDiscountPrice.setText("\u20B9"+price);
-//                        holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
-//                        holder.itemDiscount.setVisibility(View.VISIBLE);
-//                        holder.itemDiscount.setText(parent.getProductDiscount()+"% OFF");
-//                    }
+                    if (disPer.equals("0")){
+                        holder.itemPrice.setText(arrSplit[1]);
+                        holder.itemDiscountPrice.setVisibility(View.GONE);
+                        holder.itemDiscount.setVisibility(View.GONE);
+                    } else {
+                        holder.itemPrice.setText("\u20B9"+discount);
+                        holder.itemDiscountPrice.setVisibility(View.VISIBLE);
+                        holder.itemDiscountPrice.setText(""+arrSplit[1]);
+                        holder.itemDiscountPrice.setPaintFlags(holder.itemDiscountPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                        holder.itemDiscount.setVisibility(View.VISIBLE);
+                        holder.itemDiscount.setText(disPer+"% OFF");
+                    }
 
                 }
 

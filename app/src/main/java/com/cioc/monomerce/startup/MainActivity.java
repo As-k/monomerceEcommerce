@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        client.get(BackendServer.url+"/api/ecommerce/cart/?&typ=cart&user="+userPK,
+        client.get(BackendServer.url+"/api/ecommerce/cart/?&typ=cart&user="+MainActivity.userPK,
                 new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
