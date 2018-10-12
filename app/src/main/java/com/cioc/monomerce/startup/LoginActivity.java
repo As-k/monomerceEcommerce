@@ -149,42 +149,6 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-//    public void forgotPassword(View v){
-//        llPassword.setVisibility(View.GONE);
-//        loginButton.setVisibility(View.GONE);
-//        llotpEdit.setVisibility(View.GONE);
-//        forgot.setVisibility(View.GONE);
-//        getOTP.setVisibility(View.VISIBLE);
-//        goBack.setVisibility(View.VISIBLE);
-//
-//        goBack.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                llPassword.setVisibility(View.VISIBLE);
-//                llUsername.setVisibility(View.VISIBLE);
-//                loginButton.setVisibility(View.VISIBLE);
-//                llotpEdit.setVisibility(View.GONE);
-//                forgot.setVisibility(View.VISIBLE);
-//                getOTP.setVisibility(View.GONE);
-//                goBack.setVisibility(View.GONE);
-//
-//            }
-//        });
-//
-//        getOTP.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                llPassword.setVisibility(View.GONE);
-//                llUsername.setVisibility(View.GONE);
-//                loginButton.setVisibility(View.GONE);
-//                forgot.setVisibility(View.GONE);
-//                llotpEdit.setVisibility(View.VISIBLE);
-//                getOTP.setVisibility(View.VISIBLE);
-//                goBack.setVisibility(View.VISIBLE);
-//            }
-//        });
-//
-//    }
 
     public void login() {
         Toast.makeText(this, BackendServer.url, Toast.LENGTH_LONG).show();

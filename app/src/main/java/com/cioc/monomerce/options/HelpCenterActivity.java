@@ -1,7 +1,6 @@
 package com.cioc.monomerce.options;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,7 +13,7 @@ import android.widget.TextView;
 
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
-import com.cioc.monomerce.entites.FrequentlyQuestions;
+import com.cioc.monomerce.entites.Frequently;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -28,7 +27,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class HelpCenterActivity extends AppCompatActivity {
     AsyncHttpClient client;
-    ArrayList<FrequentlyQuestions> questions;
+    ArrayList<Frequently> questions;
     ListView queriesList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,7 @@ public class HelpCenterActivity extends AppCompatActivity {
                 for (int i = 0; i < response.length(); i++) {
                     try {
                         JSONObject object = response.getJSONObject(i);
-                        FrequentlyQuestions frequently = new FrequentlyQuestions(object);
+                        Frequently frequently = new Frequently(object);
                         questions.add(frequently);
 
                     } catch (JSONException e) {
@@ -108,7 +107,7 @@ public class HelpCenterActivity extends AppCompatActivity {
             TextView textQues = v.findViewById(R.id.text_ques);
             TextView textAns = v.findViewById(R.id.text_ans);
 
-            FrequentlyQuestions frequently = questions.get(position);
+            Frequently frequently = questions.get(position);
 
             textQues.setText("Q. "+frequently.getQuestions());
             textAns.setText("A. "+frequently.getAnswer());

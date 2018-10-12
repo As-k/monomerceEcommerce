@@ -11,7 +11,7 @@ import com.loopj.android.http.AsyncHttpClient;
 public class BackendServer {
 
 //    public String url = "http://10.0.2.2:8000/";
-    public static String url = "http://192.168.1.123:8080/";
+    public static String url = "http://192.168.1.124:8000/";
 //    public static String url = "https://sterlingselect.in/";
 //    public static String url = "http://192.168.43.9:8000/";
     public Context context;

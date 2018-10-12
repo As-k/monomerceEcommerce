@@ -96,54 +96,6 @@
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
-            <!--<LinearLayout-->
-            <!--android:id="@+id/llOtp"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:layout_marginVertical="@dimen/activity_vertical_margin">-->
-
-            <!--<ImageView-->
-            <!--android:id="@+id/otpiv"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:scaleType="center"-->
-            <!--app:srcCompat="@drawable/get_otp" />-->
-
-            <!--<android.support.design.widget.TextInputLayout-->
-            <!--android:layout_width="274dp"-->
-            <!--android:layout_height="wrap_content">-->
-
-            <!--<AutoCompleteTextView-->
-            <!--android:id="@+id/otpEdit"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:backgroundTint="@android:color/transparent"-->
-            <!--android:hint="@string/prompt_otp"-->
-            <!--android:inputType="textEmailAddress"-->
-            <!--android:maxLines="1"-->
-            <!--android:singleLine="true" />-->
-
-            <!--</android.support.design.widget.TextInputLayout>-->
-            <!--</LinearLayout>-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/forgot_password"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="end"-->
-            <!--android:text="Forgot password ?"-->
-            <!--android:onClick="forgotPassword"/>-->
-
-            <!--<TextView-->
-            <!--android:id="@+id/go_back"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="end"-->
-            <!--android:text="Go Back" />-->
-
-
             <Button
                 android:id="@+id/sign_in_button"
                 style="?android:selectableItemBackground"
@@ -171,22 +123,6 @@
                 android:text="Not a member ? Register"
                 android:onClick="register"
                 android:textSize="@dimen/text_size_xmedium"/>
-
-            <!--<Button-->
-            <!--android:id="@+id/get_otp"-->
-            <!--style="?android:textAppearanceSmall"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_horizontal"-->
-            <!--android:layout_marginBottom="30dp"-->
-            <!--android:layout_marginTop="16dp"-->
-            <!--android:background="@drawable/roundbutton"-->
-            <!--android:text="@string/action_get_otp"-->
-            <!--android:textColor="#ffffff"-->
-            <!--android:textAllCaps="false"-->
-            <!--android:textStyle="bold"-->
-            <!--android:layout_marginEnd="20dp"-->
-            <!--android:layout_marginStart="20dp"/>-->
 
 
         </LinearLayout>

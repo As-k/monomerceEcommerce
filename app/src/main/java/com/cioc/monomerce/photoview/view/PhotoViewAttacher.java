@@ -408,7 +408,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         mCurrentFlingRunnable = new FlingRunnable(imageView.getContext());
         mCurrentFlingRunnable.fling(getImageViewWidth(imageView),
                 getImageViewHeight(imageView), (int) velocityX, (int) velocityY);
-        imageView.post(mCurrentFlingRunnable);
+//        imageView.post(mCurrentFlingRunnable);
     }
 
     @Override
@@ -657,7 +657,7 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
 
     @Override
     public void setZoomable(boolean zoomable) {
-        mZoomEnabled = zoomable;
+//        mZoomEnabled = zoomable;
         update();
     }
 
@@ -667,13 +667,13 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
         if (null != imageView) {
             if (mZoomEnabled) {
                 // Make sure we using MATRIX Scale Type
-                setImageViewScaleTypeMatrix(imageView);
+//                setImageViewScaleTypeMatrix(imageView);
 
                 // Update the base matrix using the current drawable
-                updateBaseMatrix(imageView.getDrawable());
+//                updateBaseMatrix(imageView.getDrawable());
             } else {
                 // Reset the Matrix...
-                resetMatrix();
+//                resetMatrix();
             }
         }
     }
@@ -1092,8 +1092,8 @@ public class PhotoViewAttacher implements IPhotoView, View.OnTouchListener,
                 minY = maxY = startY;
             }
 
-            mCurrentX = startX;
-            mCurrentY = startY;
+//            mCurrentX = startX;
+//            mCurrentY = startY;
 
             if (DEBUG) {
                 LogManager.getLogger().d(

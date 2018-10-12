@@ -279,7 +279,7 @@ public class PaymentActivity extends AppCompatActivity {
             public final View mView;
             public final SimpleDraweeView mImageView;
             public final LinearLayout mLayoutItem;
-            TextView productName, itemPrice, actualPrice, discountPercentage, itemsQuantity;
+            TextView productName, itemPrice, actualPrice, discountPercentage;//, itemsQuantity;
 
             public ViewHolder(View view) {
                 super(view);
@@ -320,41 +320,57 @@ public class PaymentActivity extends AppCompatActivity {
         public void onBindViewHolder(final PaymentActivity.PaymentRecyclerViewAdapter.ViewHolder holder, final int position) {
             final Cart cart = mPaymentlist.get(position);
             final ListingParent parent = cart.getParents().get(0);
-            final Uri uri = Uri.parse(cart.getListingParent().getFilesAttachment());
+            final Uri uri = Uri.parse(parent.getFilesAttachment());
             holder.mImageView.setImageURI(uri);
-//            holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-//                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
-//                    intent.putExtra(STRING_IMAGE_POSITION, position);
-//                    mContext.startActivity(intent);
-//                }
-//            });
 
-//            holder.mLayoutItem.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent(mContext, ItemDetailsActivity.class);
-//                    intent.putExtra(STRING_IMAGE_URI, cart.getListingParent().getFilesAttachment());
-//                    intent.putExtra(STRING_IMAGE_POSITION, position);
-//                    intent.putExtra("listingLitePk", parent.getPk());
-//                    mContext.startActivity(intent);
-//                }
-//            });
-
-            holder.productName.setText(parent.getProductName());
-            if (parent.getProductDiscount().equals("0")){
-                holder.itemPrice.setText("\u20B9"+parent.getProductPrice());
-                holder.actualPrice.setVisibility(View.GONE);
-                holder.discountPercentage.setVisibility(View.GONE);
+            holder.productName.setText(parent.getProductName()+" "+cart.getProd_howMuch()+" "+parent.getUnit());
+//            holder.itemsQuantity.setText(cart.getQuantity());
+            if (cart.getProdVarPrice().equals("null")) {
+                if (parent.getProductDiscount().equals("0")) {
+                    holder.itemPrice.setText("\u20B9" + parent.getProductPrice());
+                    holder.actualPrice.setVisibility(View.GONE);
+                    holder.discountPercentage.setVisibility(View.GONE);
+//                    mPrice = mPrice + (parent.getProductIntPrice() * Integer.parseInt(cart.getQuantity()));
+                } else {
+                    holder.itemPrice.setText("\u20B9" + parent.getProductDiscountedPrice());
+//                    mPrice = mPrice + (parent.getProductIntDiscountedPrice() * Integer.parseInt(cart.getQuantity()));
+                    holder.discountPercentage.setVisibility(View.VISIBLE);
+                    holder.discountPercentage.setText("(" + parent.getProductDiscount() + "% OFF)");
+                    holder.actualPrice.setVisibility(View.VISIBLE);
+                    holder.actualPrice.setText("\u20B9" + parent.getProductPrice());
+                    holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                }
             } else {
-                holder.itemPrice.setText("\u20B9"+parent.getProductDiscountedPrice());
-                holder.discountPercentage.setVisibility(View.VISIBLE);
-                holder.discountPercentage.setText("("+parent.getProductDiscount()+"% OFF)");
-                holder.actualPrice.setVisibility(View.VISIBLE);
-                holder.actualPrice.setText("\u20B9"+parent.getProductPrice());
-                holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
+                if (parent.getProductDiscount().equals("0")) {
+                    holder.itemPrice.setText("\u20B9" + cart.getProdVarPrice());
+                    holder.actualPrice.setVisibility(View.GONE);
+                    holder.discountPercentage.setVisibility(View.GONE);
+//                    mPrice = mPrice + (Integer.parseInt(cart.getProdVarPrice()) * Integer.parseInt(cart.getQuantity()));
+                } else {
+                    holder.itemPrice.setText("\u20B9" + cart.getProdVarPrice());
+//                    mPrice = mPrice + (Integer.parseInt(cart.getProdVarPrice()) * Integer.parseInt(cart.getQuantity()));
+                    holder.discountPercentage.setVisibility(View.VISIBLE);
+                    holder.discountPercentage.setText("(" + parent.getProductDiscount() + "% OFF)");
+                    holder.actualPrice.setVisibility(View.VISIBLE);
+                    JSONArray array = parent.getItemArray();
+                    if (array.length()>0) {
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject jsonObj = null;
+                            try {
+                                jsonObj = array.getJSONObject(i);
+                                String sku = jsonObj.getString("sku");
+                                String pricearray = jsonObj.getString("price");
+                                String discountedPrice = jsonObj.getString("discountedPrice");
+                                if (cart.getProdSku().equals(sku)) {
+                                    holder.actualPrice.setText("\u20B9" + pricearray);
+                                    holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
             }
         }
 

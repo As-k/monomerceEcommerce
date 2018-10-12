@@ -34,9 +34,9 @@ import android.widget.Toast;
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
 import com.cioc.monomerce.entites.Cart;
-import com.cioc.monomerce.entites.GenericProduct;
+import com.cioc.monomerce.entites.Generic;
 import com.cioc.monomerce.entites.ListingParent;
-import com.cioc.monomerce.entites.OfferBanners;
+import com.cioc.monomerce.entites.Offer;
 import com.cioc.monomerce.fragments.ImageListFragment;
 import com.cioc.monomerce.miscellaneous.EmptyActivity;
 import com.cioc.monomerce.notification.NotificationCountSetClass;
@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity
 
     private AsyncHttpClient client;
 
-    public static ArrayList<GenericProduct> genericProducts;
-    public static ArrayList<OfferBanners> offerBannersList;
+    public static ArrayList<Generic> generics;
+    public static ArrayList<Offer> offerList;
     public static ArrayList<Cart> cartList;;
 
     @Override
@@ -94,8 +94,8 @@ public class MainActivity extends AppCompatActivity
 
         BackendServer backend = new BackendServer(context);
         client = backend.getHTTPClient();
-        genericProducts = new ArrayList<GenericProduct>();
-        offerBannersList = new ArrayList<OfferBanners>();
+        generics = new ArrayList<Generic>();
+        offerList = new ArrayList<Offer>();
         cartList = new ArrayList<Cart>();
         listingParents = new ArrayList<ListingParent>();
         getUserDetails();
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         initCollapsingToolbar();
-        getGenericProduct();
+        geProduct();
         navHeadLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void getGenericProduct() {
+    public void geProduct() {
         client.get(BackendServer.url+"/api/ecommerce/genericProduct/", new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -224,8 +224,8 @@ public class MainActivity extends AppCompatActivity
                 for (int i=0; i<response.length(); i++) {
                     try {
                         JSONObject object = response.getJSONObject(i);
-                        GenericProduct product = new GenericProduct(object);
-                        genericProducts.add(product);
+                        Generic product = new Generic(object);
+                        generics.add(product);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -251,8 +251,8 @@ public class MainActivity extends AppCompatActivity
                 for (int i=0; i<response.length(); i++) {
                     try {
                         JSONObject object = response.getJSONObject(i);
-                        OfferBanners banners = new OfferBanners(object);
-                        offerBannersList.add(banners);
+                        Offer banners = new Offer(object);
+                        offerList.add(banners);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -300,10 +300,10 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         ListFragmentAdapter adapter = new ListFragmentAdapter(getSupportFragmentManager());
-        for (int i=0; i<genericProducts.size(); i++) {
+        for (int i = 0; i< generics.size(); i++) {
             ImageListFragment fragment = new ImageListFragment();
             Bundle bundle = new Bundle();
-            GenericProduct product = genericProducts.get(i);
+            Generic product = generics.get(i);
             bundle.putInt("type", i+1);
             bundle.putString("pk", product.getPk());
             fragment.setArguments(bundle);
@@ -314,8 +314,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void getItems() {
-        for (int i=0; i<genericProducts.size(); i++) {
-            GenericProduct product = genericProducts.get(i);
+        for (int i = 0; i< generics.size(); i++) {
+            Generic product = generics.get(i);
             client.get(BackendServer.url + "/api/ecommerce/listing/?parent=" + product.getPk() + "&recursive=1", new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -523,8 +523,8 @@ public class MainActivity extends AppCompatActivity
     public void getViewpagerFragment() {
         extensiblePageIndicator = (ExtensiblePageIndicator) findViewById(R.id.flexibleIndicator);
         mSliderImageFragmentAdapter = new SliderImageFragmentAdapter(getSupportFragmentManager());
-        for (int i=0; i<offerBannersList.size(); i++) {
-            OfferBanners banners = offerBannersList.get(i);
+        for (int i = 0; i< offerList.size(); i++) {
+            Offer banners = offerList.get(i);
             mSliderImageFragmentAdapter.addFragment(OfferBannerFragment.newInstance(android.R.color.transparent, banners.getImage()));
         }
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -559,7 +559,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(context, LoginPageActivity.class));
                 return super.onSingleTapConfirmed(e);
             } else {
-                OfferBanners banners = offerBannersList.get(pos);
+                Offer banners = offerList.get(pos);
                 startActivity(new Intent(context, WebViewActivity.class)
                         .putExtra("term", true)
                         .putExtra("body", banners.getBody())

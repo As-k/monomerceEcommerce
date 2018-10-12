@@ -13,6 +13,6 @@ public class FrescoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fresco.initialize(this, ImagePipelineConfigFactory.getImagePipelineConfig(this));
+        Fresco.initialize(this);
     }
 }

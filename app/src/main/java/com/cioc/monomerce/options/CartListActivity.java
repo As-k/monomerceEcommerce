@@ -257,13 +257,14 @@ public class CartListActivity extends AppCompatActivity implements DecreaseQuntI
                             JSONObject jsonObj = null;
                             try {
                                 jsonObj = array.getJSONObject(i);
+                                String sku = jsonObj.getString("sku");
                                 String pricearray = jsonObj.getString("price");
                                 String discountedPrice = jsonObj.getString("discountedPrice");
-                                if (cart.getProdVarPrice().equals(discountedPrice)) {
+                                if (cart.getProdSku().equals(sku)) {
                                     holder.actualPrice.setText("\u20B9" + pricearray);
                                     holder.actualPrice.setPaintFlags(holder.actualPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                                 }
-                            }catch (JSONException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }

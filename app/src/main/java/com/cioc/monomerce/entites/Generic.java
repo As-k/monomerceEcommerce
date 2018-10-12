@@ -8,7 +8,7 @@ import org.json.JSONObject;
  * Created by admin on 19/07/18.
  */
 
-public class GenericProduct {
+public class Generic {
     public String pk, name, minCost, visual;
     public String fieldPk, fieldName, fieldType, unit, helpText, fieldData, fieldDefault;
     public String parentPk, parentName, parentMinCost, parentVisual;
@@ -16,11 +16,11 @@ public class GenericProduct {
     JSONObject object;
 
 
-    public GenericProduct() {
+    public Generic() {
 
     }
 
-    public GenericProduct(JSONObject object) {
+    public Generic(JSONObject object) {
         this.object = object;
 
         try {
@@ -44,7 +44,7 @@ public class GenericProduct {
                 this.parentPk = parent.getString("pk");
                 this.parentName = parent.getString("name");
                 JSONObject parentObject = parent.getJSONObject("parent");
-                new GenericProduct(parentObject);
+                new Generic(parentObject);
             }
 
         } catch (JSONException e) {

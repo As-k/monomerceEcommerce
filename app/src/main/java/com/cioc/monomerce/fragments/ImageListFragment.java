@@ -2,19 +2,15 @@ package com.cioc.monomerce.fragments;
 
 import android.content.Intent;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -27,13 +23,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
-import com.cioc.monomerce.entites.GenericProduct;
+import com.cioc.monomerce.entites.Generic;
 import com.cioc.monomerce.entites.ListingParent;
 import com.cioc.monomerce.notification.NotificationCountSetClass;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.cioc.monomerce.startup.LoginPageActivity;
 import com.cioc.monomerce.startup.MainActivity;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -85,9 +80,9 @@ public class ImageListFragment extends Fragment {
 
     String fragmentName = "";
     private void setRecycler(final RecyclerView recyclerView) {
-        for (int i=0; i<MainActivity.genericProducts.size(); i++) {
+        for (int i = 0; i<MainActivity.generics.size(); i++) {
             if (ImageListFragment.this.getArguments().getInt("type") == i + 1) {
-                GenericProduct product = MainActivity.genericProducts.get(i);
+                Generic product = MainActivity.generics.get(i);
                 pk = product.getPk();
                 listingParents.clear();
                 progressBar.setVisibility(View.VISIBLE);

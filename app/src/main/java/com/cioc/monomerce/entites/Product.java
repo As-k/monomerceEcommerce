@@ -7,11 +7,11 @@ import org.json.JSONObject;
  * Created by admin on 31/07/18.
  */
 
-public class ProductMeta {
+public class Product {
     public String pk, name, type;
     public JSONObject object;
 
-    public ProductMeta(JSONObject object) throws JSONException {
+    public Product(JSONObject object) throws JSONException {
         this.object = object;
 
         this.pk = object.getString("pk");

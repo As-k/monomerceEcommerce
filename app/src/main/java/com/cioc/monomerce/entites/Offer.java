@@ -8,16 +8,16 @@ import org.json.JSONObject;
  * Created by admin on 24/07/18.
  */
 
-public class OfferBanners {
+public class Offer {
     public String pk, user, image, imagePortrait, created, level, title, subTitle;
     public String pagePk, pageCreated, pageUpdated, pageurl, body, pageTitle;
     boolean active;
     JSONObject jsonObject;
 
-    public OfferBanners() {
+    public Offer() {
     }
 
-    public OfferBanners(JSONObject jsonObject) {
+    public Offer(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
 
         try {

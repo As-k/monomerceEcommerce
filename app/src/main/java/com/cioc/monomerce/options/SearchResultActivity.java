@@ -1,13 +1,9 @@
 package com.cioc.monomerce.options;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,7 +23,7 @@ import android.widget.Toast;
 
 import com.cioc.monomerce.backend.BackendServer;
 import com.cioc.monomerce.R;
-import com.cioc.monomerce.entites.ProductMeta;
+import com.cioc.monomerce.entites.Product;
 import com.cioc.monomerce.fragments.AllItemsShowActivity;
 import com.cioc.monomerce.product.ItemDetailsActivity;
 import com.loopj.android.http.AsyncHttpClient;
@@ -43,7 +39,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchResultActivity extends AppCompatActivity {
     AsyncHttpClient client;
-    ArrayList<ProductMeta> productMetas;
+    ArrayList<Product> products;
     ListView searchList;
     TextView searchResult;
     Menu menu;
@@ -59,7 +55,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
         BackendServer backend = new BackendServer(SearchResultActivity.this);
         client = backend.getHTTPClient();
-        productMetas = new ArrayList<>();
+        products = new ArrayList<>();
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout_all_items);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -79,7 +75,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
         searchResult = findViewById(R.id.search_result);
         searchList = findViewById(R.id.search_list);
-        if(productMetas.size() != 0) {
+        if(products.size() != 0) {
             searchResult.setVisibility(View.GONE);
         } else {
             searchResult.setVisibility(View.VISIBLE);
@@ -109,7 +105,7 @@ public class SearchResultActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 query = query.toLowerCase();
-                productMetas.clear();
+                products.clear();
                 productList.clearData();
                 client.get(BackendServer.url + "/api/ecommerce/searchProduct/?limit=10&search="+query, new JsonHttpResponseHandler() {
                     @Override
@@ -118,8 +114,8 @@ public class SearchResultActivity extends AppCompatActivity {
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 JSONObject object = response.getJSONObject(i);
-                                ProductMeta userMeta = new ProductMeta(object);
-                                productMetas.add(userMeta);
+                                Product userMeta = new Product(object);
+                                products.add(userMeta);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Log.e("JSONObject", "Json parsing error: " + e.getMessage());
@@ -142,11 +138,11 @@ public class SearchResultActivity extends AppCompatActivity {
                 searchResult.setVisibility(View.GONE);
                 if(s.equals("")){
                     searchResult.setVisibility(View.VISIBLE);
-                    productMetas.clear();
+                    products.clear();
                     productList.clearData();
                 } else {
                     s = s.toLowerCase();
-                    productMetas.clear();
+                    products.clear();
                     productList.clearData();
                     client.get(BackendServer.url + "/api/ecommerce/searchProduct/?limit=10&search="+s, new JsonHttpResponseHandler() {
                         @Override
@@ -155,8 +151,8 @@ public class SearchResultActivity extends AppCompatActivity {
                             for (int i = 0; i < response.length(); i++) {
                                 try {
                                     JSONObject object = response.getJSONObject(i);
-                                    ProductMeta userMeta = new ProductMeta(object);
-                                    productMetas.add(userMeta);
+                                    Product userMeta = new Product(object);
+                                    products.add(userMeta);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                     Log.e("JSONObject", "Json parsing error: " + e.getMessage());
@@ -177,49 +173,11 @@ public class SearchResultActivity extends AppCompatActivity {
         });
         return true;
     }
-
-//    @Override
-//    protected void onNewIntent(Intent intent) {
-//        handleIntent(intent);
-//    }
-
-//    private void handleIntent(Intent intent) {
-//        finish();
-//        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-//            String query = intent.getStringExtra(SearchManager.QUERY);
-//            //use the query to search your data somehow
-//            productMetas.clear();
-//            client.get(BackendServer.url + "/api/ecommerce/searchProduct/?limit=10&search="+query, new JsonHttpResponseHandler() {
-//                @Override
-//                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-//                    super.onSuccess(statusCode, headers, response);
-//                    for (int i = 0; i < response.length(); i++) {
-//                        try {
-//                            JSONObject object = response.getJSONObject(i);
-//                            ProductMeta userMeta = new ProductMeta(object);
-//                            productMetas.add(userMeta);
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Log.e("JSONObject", "Json parsing error: " + e.getMessage());
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-//                    super.onFailure(statusCode, headers, throwable, errorResponse);
-//                    Toast.makeText(SearchResultActivity.this, "onFailure", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//
-//        }
-//    }
-
+    
     private class ProductList extends BaseAdapter{
         @Override
         public int getCount() {
-            return productMetas.size();
+            return products.size();
         }
 
         @Override
@@ -237,7 +195,7 @@ public class SearchResultActivity extends AppCompatActivity {
             View v = getLayoutInflater().inflate(R.layout.layout_search_result_list, viewGroup, false);
             TextView textResult = v.findViewById(R.id.text_result);
 
-            final ProductMeta product = productMetas.get(position);
+            final Product product = products.get(position);
             textResult.setText(product.getName());
             textResult.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -262,7 +220,7 @@ public class SearchResultActivity extends AppCompatActivity {
         }
 
         public void clearData() {
-            productMetas.clear();
+            products.clear();
             notifyDataSetChanged();
         }
     }

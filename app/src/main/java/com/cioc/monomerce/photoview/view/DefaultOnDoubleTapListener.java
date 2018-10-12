@@ -53,7 +53,7 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
                     float yResult = (y - displayRect.top)
                             / displayRect.height();
 
-                    photoViewAttacher.getOnPhotoTapListener().onPhotoTap(imageView, xResult, yResult);
+//                    photoViewAttacher.getOnPhotoTapListener().onPhotoTap(imageView, xResult, yResult);
                     return true;
                 }
             }

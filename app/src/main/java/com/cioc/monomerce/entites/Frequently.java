@@ -7,11 +7,11 @@ import org.json.JSONObject;
  * Created by admin on 31/07/18.
  */
 
-public class FrequentlyQuestions {
+public class Frequently {
     public String pk, created, user, questions, answer;
     public JSONObject object;
 
-    public FrequentlyQuestions(JSONObject object) throws JSONException {
+    public Frequently(JSONObject object) throws JSONException {
         this.object = object;
 
         this.pk = object.getString("pk");
